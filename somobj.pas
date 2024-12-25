@@ -944,7 +944,7 @@ function SOMObject_somPrintSelf(somSelf: TRealSOMObject): TRealSOMObject;
 var
     m: somTD_SOMObject_somPrintSelf;
 begin
-	{$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(somResolve(somSelf, SOMObjectClassData.somPrintSelf));
+    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somPrintSelf));
     Result:=m(somSelf);
 end;
 
