@@ -1,0 +1,23 @@
+Need some investigation about CORBA memory management.
+
+CORBA_*_alloc
+CORBA_free
+CORBA_*_set_release
+CORBA_*_get_release
+
+Seems CORBA_free and ORBFree have a similar idea... But I still can't find info about DSOM alloc and set/get release flag...
+
+
+New for somFree
+
+CORBA memory management functions are implemented, such as:
+
+CORBA_T_alloc
+CORBA_free
+CORBA_T_set_release
+CORBA_T_get_release
+
+
+CORBA::LocalObject
+
+LocalObject is mostly just SOMObject...
