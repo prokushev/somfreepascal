@@ -1,12 +1,28 @@
-{$ifdef fpc}
-{$mode objfpc}
+{$I som.inc}
+
+uses sysutils, som, somobj, somcls, somcm, math;
+
+{$ifdef virtualpascal}
+procedure Assert(s: boolean; msg: String);
+begin
+  If not s then
+  begin
+    WriteLn('Assertion failed: ', msg);
+    Halt;
+  end;
+end;
 {$endif}
 
-{$H+}
-{$X+}
-
-uses sysutils, som, somobj, somcls, somcm;
-
+{$ifdef ver90}
+procedure Assert(s: boolean; msg: String);
+begin
+  If not s then
+  begin
+    WriteLn('Assertion failed: ', msg);
+    Halt;
+  end;
+end;
+{$endif}
 
 var
   clsmgr: TRealSOMObject;
@@ -16,8 +32,42 @@ var
 //  cmo: TSOMObject;
   m: somTD_SOMObject_somPrintSelf;
 begin
-  writeln('hi');
-  // Turn on all debug info
+  WriteLn('Testing types');
+
+  WriteLn('TCORBA_short max: ', High(TCORBA_short)); 
+  WriteLn('TCORBA_short min: ', Low(TCORBA_short)); 
+  WriteLn('TCORBA_short size: ', SizeOf(TCORBA_short));
+
+  WriteLn('TCORBA_long max: ', High(TCORBA_long)); 
+  WriteLn('TCORBA_long min: ', Low(TCORBA_long));
+  WriteLn('TCORBA_long size: ', SizeOf(TCORBA_long));
+
+  WriteLn('TCORBA_unsigned_short max: ', High(TCORBA_unsigned_short)); 
+  WriteLn('TCORBA_unsigned_short min: ', Low(TCORBA_unsigned_short));
+  WriteLn('TCORBA_unsigned_short size: ', SizeOf(TCORBA_unsigned_short));
+
+  WriteLn('TCORBA_unsigned_long max: ', High(TCORBA_unsigned_long)); 
+  WriteLn('TCORBA_unsigned_long min: ', Low(TCORBA_unsigned_long)); 
+  WriteLn('TCORBA_unsigned_long size: ', SizeOf(TCORBA_unsigned_long));
+
+{$ifdef SOM_LONG_LONG}
+  WriteLn('TCORBA_long_long max: ', High(TCORBA_long_long)); 
+  WriteLn('TCORBA_long_long min: ', Low(TCORBA_long_long)); 
+  WriteLn('TCORBA_long_long size: ', SizeOf(TCORBA_long_long));
+
+  WriteLn('TCORBA_unsigned_long_long max: ', High(TCORBA_unsigned_long_long));
+  WriteLn('TCORBA_unsigned_long_long min: ', Low(TCORBA_unsigned_long_long));
+  WriteLn('TCORBA_unsigned_long_long size: ', SizeOf(TCORBA_unsigned_long_long));
+{$endif}
+
+  WriteLn('TCORBA_float size: ', SizeOf(TCORBA_float));
+  WriteLn('TCORBA_double size: ', SizeOf(TCORBA_double));
+//  Assert(SizeOf(TCORBA_long_double)=8, 'TCORBA_long_double size');
+
+  WriteLn('TCORBA_char size: ', SizeOf(TCORBA_char));
+  WriteLn('TCORBA_octet size: ', SizeOf(TCORBA_octet));
+
+  WriteLn('Test trace level control support');
   SOM_TraceLevelPtr^:=2;
   SOM_WarnLevelPtr^:=2;
   SOM_AssertLevelPtr^:=2;
@@ -30,16 +80,26 @@ begin
   // Check two variables (must be same)
   WriteLn('SOMClassMgr=', inttohex(longint(clsmgr),8));
   WriteLn('SOMClassMgr=', inttohex(longint(SOMClassMgrObject),8));
-
   // Try var args function
-  //somPrintf('somPrintf test: %d %s'#13#10, [123, 'string']);
+{$ifdef virtualpascal}
+  somPrintf('somPrintf test: %d '#13#10, [123]);
+{$else}
+{$ifdef VER90}
+  somPrintf('somPrintf test: %d %d %s'#13#10, [123, 432, 'string']);
+{$else}
+  somPrintf('somPrintf test: %d %s'#13#10, 123, 'string');
+{$endif}
+{$endif}
+exit;
+  WriteLn('SOMClassMgrObject.somPrintSelf');
   SOMObject_somPrintSelf(SOMClassMgrObject);
   // Try to resolve SOMClassManager operation by name
 //  somTD_SOMObject_somPrintSelf(somResolveByName(clsmgr, 'somPrintSelf'))(clsmgr);
 
   // Try to resolve SOMClassManager operation by somMToken
-//  tst:=somTD_SOMObject_somDumpSelf(SOM_Resolve(clsmgr, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelf));
-//  tst(clsmgr, 0);
+  WriteLn('SOMClassMgr.somDumpSelf');
+  {$ifdef fpc}somMethodProc(tst):={$else}@tst:=Pointer{$endif}(SOM_Resolve(clsmgr, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelf));
+  tst(clsmgr, 0);
 (*
   // Try to resolve SOMClassManager operation by procedural-style bindings
   SOMObject_somPrintSelf(clsmgr); {This is direct call of parent code}
@@ -61,14 +121,14 @@ begin
     SOMObject_somDumpSelf(a._buffer[i], 0);
   end;
 *)
-(*
+
   // Try via Pascal class
-  WriteLn('test object pascal...');
+{  WriteLn('test object pascal...');
   cmo:=TSOMObject.Create;
   cmo.somDumpSelf(0);
   cmo.somDumpSelfInt(0);
   WriteLn('test casting...');
   cmo.somPrintSelf.somDumpSelf(0);
-  cmo.somFree;
-  writeln(4);*)
+  cmo.somFree;}
+  somEnvironmentEnd;
 end.

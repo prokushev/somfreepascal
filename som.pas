@@ -38,8 +38,10 @@ Interface
 const
   {$IFDEF UNIX}
     SOMDLL='libsom';
+    SOMTCDLL='libsomtc';
   {$ELSE}
     SOMDLL='som.dll';
+    SOMTCDLL='somtc.dll';
   {$ENDIF}
 
 {$ifdef vpc}
@@ -53,21 +55,29 @@ type
 
 (* CORBA basic data types. System/compiler depended. *)
 type
-  TCORBA_short   = Integer;
-  TCORBA_long    = Longint;
-  //TCORBA_long_long = ???;
-  TCORBA_unsigned_short = Word;
-  TCORBA_unsigned_long    = Cardinal;
-  //TCORBA_unsigned_long_long = ???;
-  //TCORBA_float = Float;
-  TCORBA_Double  = Double;
-  //TCORBA_long_double = ???;
-  TCORBA_char    = Char;
+  TCORBA_short              = SmallInt;
+  TCORBA_unsigned_short     = Word;
+
+  TCORBA_long               = Longint;
+  TCORBA_unsigned_long      = Cardinal;
+
+{$ifdef SOM_LONG_LONG}
+  TCORBA_long_long          = Int64;
+{$ifdef fpc}
+  TCORBA_unsigned_long_long = UInt64;
+{$else} {Delphi 6+}
+  TCORBA_unsigned_long_long = UInt64;
+{$endif}
+{$endif}
+
+  TCORBA_float              = Single;
+  TCORBA_Double             = Double;
+  TCORBA_long_double        = Extended;
+  TCORBA_char               = Char;
   //TCORBA_wchar   = ???;
-  TCORBA_boolean = ByteBool;
+  TCORBA_boolean            = ByteBool;
   
-  TCORBA_octet   = Byte;
-  Tva_list       = PChar;
+  TCORBA_octet              = Byte;
 
 (* Pointers to basic data types *)
 {$ifdef fpc}
@@ -102,6 +112,7 @@ type
   TRealSOMClass                         = TRealSOMObject;
   SOMMSingleInstanceType                = Pointer;
   TRealSOMClassMgr                      = TRealSOMObject;
+  PRealSOMClassMgr                      = ^TRealSOMClassMgr;
   PSOMClass                             = ^TRealSOMClass;
   PSOMObject                            = ^TRealSOMObject;
   TCORBA_Object                         = TRealSOMObject;    (* in SOM, a CORBA object is a SOM object *)
@@ -115,6 +126,9 @@ type
   somDToken             = somToken;
   somMTokenPtr          = ^somMToken;
   somDTokenPtr          = ^somDToken;
+
+  Tva_list       = somToken;
+  Pva_list       = ^Tva_list;
 
 type
 
@@ -889,8 +903,7 @@ Procedure somEndPersistentIds;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 (* Global class manager object *)
 var
   SOMClassMgrObject     : TRealSOMClassMgr; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMClassMgrObject';{$endif}
-const
-  SOMClassMgrObjectPtr: ^TRealSOMClassMgr = @SOMClassMgrObject;
+  SOMClassMgrObjectPtr  : PRealSOMClassMgr;
 
 (* The somRegisterClassLibrary function is provided for use
  * in SOM class libraries on platforms that have loader-invoked
@@ -976,10 +989,14 @@ Procedure somConstructClass(classInitRoutine:somTD_ClassInitRoutine;
  * Uses <SOMOutCharRoutine> to output its arguments under control of the ANSI C
  * style format.  Returns the number of characters output.
  *)
-Function  somPrintf(fmt: TCORBA_string; buf: Array of const): TCORBA_long; cdecl; {$ifdef fpc}external SOMDLL name 'somPrintf';{$endif}
+{$ifdef SOM_VARARGS}
+Function somPrintf(fmt: TCORBA_string): TCORBA_long; cdecl; varargs;
+{$else}
+Function somPrintf(fmt: TCORBA_string; args: Array of const): TCORBA_long;
+{$endif}
 
 // vprint form of somPrintf
-Function  somVPrintf(fmt: TCORBA_string; var ap): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somVPrintf(fmt: TCORBA_string; ap: Tva_list): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 // Outputs (via somPrintf) blanks to prefix a line at the indicated level
 Procedure somPrefixLevel(level: TCORBA_long);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
@@ -1193,9 +1210,7 @@ function SOM_Resolve(o: TRealSOMObject; oc: TRealSOMClass; mn: somMToken): somMe
 // 0-none, 1-user, 2-core&user */
 var
   SOM_TraceLevel: TCORBA_long; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOM_TraceLevel';{$endif}
-
-const
-  SOM_TraceLevelPtr: PCORBA_long = @SOM_TraceLevel;
+  SOM_TraceLevelPtr: PCORBA_long;
 
 // Control the printing of warning messages, 0-none, 1-all
 var
@@ -1273,6 +1288,16 @@ Function somva_SOMObject_somClassDispatch(somSelf: PSOMObject;
                 methodId: somId;
                 args: array of const): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
+type
+  somVaBuf = somToken;
+
+function somVaBuf_create(vb: somVaBuf; size: TCORBA_long): somVaBuf;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+procedure somVaBuf_get_valist(vb: somVaBuf; ap: Pva_list);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+procedure somVaBuf_destroy(vb: somVaBuf);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+function somVaBuf_add(vb: somVaBuf; arg: somToken; typ: TCORBA_long): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+function somvalistGetTarget(ap: Tva_list): TCORBA_unsigned_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+procedure somvalistSetTarget(ap: Tva_list; a: pointer);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+
 Implementation
 
 {$ifdef vpc}
@@ -1293,13 +1318,20 @@ uses
   windows;
 {$endif}
 
+function somVaBuf_create(vb: somVaBuf; size: TCORBA_long): somVaBuf; external SOMTCDLL name 'somVaBuf_create';
+procedure somVaBuf_get_valist(vb: somVaBuf; ap: Pva_list); external SOMTCDLL name 'somVaBuf_get_valist';
+procedure somVaBuf_destroy(vb: somVaBuf); external SOMTCDLL name 'somVaBuf_destroy';
+function somVaBuf_add(vb: somVaBuf; arg: somToken; typ: TCORBA_long): TCORBA_long; external SOMTCDLL name 'somVaBuf_add';
+function somvalistGetTarget(ap: Tva_list): TCORBA_unsigned_long; external SOMTCDLL name 'somvalistGetTarget';
+procedure somvalistSetTarget(ap: Tva_list; a: pointer); external SOMTCDLL name 'somvalistSetTarget';
+
 Procedure somSetOutChar(outch:somTD_SOMOutCharRoutine); external SOMDLL name 'somSetOutChar';
 Function  somMainProgram:TRealSOMClassMgr; external SOMDLL name 'somMainProgram';
 Procedure somEnvironmentEnd; external SOMDLL name 'somEnvironmentEnd';
 Function  somAbnormalEnd: TCORBA_boolean; external SOMDLL name 'somAbnormalEnd';
 Function  somResolve(obj:TRealSOMObject; mdata:somMToken):somMethodProc; external SOMDLL name 'somResolve';
 Function  somParentResolve(parentMtabs:somMethodTabs; mToken:somMToken):somMethodProc; external SOMDLL name 'somParentResolve';
-Function  somParentNumResolve(parentMtabs:somMethodTabs; parentNum:Longint;mToken:somMToken):somMethodProc; external SOMDLL name 'somParentNumResolve';
+Function  somParentNumResolve(parentMtabs:somMethodTabs; parentNum: TCORBA_long;mToken:somMToken):somMethodProc; external SOMDLL name 'somParentNumResolve';
 Function  somClassResolve(obj:TRealSOMClass; mdata:somMToken):somMethodProc; external SOMDLL name 'somClassResolve'; 
 Function  somAncestorResolve(obj:TRealSOMObject; var ccds:somCClassDataStructure; mToken:somMToken):somMethodProc;  external SOMDLL name 'somAncestorResolve';
 Function  somResolveByName(obj: TRealSOMObject; methodName: PCORBA_char):somMethodProc; external SOMDLL name 'somResolveByName';
@@ -1309,7 +1341,7 @@ Function  somEnvironmentNew: TRealSOMClassMgr; external SOMDLL name 'somEnvironm
 Function  somIsObj(obj:somToken): TCORBA_boolean; external SOMDLL name 'somIsObj';
 Function  somGetClassFromMToken(mToken:somMToken):TRealSOMClass; external SOMDLL name 'somGetClassFromMToken';
 Function  somCheckID(id:somId):somId; external SOMDLL name 'somCheckId';
-Function  somRegisterId(id:somId):Longint; external SOMDLL name 'somRegisterId';
+Function  somRegisterId(id:somId): TCORBA_long; external SOMDLL name 'somRegisterId';
 Function  somIDFromString(aString: PCORBA_char):somId; external SOMDLL name 'somIdFromString';
 Function  somStringFromId(id:somId): TCORBA_string; external SOMDLL name 'somStringFromId';
 Function  somCompareIds(id1,id2:somId): TCORBA_long; external SOMDLL name 'somCompareIds';
@@ -1320,12 +1352,42 @@ Procedure somBeginPersistentIds; external SOMDLL name 'somBeginPersistentIds';
 Procedure somEndPersistentIds; external SOMDLL name 'somEndPersistentIds';
 Procedure somRegisterClassLibrary(libraryName: TCORBA_string; libraryInitRun:somMethodProc); external SOMDLL name 'somRegisterClassLibrary';
 Function  somApply(var somSelf:TRealSOMObject; var retVal:somToken; mdPtr:somMethodDataPtr; var ap): TCORBA_boolean; external SOMDLL name 'somApply';
-Function  somBuildClass(inherit_vars:Longint; var sci:somStaticClassInfo; majorVersion,minorVersion:Longint):TRealSOMClass; external SOMDLL name 'somBuildClass';
+Function  somBuildClass(inherit_vars: TCORBA_long; var sci:somStaticClassInfo; majorVersion,minorVersion: TCORBA_long):TRealSOMClass; external SOMDLL name 'somBuildClass';
 Procedure somConstructClass(classInitRoutine:somTD_ClassInitRoutine; parentClass,metaClass:TRealSOMClass; var cds :somClassDataStructure); external SOMDLL name 'somConstructClass';
-{$ifndef fpc}
-Function  somPrintf(fmt: PCORBA_char; buf: Array of const): TCORBA_long;external SOMDLL name 'somPrintf';
+Function  somVPrintf(fmt: PCORBA_char; ap: Tva_list): TCORBA_long; external SOMDLL name 'somVprintf';
+{$ifdef SOM_VARARGS}
+Function  somPrintf(fmt: TCORBA_string): TCORBA_long; cdecl; varargs; external SOMDLL name 'somPrintf';
+{$else}
+Function  somPrintf(fmt: TCORBA_string; args: array of const): TCORBA_long;
+var
+  ap: tva_list;
+  vb: somVaBuf;
+  i: integer;
+begin
+  vb:=somVaBuf_create(nil, 0);
+  for i:=Low(args) to High(args) do
+  begin
+    case args[i].vType of
+      vtInteger,vtExtended,vtPointer,vtPChar:
+                      begin somVaBuf_add(vb, @args[i].vInteger, tk_long); end;
+      vtAnsiString:
+                      begin somVaBuf_add(vb, @args[i].vPointer, tk_long); end;
+      vtBoolean      : somVaBuf_add(vb, @args[i].vBoolean, tk_octet);
+      vtChar         : somVaBuf_add(vb, @args[i].vChar, tk_char);
+      vtString       : begin
+        args[i].vString^[Length(args[i].vString^)+1] := #0;
+        somVaBuf_add(vb, @args[i].vString^[1], tk_pointer);
+      end;
+//      vtObject,vtClass: buf2^.vInt := 0;
+    end;
+  end;
+
+   somVaBuf_get_valist(vb, @ap);
+   Result:=somVprintf(fmt, ap);
+   somVaBuf_destroy(vb);
+end;
 {$endif}
-Function  somVPrintf(fmt: PCORBA_char; var ap): TCORBA_long; external SOMDLL name 'somVprintf';
+
 Procedure somPrefixLevel(level: TCORBA_long); external SOMDLL name 'somPrefixLevel';
 Procedure somLPrintf(level: TCORBA_long; fmt: TCORBA_string; var buf); external SOMDLL name 'somLPrintf';
 Function  somTestCls(obj:TRealSOMObject; classObj:TRealSOMClass; fileName: TCORBA_string; lineNumber: TCORBA_long):TRealSOMObject; external SOMDLL name 'somTestCls';
@@ -1336,7 +1398,7 @@ Function  somExceptionValue(var ev: TCORBA_Environment):Pointer; external SOMDLL
 Procedure somExceptionFree(ev: PCORBA_Environment); external SOMDLL name 'somExceptionFree';
 Procedure somSetException(var ev: TCORBA_Environment; major: TCORBA_exception_type; exception_name: PCORBA_char;params:pointer); external SOMDLL name 'somSetException';
 Function  somGetGlobalEnvironment: PCORBA_Environment; external SOMDLL name 'somGetGlobalEnvironment';
-Procedure somCheckArgs(argc: longint; argv: array of pchar); external SOMDLL name 'somCheckArgs';
+Procedure somCheckArgs(argc: TCORBA_long; argv: array of pchar); external SOMDLL name 'somCheckArgs';
 Procedure somUnregisterClassLibrary (libraryName: TCORBA_string); external SOMDLL name 'somUnregisterClassLibrary';
 Function somResolveTerminal(x : PSOMClass; mdata: somMToken): somMethodProcPtr; external SOMDLL name 'somResolveTerminal';
 Function somPCallResolve(obj: PSOMObject; callingCls: PSOMClass; method: somMToken): somMethodProcPtr; external SOMDLL name 'somPCallResolve';
@@ -1793,11 +1855,17 @@ Begin
   OldCalloc  := SOMCalloc;
   OldRealloc := SOMRealloc;
   OldFree    := SOMFree;
-
+{$ifdef vpc}
+  @SOMFree    := @MyFree;
+  @SOMRealloc := @MyRealloc;
+  @SOMCalloc  := @MyCalloc;
+  @SOMMalloc  := @MyMalloc;
+{$else}
   SOMFree    := @MyFree;
   SOMRealloc := @MyRealloc;
   SOMCalloc  := @MyCalloc;
   SOMMalloc  := @MyMalloc;
+{$endif}
 
 { Place to our exit proc
   SOMMalloc  := somTD_SOMMalloc(OldMalloc);

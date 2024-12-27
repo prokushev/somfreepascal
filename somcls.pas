@@ -336,10 +336,10 @@ const
   somMD_SOMClass_somGetNumMethods = '::SOMClass::somGetNumMethods';
 
 type
-  somTP_SOMClass_somGetNumMethods = function(somSelf: TRealSOMClass): LongInt;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMClass_somGetNumMethods = function(somSelf: TRealSOMClass): TCORBA_long;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClass_somGetNumMethods = somTP_SOMClass_somGetNumMethods;
 
-function SOMClass_somGetNumMethods(somSelf: TRealSOMClass): LongInt;
+function SOMClass_somGetNumMethods(somSelf: TRealSOMClass): TCORBA_long;
 
 (*
  * New Method: somGetNumStaticMethods
@@ -354,10 +354,10 @@ const
   somMD_SOMClass_somGetNumStaticMethods = '::SOMClass::somGetNumStaticMethods';
 
 type
-  somTP_SOMClass_somGetNumStaticMethods = function(somSelf: TRealSOMClass): LongInt;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMClass_somGetNumStaticMethods = function(somSelf: TRealSOMClass): TCORBA_long;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClass_somGetNumStaticMethods = somTP_SOMClass_somGetNumStaticMethods;
 
-function SOMClass_somGetNumStaticMethods(somSelf: TRealSOMClass): LongInt;
+function SOMClass_somGetNumStaticMethods(somSelf: TRealSOMClass): TCORBA_long;
 
 (*
  * New Method: somGetInstanceSize
@@ -371,10 +371,10 @@ const
   somMD_SOMClass_somGetInstanceSize = '::SOMClass::somGetInstanceSize';
 
 type
-  somTP_SOMClass_somGetInstanceSize = function(somSelf: TRealSOMClass): LongInt;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMClass_somGetInstanceSize = function(somSelf: TRealSOMClass): TCORBA_long;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClass_somGetInstanceSize = somTP_SOMClass_somGetInstanceSize;
 
-function SOMClass_somGetInstanceSize(somSelf: TRealSOMClass): LongInt;
+function SOMClass_somGetInstanceSize(somSelf: TRealSOMClass): TCORBA_long;
 
 (*
  * New Method: somGetInstancePartSize
@@ -390,10 +390,10 @@ const
   somMD_SOMClass_somGetInstancePartSize = '::SOMClass::somGetInstancePartSize';
 
 type
-  somTP_SOMClass_somGetInstancePartSize = function(somSelf: TRealSOMClass): LongInt;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMClass_somGetInstancePartSize = function(somSelf: TRealSOMClass): TCORBA_long;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClass_somGetInstancePartSize = somTP_SOMClass_somGetInstancePartSize;
 
-function SOMClass_somGetInstancePartSize(somSelf: TRealSOMClass): LongInt;
+function SOMClass_somGetInstancePartSize(somSelf: TRealSOMClass): TCORBA_long;
 
 (*
  * New Method: somGetInstanceToken
@@ -432,11 +432,10 @@ const
   somMD_SOMClass_somGetMemberToken = '::SOMClass::somGetMemberToken';
 
 type
-  somTP_SOMClass_somGetMemberToken = function(somSelf: TRealSOMClass; memberOffset: LongInt; instanceToken: somDToken): somDToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMClass_somGetMemberToken = function(somSelf: TRealSOMClass; memberOffset: TCORBA_long; instanceToken: somDToken): somDToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClass_somGetMemberToken = somTP_SOMClass_somGetMemberToken;
 
-function SOMClass_somGetMemberToken(somSelf: TRealSOMClass;
-  memberOffset: LongInt; instanceToken: somDToken): somDToken;
+function SOMClass_somGetMemberToken(somSelf: TRealSOMClass; memberOffset: TCORBA_long; instanceToken: somDToken): somDToken;
 
 (*
  * New Method: somGetClassMtab
@@ -849,16 +848,16 @@ const
 
 type
   somTP_SOMClass_somInitMIClass = procedure(somSelf: TRealSOMClass;
-    inherit_vars: Longint{LongWord}; className: PCORBA_char;
+    inherit_vars: TCORBA_unsigned_long; className: PCORBA_char;
     parentClasses: SOMClass_SOMClassSequence;
     dataSize, dataAlignment, maxNDMethods,
-    majorVersion, minorVersion: LongInt);{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+    majorVersion, minorVersion: TCORBA_long);{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClass_somInitMIClass = somTP_SOMClass_somInitMIClass;
 
 procedure SOMClass_somInitMIClass(somSelf: TRealSOMClass;
-  inherit_vars: Longint{LongWord}; className: PCORBA_char;
+  inherit_vars: TCORBA_unsigned_long; className: PCORBA_char;
   parentClasses: SOMClass_SOMClassSequence;
-  dataSize, dataAlignment, maxNDMethods, majorVersion, minorVersion: LongInt);
+  dataSize, dataAlignment, maxNDMethods, majorVersion, minorVersion: TCORBA_long);
 
 (*
  * New Method: somGetVersionNumbers
@@ -873,10 +872,10 @@ const
   somMD_SOMClass_somGetVersionNumbers = '::SOMClass::somGetVersionNumbers';
 
 type
-  somTP_SOMClass_somGetVersionNumbers = procedure(somSelf: TRealSOMClass; var majorVersion, minorVersion: LongInt);{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMClass_somGetVersionNumbers = procedure(somSelf: TRealSOMClass; var majorVersion, minorVersion: TCORBA_long);{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClass_somGetVersionNumbers = somTP_SOMClass_somGetVersionNumbers;
 
-procedure SOMClass_somGetVersionNumbers(somSelf: TRealSOMClass; var majorVersion, minorVersion: LongInt);
+procedure SOMClass_somGetVersionNumbers(somSelf: TRealSOMClass; var majorVersion, minorVersion: TCORBA_long);
 
 (*
  * New Method: somGetParents
@@ -1506,7 +1505,7 @@ begin
   mt(somSelf, memptr);
 end;
 
-procedure SOMClass_somInitMIClass(somSelf: TRealSOMClass; inherit_vars: Longint{LongWord}; className: PCORBA_char; parentClasses: SOMClass_SOMClassSequence; dataSize, dataAlignment, maxNDMethods, majorVersion, minorVersion: TCORBA_long);
+procedure SOMClass_somInitMIClass(somSelf: TRealSOMClass; inherit_vars: TCORBA_unsigned_long; className: PCORBA_char; parentClasses: SOMClass_SOMClassSequence; dataSize, dataAlignment, maxNDMethods, majorVersion, minorVersion: TCORBA_long);
 var
   mt: somTD_SOMClass_somInitMIClass;
 begin

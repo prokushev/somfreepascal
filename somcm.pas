@@ -599,6 +599,39 @@ function SOMClassMgr_somCastObj(somSelf: TRealSOMClassMgr; castedCls: TRealSOMCl
 function SOMClassMgr_somResetObj(somSelf: TRealSOMClassMgr): TCORBA_boolean;
 {$endif}
 
+{$ifdef SOM_OBJECTS}     {
+type
+  TSOMClassMgr           = Class(TSOMObject)
+  public
+    Function  somLoadClassFile(classId:somId; majorVersion,minorVersion:long; filen:PChar): TSOMClass;
+    Function  somLocateClassFile(classId:somId; majorVersion,minorVersion:long): PChar;
+    Procedure somRegisterClass(classObj:TSOMClass);
+    Procedure somRegisterClassLibrary(libraryName:PChar;libraryInitRtn:somMethodPtr);
+    Function  somUnloadClassFile(classObj:TSOMClass):long;
+    Function  somUnregisterClass(classObj:TSOMClass):long;
+    Procedure somBeginPersistentClasses;
+    Procedure somEndPersistentClasses;
+    Function  somJoinAffinityGroup(newClass,affClass:SOMClass):Boolean;
+    Function  somGetInitFunction:PChar;
+    Function  somGetRelatedClasses(classObj: TSOMClass):SOMClassMgr_SOMClassArray;
+    Function  somClassFromId(classId:somId): TSOMClass;
+    Function  somFindClass(classId:somId;majorVersion,minorVersion:long): TSOMClass;
+    Function  somFindClsInFile(classId:somId;majorVersion,minorVersion:long;filen:PChar): TSOMClass;
+    Procedure somMergeInto(targetObj: TSOMObject);
+    Function  somSubstituteClass(origClassName,newClassName:PChar): long;
+  private
+    Function  _get_somInterfaceRepository: TRepository;
+    Procedure _set_somInterfaceRepository(somInterfaceRepository: TRepository);
+    Function  _get_somRegisteredClasses: _IDL_SEQUENCE_SOMClass;
+  public
+    property somInterfaceRepository:Repository read _get_somInterfaceRepository write _set_somInterfaceRepository;
+    property somRegisteredClasses:_IDL_SEQUENCE_SOMClass read _get_somRegisteredClasses;
+  public//protected
+    class function InstanceClass:SOMClassType; override;
+    class function RegisterClass:TSOMObject; override;
+  end;                    }
+{$endif}
+
 Implementation
 
 /////////////////////// SOMClassMgr Class ///////////////////////////

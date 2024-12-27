@@ -2,14 +2,14 @@
 rem $Id: somenv.cmd 2876 2012-09-08 23:12:15Z rogerb $
 
 rem IBM SOM 2.1 NT
-rem if "%SOMBASE%x" == "x" if exist "c:\som21nt" set SOMBASE=c:\som21nt
+if "%SOMBASE%x" == "x" if exist "c:\som21nt" set SOMBASE=c:\som21nt
 
 rem IBM SOM 3.0 NT (hangs with access violation)
 rem if "%SOMBASE%x" == "x" if exist "c:\som30nt" set SOMBASE=c:\som30nt
 
 rem somFree
-if "%SOMBASE%x" == "x" if exist "%ProgramFiles%\somtk" set SOMBASE=%ProgramFiles%\somtk
-if "%SOMBASE%x" == "x" if exist "%ProgramFiles(x86)%\somtk" set SOMBASE=%ProgramFiles(x86)%\somtk
+rem if "%SOMBASE%x" == "x" if exist "%ProgramFiles%\somtk" set SOMBASE=%ProgramFiles%\somtk
+rem if "%SOMBASE%x" == "x" if exist "%ProgramFiles(x86)%\somtk" set SOMBASE=%ProgramFiles(x86)%\somtk
 
 if "%SOMBASE%x" == "x" goto firsttime
 

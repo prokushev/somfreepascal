@@ -51,10 +51,8 @@ type
   end;
 
 var
-  SOMObjectCClassData           : TSOMObjectCClassDataStructure; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMObjectCClassData';{$endif}
-
-const
-  SOMObjectCClassDataPtr: ^TSOMObjectCClassDataStructure = @SOMObjectCClassData;
+  SOMObjectCClassData   : TSOMObjectCClassDataStructure; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMObjectCClassData';{$endif}
+  SOMObjectCClassDataPtr: ^TSOMObjectCClassDataStructure;
 
 type
   TSOMObjectClassDataStructure   = record
@@ -110,9 +108,7 @@ type
 
 var
   SOMObjectClassData            : TSOMObjectClassDataStructure; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMObjectClassData';{$endif}
-
-const
-  SOMObjectClassDataPtr: ^TSOMObjectClassDataStructure = @SOMObjectClassData;
+  SOMObjectClassDataPtr: ^TSOMObjectClassDataStructure;
 
 Function SOMObjectNewClass(majorVersion,minorVersion:Longint):TRealSOMClass; {$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
@@ -764,8 +760,8 @@ type
     Constructor Create;
     function    somSelf: TRealSOMObject;
   private          // Private methods... for SOM.. Pas Touche!
-    class function NewInstance:TObject; override; register;
-    procedure      FreeInstance; override; register;
+    class function NewInstance:TObject; override; {$ifndef vpc}register;{$endif}
+    procedure      FreeInstance; override; {$ifndef vpc}register;{$endif}
   public//protected        // User Class Definition...
     class function InstanceClass: TRealSOMClass; virtual;
     class function RegisterClass: TSOMObjectClass; virtual;
@@ -1335,12 +1331,13 @@ var
   _somIsInstance        : somTD_SOMObject_somIsInstanceOf;
   _somIsA               : somTD_SOMObject_somIsA;
 begin
-  if not somIsObj(obj) then Result := nil else begin
+  if not somIsObj(obj) then Result := nil else
+  begin
     obj2 := Pointer(Longint(obj)-4); Result := TSOMObject(Pointer(obj2));
 
     if PLongint(obj2)^<>0 then exit;  // Class already resolved;
 
-    _somIsInstance := somTD_SOMObject_somIsInstanceOf(somResolve(obj,SOMObjectClassData.somIsInstanceOf));
+    {$ifdef fpc}somMethodProc(_somIsInstance):={$else}@_somIsInstance:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsInstanceOf));
     p := @RSOMObject;                   // First check for specific instances...
     while (p<>nil)and(not _somIsInstance(obj,p^.SOMCls^)) do p:=p^.Next;
     if p<>nil then begin
@@ -1348,7 +1345,7 @@ begin
       exit;
     end;
 
-    _somIsA := somTD_SOMObject_somIsA(somResolve(obj,SOMObjectClassData.somIsA));
+    {$ifdef fpc}somMethodProc(_somIsA):={$else}@_somIsA:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsA));
     p := @RSOMObject; // Specific class not registered. Look for best general class.
     q := @RSOMObject;
     while (p<>nil) do begin
@@ -1372,7 +1369,7 @@ class function TSOMObject.RegisterClass:TSOMObjectClass;
 const
   firsttime     : Boolean       = True;
 begin
-  if (SOMObjectClassData.classObject=nil)or firsttime then begin
+  if (SOMObjectClassData.classObject=nil) or firsttime then begin
     firsttime:=false;
     SOMObjectNewClass(SOMObject_MajorVersion,SOMObject_MinorVersion);
     CastClass(SOMObjectClassData.classObject,TSOMClass.RegisterClass);   // SOM Metaclass is SOMClass
@@ -1391,7 +1388,7 @@ begin
   {$endif}
 end;
 
-class function TSOMObject.NewInstance:TObject; register;
+class function TSOMObject.NewInstance:TObject; {$ifndef vpc}register;{$endif}
 type
   somTD_SOMClass_somNewNoInit = function(somSelf: TRealSOMClass): TRealSOMObject;
 var
@@ -1402,7 +1399,7 @@ begin
   Result := nil;
   NewCls := RegisterClass;
   if (InstanceSize>4)or(NewCls=nil) then exit;
-  somNewNoInit := somTD_SOMClass_somNewNoInit(somResolveByName(InstanceClass, 'somNewNoInit'{SOMClassClassData.somNewNoInit}));
+  {$ifdef fpc}somMethodProc(somNewNoInit):={$else}@somNewNoInit:=Pointer{$endif}(somResolveByName(InstanceClass, 'somNewNoInit'{SOMClassClassData.somNewNoInit}));
   NewObj := somNewNoInit(InstanceClass);
   if NewObj=nil then exit;
   dec(Longint(NewObj),4);
@@ -1410,7 +1407,7 @@ begin
   Result := TObject(NewObj);
 end;
 
-procedure TSOMObject.FreeInstance; register;
+procedure TSOMObject.FreeInstance; {$ifndef vpc}register;{$endif}
 begin
   SOMObject_somFree(somSelf);
 end;

@@ -25,16 +25,16 @@
   {$DEFINE VPC}
   {$H+}
   {$X+}
+  {&Optimise-}
   {&AlignData-}
   {&AlignCode-}
   {&AlignRec-}
   {&Use32-}
-  {&Delphi+}
   {$IFDEF OS2}
     {&Cdecl+}
   {$ENDIF}
   {$IFDEF WIN2}
-    {&Cdecl+}
+    {&Stdcall+}
     {$define SOM_STDCALL}
   {$ENDIF}
 {$ENDIF}
@@ -56,11 +56,51 @@
     {$define SOM_STDCALL}
   {$endif}
   {$define SOM_EXTVAR}
+  {$define SOM_VARARGS}
+  {$define SOM_LONG_LONG}
 {$ENDIF}
 
 {$ifdef ver90} {Delphi 2}
   {$define SOM_STDCALL}
 {$endif}
+
+{$ifdef VER100} {Delphi 3}
+  {$define SOM_STDCALL}
+{$endif}
+
+{$ifdef VER120} {Delphi 4}
+  {$define SOM_STDCALL}
+{$endif}
+
+{$ifdef VER130} {Delphi 5}
+  {$define SOM_STDCALL}
+{$endif}
+
+{$ifdef VER140} {Delphi 6}
+  {$define SOM_STDCALL}
+  {$define SOM_VARARGS}
+{$endif}
+
+{$ifdef VER150} {Delphi 7}
+  {$define SOM_STDCALL}
+  {$define SOM_VARARGS}
+{$endif}
+
+{$ifdef VER160} {Delphi 8 for Net}
+  {$define SOM_STDCALL}
+  {$define SOM_VARARGS}
+{$endif}
+
+{$ifdef VER160} {Delphi 8 for Net}
+  {$define SOM_STDCALL}
+  {$define SOM_VARARGS}
+{$endif}
+
+{$ifdef VER170} {Delphi 2005}
+  {$define SOM_STDCALL}
+  {$define SOM_VARARGS}
+{$endif}
+
 (*************************************************************************************
  *
  * Method Thunks supported by OS/2, Win32 and AIX. Don't know about OS/390 and MacOS.
@@ -111,4 +151,12 @@
 
 {$define SOM_CORBA_MEM}
 
+(*************************************************************************************
+ *
+ * Turn on varargs modifier support:
+ *
+ *************************************************************************************)
 
+{.$define SOM_VARARGS}
+
+{.$define SOM_LONG_LONG}
