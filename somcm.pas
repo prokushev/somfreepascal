@@ -34,7 +34,15 @@ Uses
 
 const
   SOMClassMgr_MajorVersion = 1;
-  SOMClassMgr_MinorVersion = 4;
+  {$ifdef SOM_VERSION_3}
+    SOMClassMgr_MinorVersion = 6;
+  {$else}
+    {$ifdef SOM_VERSION_2}
+      SOMClass_MinorVersion = 4;
+    {$else}
+      SOMClassMgr_MinorVersion = 1;
+    {$endif}
+  {$endif}
 
 type
   TSOMClassMgrCClassData   = record
