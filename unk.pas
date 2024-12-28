@@ -1,5 +1,19 @@
 Unknown place yet...
 
+(* -- For building lists of class objects *)
+  PsomClasses            =^TsomClassList;
+  TsomClassList          = record
+    cls                 : TRealSOMClass;
+    next                : PsomClasses;
+  end;
+
+(* -- For building lists of objects *)
+  PsomObjects            =^TsomObjectList;
+  TsomObjectList         = record
+    obj                 : TRealSOMObject;
+    next                : PsomObjects;
+  end;
+
 type
   NamedValue            =record
     name                : Identifier;

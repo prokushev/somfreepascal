@@ -1,5 +1,5 @@
 {
-    Copyright (c) 1994-1996 by International Business Machines Corporation
+    Copyright (c) 1994-1996 Interfaces by International Business Machines Corporation
     Copyright (c) 1997 Antony T Curtis.
     Copyright (c) 2002-2007, 2025 Yuri Prokushev (yuri.prokushev@gmail.com)
     Copyright (c) 2004-2005 Andrey Vasilkin
@@ -46,8 +46,8 @@ const
 
 type
   TSOMObjectCClassDataStructure  = record
-    parentMtab                  :somMethodTabs;
-    instanceDataToken           :somDToken;
+    parentMtab                  : PsomMethodTabs;
+    instanceDataToken           : TsomDToken;
   end;
 
 var
@@ -58,51 +58,51 @@ type
   TSOMObjectClassDataStructure   = record
     // Start of SOM 1.0 methods (class version 1.1)
     classObject                 : TRealSOMClass;
-    somInit                     : somMToken;
-    somUninit                   : somMToken;
-    somFree                     : somMToken;
-    somDefaultVCopyInit         : somMToken; // was somMissingMethod in SOM 1.0
-    somGetClassName             : somMToken;
-    somGetClass                 : somMToken;
-    somIsA                      : somMToken;
-    somRespondsTo               : somMToken;
-    somIsInstanceOf             : somMToken;
-    somGetSize                  : somMToken;
-    somDumpSelf                 : somMToken;
-    somDumpSelfInt              : somMToken;
-    somPrintSelf                : somMToken;
-    somDefaultConstVCopyInit    : somMToken; // was somFreeObj in SOM 1.0
-    somDispatchV                : somMToken;
-    somDispatchL                : somMToken;
-    somDispatchA                : somMToken;
-    somDispatchD                : somMToken;
+    somInit                     : TsomMToken;
+    somUninit                   : TsomMToken;
+    somFree                     : TsomMToken;
+    somDefaultVCopyInit         : TsomMToken; // was somMissingMethod in SOM 1.0
+    somGetClassName             : TsomMToken;
+    somGetClass                 : TsomMToken;
+    somIsA                      : TsomMToken;
+    somRespondsTo               : TsomMToken;
+    somIsInstanceOf             : TsomMToken;
+    somGetSize                  : TsomMToken;
+    somDumpSelf                 : TsomMToken;
+    somDumpSelfInt              : TsomMToken;
+    somPrintSelf                : TsomMToken;
+    somDefaultConstVCopyInit    : TsomMToken; // was somFreeObj in SOM 1.0
+    somDispatchV                : TsomMToken;
+    somDispatchL                : TsomMToken;
+    somDispatchA                : TsomMToken;
+    somDispatchD                : TsomMToken;
     // Start of SOM 2.0 methods (class version 1.4)
     {$ifdef SOM_VERSION_2}
-    somDispatch                 : somMToken;
-    somClassDispatch            : somMToken;
-    somCastObj                  : somMToken;
-    somResetObj                 : somMToken;
-    somDefaultInit              : somMToken;
-    somDestruct                 : somMToken;
-    somComputeForwardVisitMask  : somMToken;
-    somsomComputeReverseVisitMask : somMToken;
-    somDefaultCopyInit          : somMToken;
-    somDefaultConstCopyInit     : somMToken;
-    somDefaultAssign            : somMToken;
-    somDefaultConstAssign       : somMToken;
-    somDefaultVAssign           : somMToken;
-    somDefaultConstVAssign      : somMToken;
+    somDispatch                 : TsomMToken;
+    somClassDispatch            : TsomMToken;
+    somCastObj                  : TsomMToken;
+    somResetObj                 : TsomMToken;
+    somDefaultInit              : TsomMToken;
+    somDestruct                 : TsomMToken;
+    somComputeForwardVisitMask  : TsomMToken;
+    somsomComputeReverseVisitMask : TsomMToken;
+    somDefaultCopyInit          : TsomMToken;
+    somDefaultConstCopyInit     : TsomMToken;
+    somDefaultAssign            : TsomMToken;
+    somDefaultConstAssign       : TsomMToken;
+    somDefaultVAssign           : TsomMToken;
+    somDefaultConstVAssign      : TsomMToken;
     {$endif}
     // Start of SOM 3.0 methods (class version 1.7)
     {$ifdef SOM_VERSION_3}
-    release		            	: somMToken;
-    duplicate					: somMToken;
-    get_interface				: somMToken;
-    get_implementation			: somMToken;
-    is_proxy					: somMToken;
-    create_request				: somMToken;
-    create_request_args			: somMToken;
-    is_nil						: somMToken;
+    release		            	: TsomMToken;
+    duplicate					: TsomMToken;
+    get_interface				: TsomMToken;
+    get_implementation			: TsomMToken;
+    is_proxy					: TsomMToken;
+    create_request				: TsomMToken;
+    create_request_args			: TsomMToken;
+    is_nil						: TsomMToken;
     {$endif}
   end;
 
@@ -252,10 +252,10 @@ const
   somMD_SOMObject_somRespondsTo: PChar = '::SOMObject::somRespondsTo';
 
 type
-  somTP_SOMObject_somRespondsTo = function(somSelf: TRealSOMObject; mId: somId): TCORBA_boolean; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somRespondsTo = function(somSelf: TRealSOMObject; mId: TsomId): TCORBA_boolean; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somRespondsTo = somTP_SOMObject_somRespondsTo;
 
-function SOMObject_somRespondsTo(somSelf: TRealSOMObject; mId: somId): TCORBA_boolean;
+function SOMObject_somRespondsTo(somSelf: TRealSOMObject; mId: TsomId): TCORBA_boolean;
 
 
 (*
@@ -333,37 +333,37 @@ const
   somMD_SOMObject_somDispatchV: PChar ='::SOMObject::somDispatchV';
 
 type
-  somTP_SOMObject_somDispatchV = procedure(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap:tva_list); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDispatchV = procedure(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap:tva_list); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDispatchV = somTP_SOMObject_somDispatchV;
 
-procedure SOMObject_somDispatchV(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap:tva_list);
+procedure SOMObject_somDispatchV(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap:tva_list);
 
 const
   somMD_SOMObject_somDispatchL: PChar ='::SOMObject::somDispatchL';
 
 type
-  somTP_SOMObject_somDispatchL    = Function(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap: tva_list):Longint; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDispatchL    = Function(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap: tva_list):Longint; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDispatchL =somTP_SOMObject_somDispatchL;
 
-function SOMObject_somDispatchL(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap:tva_list):Longint;
+function SOMObject_somDispatchL(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap:tva_list):Longint;
 
 const
   somMD_SOMObject_somDispatchA: PChar ='::SOMObject::somDispatchA';
 
 type
-  somTP_SOMObject_somDispatchA    = Function(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap: tva_list):Pointer; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDispatchA    = Function(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap: tva_list):Pointer; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDispatchA = somTP_SOMObject_somDispatchA;
 
-function SOMObject_somDispatchA(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap:tva_list):Pointer;
+function SOMObject_somDispatchA(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap:tva_list):Pointer;
 
 const
   somMD_SOMObject_somDispatchD: PChar ='::SOMObject::somDispatchD';
 
 type
-  somTP_SOMObject_somDispatchD    = Function(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap: tva_list):Double; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDispatchD    = Function(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap: tva_list):Double; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDispatchD = somTP_SOMObject_somDispatchD;
 
-function SOMObject_somDispatchD(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap:tva_list):Double;
+function SOMObject_somDispatchD(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap:tva_list):Double;
 
 {$ifdef SOM_VERSION_2}
 (*
@@ -381,10 +381,10 @@ const
   somMD_SOMObject_somDefaultInit: PChar = '::SOMObject::somDefaultInit';
 
 type
-  somTP_SOMObject_somDefaultInit = procedure(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDefaultInit = procedure(somSelf: TRealSOMObject; ctrl: PsomInitCtrl); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDefaultInit = somTP_SOMObject_somDefaultInit;
 
-procedure SOMObject_somDefaultInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr); 
+procedure SOMObject_somDefaultInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl); 
 
 (*
  * New Method: somDestruct
@@ -401,10 +401,10 @@ const
   somMD_SOMObject_somDestruct: PChar = '::SOMObject::somDestruct';
 
 type
-  somTP_SOMObject_somDestruct = procedure(somSelf: TRealSOMObject; doFree: TCORBA_boolean; ctrl: somDestructCtrlPtr); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDestruct = procedure(somSelf: TRealSOMObject; doFree: TCORBA_boolean; ctrl: PsomDestructCtrl); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDestruct = somTP_SOMObject_somDestruct;
 
-procedure SOMObject_somDestruct(somSelf: TRealSOMObject; doFree: TCORBA_boolean; ctrl: somDestructCtrlPtr);
+procedure SOMObject_somDestruct(somSelf: TRealSOMObject; doFree: TCORBA_boolean; ctrl: PsomDestructCtrl);
 
 (*
  * New Method: somDefaultCopyInit
@@ -418,10 +418,10 @@ const
   somMD_SOMObject_somDefaultCopyInit: PChar = '::SOMObject::somDefaultCopyInit';
 
 type
-  somTP_SOMObject_somDefaultCopyInit = procedure(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDefaultCopyInit = procedure(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDefaultCopyInit = somTP_SOMObject_somDefaultCopyInit;
 
-procedure SOMObject_somDefaultCopyInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMObject_somDefaultCopyInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 
 (*
  * New Method: somDefaultAssign
@@ -436,10 +436,10 @@ const
   somMD_SOMObject_somDefaultAssign: PChar = '::SOMObject::somDefaultAssign';
 
 type
-  somTP_SOMObject_somDefaultAssign = function(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDefaultAssign = function(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDefaultAssign = somTP_SOMObject_somDefaultAssign;
 
-function SOMObject_somDefaultAssign(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMObject_somDefaultAssign(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 
 (*
  * New Method: somDefaultConstCopyInit
@@ -452,10 +452,10 @@ const
   somMD_SOMObject_somDefaultConstCopyInit: PChar = '::SOMObject::somDefaultConstCopyInit';
 
 type
-  somTP_SOMObject_somDefaultConstCopyInit = procedure(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDefaultConstCopyInit = procedure(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDefaultConstCopyInit = somTP_SOMObject_somDefaultConstCopyInit;
 
-procedure SOMObject_somDefaultConstCopyInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMObject_somDefaultConstCopyInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 
 (*
  * New Method: somDefaultVCopyInit
@@ -468,10 +468,10 @@ const
   somMD_SOMObject_somDefaultVCopyInit: PChar = '::SOMObject::somDefaultVCopyInit';
 
 type
-  somTP_SOMObject_somDefaultVCopyInit = procedure(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDefaultVCopyInit = procedure(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDefaultVCopyInit = somTP_SOMObject_somDefaultVCopyInit;
 
-procedure SOMObject_somDefaultVCopyInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMObject_somDefaultVCopyInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 
 (*
  * New Method: somDefaultConstVCopyInit
@@ -485,10 +485,10 @@ const
   somMD_SOMObject_somDefaultConstVCopyInit: PChar = '::SOMObject::somDefaultConstVCopyInit';
 
 type
-  somTP_SOMObject_somDefaultConstVCopyInit = procedure(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDefaultConstVCopyInit = procedure(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDefaultConstVCopyInit = somTP_SOMObject_somDefaultConstVCopyInit;
 
-procedure SOMObject_somDefaultConstVCopyInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMObject_somDefaultConstVCopyInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 
 (*
  * New Method: somDefaultConstAssign
@@ -501,10 +501,10 @@ const
   somMD_SOMObject_somDefaultConstAssign: PChar = '::SOMObject::somDefaultConstAssign';
 
 type
-  somTP_SOMObject_somDefaultConstAssign = function(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDefaultConstAssign = function(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDefaultConstAssign = somTP_SOMObject_somDefaultConstAssign;
 
-function SOMObject_somDefaultConstAssign(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMObject_somDefaultConstAssign(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 
 (*
  * New Method: somDefaultVAssign
@@ -517,10 +517,10 @@ const
   somMD_SOMObject_somDefaultVAssign: PChar = '::SOMObject::somDefaultVAssign';
 
 type
-  somTP_SOMObject_somDefaultVAssign = function(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDefaultVAssign = function(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDefaultVAssign = somTP_SOMObject_somDefaultVAssign;
 
-function SOMObject_somDefaultVAssign(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMObject_somDefaultVAssign(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 
 (*
  * New Method: somDefaultConstVAssign
@@ -534,10 +534,10 @@ const
   somMD_SOMObject_somDefaultConstVAssign: PChar = '::SOMObject::somDefaultConstVAssign';
 
 type
-  somTP_SOMObject_somDefaultConstVAssign = function(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMObject_somDefaultConstVAssign = function(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDefaultConstVAssign = somTP_SOMObject_somDefaultConstVAssign;
 
-function SOMObject_somDefaultConstVAssign(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMObject_somDefaultConstVAssign(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 
 (*
  * New Method: somDispatch
@@ -557,12 +557,12 @@ const
 
 type
   somTP_SOMObject_somDispatch = function(somSelf: TRealSOMObject;
-    var retValue: somToken;
-    methodId: somId;
+    var retValue: TsomToken;
+    methodId: TsomId;
     ap: Tva_list{array of const}): TCORBA_boolean; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somDispatch = somTP_SOMObject_somDispatch;
 
-function SOMObject_somDispatch(somSelf: TRealSOMObject; var retValue: somToken; methodId: somId; ap: Tva_list{array of const}): TCORBA_boolean;
+function SOMObject_somDispatch(somSelf: TRealSOMObject; var retValue: TsomToken; methodId: TsomId; ap: Tva_list{array of const}): TCORBA_boolean;
 
 (*
  * New Method: somClassDispatch
@@ -579,15 +579,15 @@ const
 type
   somTP_SOMObject_somClassDispatch = function(somSelf: TRealSOMObject;
     clsObj: TRealSOMClass;
-    var retValue: somToken;
-    methodId: somId;
+    var retValue: TsomToken;
+    methodId: TsomId;
     ap: Tva_list{array of const}): TCORBA_boolean;  {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMObject_somClassDispatch = somTP_SOMObject_somClassDispatch;
 
 function SOMObject_somClassDispatch(somSelf: TRealSOMObject;
   clsObj: TRealSOMClass;
-  var retValue: somToken;
-  methodId: somId;
+  var retValue: TsomToken;
+  methodId: TsomId;
   ap: Tva_list{array of const}): TCORBA_boolean;
 
 (*
@@ -711,7 +711,7 @@ type
     Function    somGetClassName:PChar;
     Function    somGetClass:TSOMClass;
     Function    somIsA(aClassObj: TSOMClass): TCORBA_boolean;
-    Function    somRespondsTo(mId:somId): TCORBA_boolean;
+    Function    somRespondsTo(mId: TsomId): TCORBA_boolean;
     Function    somIsInstanceOf(aClassObj: TSOMClass): TCORBA_boolean;
     Function    somGetSize:Longint;
     Procedure   somDumpSelf(level:longint);
@@ -720,14 +720,14 @@ type
     {$ifdef SOM_VERSION_2}
 	Procedure   somDefaultConstVCopyInit(ctrl:somInitCtrlPtr;fromObj:TSOMObject);
 	{$endif}
-    Procedure   somDispatchV(methodId:somId; descriptor:somId; ap:tva_list);
-    Function    somDispatchL(methodId:somId; descriptor:somId; ap:tva_list):Longint;
-    Function    somDispatchA(methodId:somId; descriptor:somId; ap:tva_list):Pointer;
-    Function    somDispatchD(methodId:somId; descriptor:somId; ap:tva_list):Double;
+    Procedure   somDispatchV(methodId: TsomId; descriptor: TsomId; ap:tva_list);
+    Function    somDispatchL(methodId: TsomId; descriptor: TsomId; ap:tva_list):Longint;
+    Function    somDispatchA(methodId: TsomId; descriptor: TsomId; ap:tva_list):Pointer;
+    Function    somDispatchD(methodId: TsomId; descriptor: TsomId; ap:tva_list):Double;
     // Start of SOM 2.0 methods (class version 1.4)
 	{$ifdef SOM_VERSION_2}
-    Function    somDispatch(var retValue:somToken;methodId:somId;ap: tva_list): TCORBA_boolean;
-    Function    somClassDispatch(clsObj:TSOMClass;var retValue:somToken;methodId:somId;ap: tva_list): TCORBA_boolean;
+    Function    somDispatch(var retValue: TsomToken;methodId: TsomId;ap: tva_list): TCORBA_boolean;
+    Function    somClassDispatch(clsObj:TSOMClass;var retValue: TsomToken;methodId: TsomId;ap: tva_list): TCORBA_boolean;
     Function    somCastObj(cls:TSOMClass): TCORBA_boolean;
     Function    somResetObj: TCORBA_boolean;
     Procedure   somDefaultInit(ctrl:somInitCtrlPtr);
@@ -790,7 +790,7 @@ procedure SOMObject_somInit(somSelf: TRealSOMObject);
 var
     m: somTD_SOMObject_somInit;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somInit));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somInit));
     m(somSelf);
 end;
 
@@ -805,7 +805,7 @@ procedure SOMObject_somUninit(somSelf: TRealSOMObject);
 var
     m: somTD_SOMObject_somUninit;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somUninit));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somUninit));
     m(somSelf);
 end;
 
@@ -821,7 +821,7 @@ procedure SOMObject_somFree(somSelf: TRealSOMObject);
 var
     m: somTD_SOMObject_somFree;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somFree));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somFree));
     m(somSelf);
 end;
 
@@ -836,7 +836,7 @@ function SOMObject_somGetClass(somSelf: TRealSOMObject): TRealSOMClass;
 var
     m: somTD_SOMObject_somGetClass;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somGetClass));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somGetClass));
     Result:=m(somSelf);
 end;
 
@@ -852,7 +852,7 @@ function SOMObject_somGetClassName(somSelf: TRealSOMObject): PCORBA_char;
 var
     m: somTD_SOMObject_somGetClassName;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somGetClassName));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somGetClassName));
     Result:=m(somSelf);
 end;
 
@@ -868,7 +868,7 @@ function SOMObject_somGetSize(somSelf: TRealSOMObject): LongInt;
 var
     m: somTD_SOMObject_somGetSize;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somGetSize));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somGetSize));
     Result:=m(somSelf);
 end;
 
@@ -885,7 +885,7 @@ function SOMObject_somIsA(somSelf: TRealSOMObject; aClassObj: TRealSOMClass): TC
 var
     m: somTD_SOMObject_somIsA;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somIsA));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somIsA));
     Result:=m(somSelf, aClassObj);
 end;
 
@@ -902,7 +902,7 @@ function SOMObject_somIsInstanceOf(somSelf: TRealSOMObject; aClassObj: TRealSOMC
 var
     m: somTD_SOMObject_somIsInstanceOf;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somIsInstanceOf));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somIsInstanceOf));
     Result:=m(somSelf, aClassObj);
 end;
 
@@ -915,11 +915,11 @@ end;
  *  on the receiver and 0 (false) otherwise.
  *)
 
-function SOMObject_somRespondsTo(somSelf: TRealSOMObject; mId: somId): TCORBA_boolean;
+function SOMObject_somRespondsTo(somSelf: TRealSOMObject; mId: TsomId): TCORBA_boolean;
 var
     m: somTD_SOMObject_somRespondsTo;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somRespondsTo));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somRespondsTo));
     Result:=m(somSelf, mId);
 end;
 
@@ -940,7 +940,7 @@ function SOMObject_somPrintSelf(somSelf: TRealSOMObject): TRealSOMObject;
 var
     m: somTD_SOMObject_somPrintSelf;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somPrintSelf));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somPrintSelf));
     Result:=m(somSelf);
 end;
 
@@ -969,7 +969,7 @@ procedure SOMObject_somDumpSelf(somSelf: TRealSOMObject; level: LongInt);
 var
     m: somTD_SOMObject_somDumpSelf;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelf));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelf));
     m(somSelf, level);
 end;
 
@@ -990,16 +990,16 @@ procedure SOMObject_somDumpSelfInt(somSelf: TRealSOMObject; level: LongInt);
 var
     m: somTD_SOMObject_somDumpSelfInt;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelfInt));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelfInt));
     m(somSelf, level);
 end;
 
 (* Does not return a value. *)
-procedure SOMObject_somDispatchV(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap:tva_list);
+procedure SOMObject_somDispatchV(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap:tva_list);
 var
     m: somTD_SOMObject_somDispatchV;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatchV));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatchV));
     m(somSelf, methodId, descriptor, ap);
 end;
 
@@ -1007,27 +1007,27 @@ end;
  * returned. This 4 byte quanity can, of course, be something other
  * than an integer.
  *)
-function SOMObject_somDispatchL(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap:tva_list):Longint;
+function SOMObject_somDispatchL(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap:tva_list):Longint;
 var
     m: somTD_SOMObject_somDispatchL;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatchL));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatchL));
     Result:=m(somSelf, methodId, descriptor, ap);
 end;
 
-function SOMObject_somDispatchA(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap:tva_list):Pointer;
+function SOMObject_somDispatchA(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap:tva_list):Pointer;
 var
     m: somTD_SOMObject_somDispatchA;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatchA));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatchA));
     Result:=m(somSelf, methodId, descriptor, ap);
 end;
 
-function SOMObject_somDispatchD(somSelf:TRealSOMObject; methodId:somId; descriptor:somId; ap:tva_list):Double;
+function SOMObject_somDispatchD(somSelf:TRealSOMObject; methodId: TsomId; descriptor: TsomId; ap:tva_list):Double;
 var
     m: somTD_SOMObject_somDispatchD;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatchD));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatchD));
     Result:=m(somSelf, methodId, descriptor, ap);
 end;
 
@@ -1044,11 +1044,11 @@ end;
  *  an appropriate control structure.
  *)
 
-procedure SOMObject_somDefaultInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr);
+procedure SOMObject_somDefaultInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl);
 var
     m: somTD_SOMObject_somDefaultInit;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultInit));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultInit));
     m(somSelf, ctrl);
 end;
 
@@ -1063,11 +1063,11 @@ end;
  *  As with somDefaultInit, a null ctrl can be passed.
  *)
 
-procedure SOMObject_somDestruct(somSelf: TRealSOMObject; doFree: TCORBA_boolean; ctrl: somDestructCtrlPtr);
+procedure SOMObject_somDestruct(somSelf: TRealSOMObject; doFree: TCORBA_boolean; ctrl: PsomDestructCtrl);
 var
     m: somTD_SOMObject_somDestruct;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDestruct));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDestruct));
     m(somSelf, doFree, ctrl);
 end;
 
@@ -1079,11 +1079,11 @@ end;
  *  calling methods with "by-value" argument semantics.
  *)
 
-procedure SOMObject_somDefaultCopyInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMObject_somDefaultCopyInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 var
     m: somTD_SOMObject_somDefaultCopyInit;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultCopyInit));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultCopyInit));
     m(somSelf, ctrl, fromObj);
 end;
 
@@ -1097,11 +1097,11 @@ end;
  *)
 
 
-function SOMObject_somDefaultAssign(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMObject_somDefaultAssign(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 var
     m: somTD_SOMObject_somDefaultAssign;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultAssign));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultAssign));
 	Result:=m(somSelf, ctrl, fromObj);
 end;
 
@@ -1113,11 +1113,11 @@ end;
  *  A default copy constructor that uses a const fromObj.
  *)
 
-procedure SOMObject_somDefaultConstCopyInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMObject_somDefaultConstCopyInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 var
     m: somTD_SOMObject_somDefaultConstCopyInit;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultConstCopyInit));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultConstCopyInit));
 	m(somSelf, ctrl, fromObj);
 end;
 
@@ -1129,11 +1129,11 @@ end;
  *  A default copy constructor that uses a volatile fromObj.
  *)
 
-procedure SOMObject_somDefaultVCopyInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMObject_somDefaultVCopyInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 var
     m: somTD_SOMObject_somDefaultVCopyInit;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultVCopyInit));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultVCopyInit));
 	m(somSelf, ctrl, fromObj);
 end;
 
@@ -1145,11 +1145,11 @@ end;
  *  A default copy constructor that uses a const volatile fromObj.
  *)
 
-procedure SOMObject_somDefaultConstVCopyInit(somSelf: TRealSOMObject; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMObject_somDefaultConstVCopyInit(somSelf: TRealSOMObject; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 var
     m: somTD_SOMObject_somDefaultConstVCopyInit;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultConstVCopyInit));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultConstVCopyInit));
 	m(somSelf, ctrl, fromObj);;
 end;
 
@@ -1161,11 +1161,11 @@ end;
  *  A default assignment operator that uses a const fromObj.
  *)
 
-function SOMObject_somDefaultConstAssign(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMObject_somDefaultConstAssign(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 var
     m: somTD_SOMObject_somDefaultConstAssign;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultConstAssign));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultConstAssign));
     Result:=m(somSelf, ctrl, fromObj);
 end;
 
@@ -1177,11 +1177,11 @@ end;
  *  A default assignment operator that uses a volatile fromObj.
  *)
 
-function SOMObject_somDefaultVAssign(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMObject_somDefaultVAssign(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 var
     m: somTD_SOMObject_somDefaultVAssign;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultVAssign));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultVAssign));
     Result:=m(somSelf, ctrl, fromObj);
 end;
 
@@ -1193,11 +1193,11 @@ end;
  *  A default assignment operator that uses a const volatile fromObj.
  *)
 
-function SOMObject_somDefaultConstVAssign(somSelf: TRealSOMObject; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMObject_somDefaultConstVAssign(somSelf: TRealSOMObject; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 var
     m: somTD_SOMObject_somDefaultConstVAssign;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultConstVAssign));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDefaultConstVAssign));
     Result:=m(somSelf, ctrl, fromObj);
 end;
 
@@ -1215,11 +1215,11 @@ end;
  *  Default redispatch stubs invoke this method.
  *)
 
-function SOMObject_somDispatch(somSelf: TRealSOMObject; var retValue: somToken; methodId: somId; ap: Tva_list{array of const}): TCORBA_boolean;
+function SOMObject_somDispatch(somSelf: TRealSOMObject; var retValue: TsomToken; methodId: TsomId; ap: Tva_list{array of const}): TCORBA_boolean;
 var
     m: somTD_SOMObject_somDispatch;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatch));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somDispatch));
     Result:=m(somSelf, retValue, methodId, ap);
 end;
 
@@ -1232,11 +1232,11 @@ end;
  *  according to the clsObj instance method table.
  *)
 
-function SOMObject_somClassDispatch(somSelf: TRealSOMObject; clsObj: TRealSOMClass; var retValue: somToken; methodId: somId; ap: tva_list{array of const}): TCORBA_boolean;
+function SOMObject_somClassDispatch(somSelf: TRealSOMObject; clsObj: TRealSOMClass; var retValue: TsomToken; methodId: TsomId; ap: tva_list{array of const}): TCORBA_boolean;
 var
     m: somTD_SOMObject_somClassDispatch;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somClassDispatch));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somClassDispatch));
     Result:=m(somSelf, clsObj, retValue, methodId, ap);
 end;
 
@@ -1255,7 +1255,7 @@ function SOMObject_somCastObj(somSelf: TRealSOMObject; castedCls: TRealSOMClass)
 var
     m: somTD_SOMObject_somCastObj;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somCastObj));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somCastObj));
     Result:=m(somSelf, castedCls);
 end;
 
@@ -1271,7 +1271,7 @@ function SOMObject_somResetObj(somSelf: TRealSOMObject): TCORBA_boolean;
 var
     m: somTD_SOMObject_somResetObj;
 begin
-    {$ifdef fpc}somMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somResetObj));
+    {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somResetObj));
     Result:=m(somSelf);
 end;
 
@@ -1337,7 +1337,7 @@ begin
 
     if PLongint(obj2)^<>0 then exit;  // Class already resolved;
 
-    {$ifdef fpc}somMethodProc(_somIsInstance):={$else}@_somIsInstance:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsInstanceOf));
+    {$ifdef fpc}TsomMethodProc(_somIsInstance):={$else}@_somIsInstance:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsInstanceOf));
     p := @RSOMObject;                   // First check for specific instances...
     while (p<>nil)and(not _somIsInstance(obj,p^.SOMCls^)) do p:=p^.Next;
     if p<>nil then begin
@@ -1345,7 +1345,7 @@ begin
       exit;
     end;
 
-    {$ifdef fpc}somMethodProc(_somIsA):={$else}@_somIsA:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsA));
+    {$ifdef fpc}TsomMethodProc(_somIsA):={$else}@_somIsA:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsA));
     p := @RSOMObject; // Specific class not registered. Look for best general class.
     q := @RSOMObject;
     while (p<>nil) do begin
@@ -1399,7 +1399,7 @@ begin
   Result := nil;
   NewCls := RegisterClass;
   if (InstanceSize>4)or(NewCls=nil) then exit;
-  {$ifdef fpc}somMethodProc(somNewNoInit):={$else}@somNewNoInit:=Pointer{$endif}(somResolveByName(InstanceClass, 'somNewNoInit'{SOMClassClassData.somNewNoInit}));
+  {$ifdef fpc}TsomMethodProc(somNewNoInit):={$else}@somNewNoInit:=Pointer{$endif}(somResolveByName(InstanceClass, 'somNewNoInit'{SOMClassClassData.somNewNoInit}));
   NewObj := somNewNoInit(InstanceClass);
   if NewObj=nil then exit;
   dec(Longint(NewObj),4);
@@ -1458,28 +1458,28 @@ begin
   Result := SOMObject_somIsInstanceOf(somSelf,aClassObj.somSelf);
 end;
 
-Function TSOMObject.somRespondsTo(mId:somId): TCORBA_boolean;
+Function TSOMObject.somRespondsTo(mId: TsomId): TCORBA_boolean;
 begin
   Result := SOMObject_somRespondsTo(somSelf,mId);
 end;
 
 
-Procedure TSOMObject.somDispatchV(methodId:somId; descriptor:somId; ap:tva_list);
+Procedure TSOMObject.somDispatchV(methodId: TsomId; descriptor: TsomId; ap:tva_list);
 begin
   SOMObject_somDispatchV(somSelf, methodId, descriptor, ap);
 end;
 
-Function TSOMObject.somDispatchL(methodId:somId; descriptor:somId; ap:tva_list):Longint;
+Function TSOMObject.somDispatchL(methodId: TsomId; descriptor: TsomId; ap:tva_list):Longint;
 begin
   Result:=SOMObject_somDispatchL(somSelf, methodId, descriptor, ap);
 end;
 
-Function TSOMObject.somDispatchA(methodId:somId; descriptor:somId; ap:tva_list):Pointer;
+Function TSOMObject.somDispatchA(methodId: TsomId; descriptor: TsomId; ap:tva_list):Pointer;
 begin
   Result:=SOMObject_somDispatchA(somSelf, methodId, descriptor, ap);
 end;
 
-Function TSOMObject.somDispatchD(methodId:somId; descriptor:somId; ap:tva_list):Double;
+Function TSOMObject.somDispatchD(methodId: TsomId; descriptor: TsomId; ap:tva_list):Double;
 begin
   Result:=SOMObject_somDispatchD(somSelf, methodId, descriptor, ap);
 end;
@@ -1550,12 +1550,12 @@ begin
   Result := ResolveClass(SOMObject_somDefaultConstVAssign(somSelf,ctrl,fromObj.somSelf));
 end;
 
-Function TSOMObject.somDispatch(var retValue:somToken;methodId:somId; ap: tva_list): TCORBA_boolean;
+Function TSOMObject.somDispatch(var retValue: TsomToken;methodId: TsomId; ap: tva_list): TCORBA_boolean;
 begin
   Result := SOMObject_somDispatch(somSelf,retValue,methodId,ap);
 end;
 
-Function TSOMObject.somClassDispatch(clsObj: TSOMClass; var retValue: somToken; methodId:somId; ap: tva_list): TCORBA_boolean;
+Function TSOMObject.somClassDispatch(clsObj: TSOMClass; var retValue: TsomToken; methodId: TsomId; ap: tva_list): TCORBA_boolean;
 begin
   Result := SOMObject_somClassDispatch(somSelf,clsObj.somSelf,retValue,methodId,ap);
 end;

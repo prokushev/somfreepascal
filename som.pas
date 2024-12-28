@@ -1,5 +1,5 @@
 {
-    Copyright (c) 1994-1996 by International Business Machines Corporation
+    Copyright (c) 1994-1996 Interfaces by International Business Machines Corporation
     Copyright (c) 1997 Antony T Curtis.
     Copyright (c) 2002-2007, 2025 Yuri Prokushev (yuri.prokushev@gmail.com)
     Copyright (c) 2004-2005 Andrey Vasilkin
@@ -66,7 +66,7 @@ type
 {$ifdef fpc}
   TCORBA_unsigned_long_long = UInt64;
 {$else} {Delphi 6+}
-  TCORBA_unsigned_long_long = UInt64;
+  TCORBA_unsigned_long_long = UInt64;???
 {$endif}
 {$endif}
 
@@ -74,7 +74,9 @@ type
   TCORBA_Double             = Double;
   TCORBA_long_double        = Extended;
   TCORBA_char               = Char;
-  //TCORBA_wchar   = ???;
+{$ifdef SOM_WCHAR}
+  TCORBA_wchar   			= WideChar;
+{$endif}
   TCORBA_boolean            = ByteBool;
   
   TCORBA_octet              = Byte;
@@ -86,6 +88,7 @@ type
   PCORBA_char    = PChar;
 {$endif}
   TCORBA_string  = PCORBA_char;
+
   PCORBA_long    = ^TCORBA_long;
   PCORBA_octet   = ^TCORBA_octet;
   PCORBA_boolean = ^TCORBA_boolean;
@@ -113,34 +116,34 @@ type
   SOMMSingleInstanceType                = Pointer;
   TRealSOMClassMgr                      = TRealSOMObject;
   PRealSOMClassMgr                      = ^TRealSOMClassMgr;
-  PSOMClass                             = ^TRealSOMClass;
-  PSOMObject                            = ^TRealSOMObject;
+  PRealSOMClass                         = ^TRealSOMClass;
+  PRealSOMObject                        = ^TRealSOMObject;
   TCORBA_Object                         = TRealSOMObject;    (* in SOM, a CORBA object is a SOM object *)
 
-  somToken              = Pointer;       (* Uninterpretted value   *)
-  somId                 = ^PCORBA_char;
-  somIdPtr              = ^somId;
-  PsomToken             = ^somToken;       (* Uninterpretted value   *)
+  TsomToken              = Pointer;       (* Uninterpretted value   *)
+  PsomToken              = ^TsomToken;    (* Uninterpretted value   *)
+  TsomId                 = ^PCORBA_char;
+  PsomId                 = ^TsomId;
 
-  somMToken             = somToken;
-  somDToken             = somToken;
-  somMTokenPtr          = ^somMToken;
-  somDTokenPtr          = ^somDToken;
+  TsomMToken             = TsomToken;
+  TsomDToken             = TsomToken;
+  PsomMToken             = ^TsomMToken;
+  PsomDToken             = ^TsomDToken;
 
-  Tva_list       = somToken;
-  Pva_list       = ^Tva_list;
+  Tva_list               = TsomToken;
+  Pva_list               = ^Tva_list;
 
 type
 
-  somMethodPtr           = Pointer;
-  somBooleanVector       = PCORBA_boolean;
-  somCtrlInfo            = somToken;
+  PsomMethod             = Pointer;
+  TsomBooleanVector      = PCORBA_boolean;
+  TsomCtrlInfo           = TsomToken;
 
-  somSharedMethodData    = somToken;
-  somSharedMethodDataPtr = ^somSharedMethodData;
+  TsomSharedMethodData   = TsomToken;
+  PsomSharedMethodData   = ^TsomSharedMethodData;
 
-  somClassInfoPtr        = ^somClassInfo;
-  somClassInfo           = somToken;
+  TsomClassInfo          = TsomToken;
+  PsomClassInfo          = ^TsomClassInfo;
 
 
   TCORBA_TypeCode       = pointer;
@@ -166,31 +169,29 @@ procedure CORBA_free(Storage: Pointer);
 type
 (* -- Method/Data Tokens -- For locating methods and data members. *)
 
-  somRdAppType          = TCORBA_long;       (* method signature code -- see def below *)
-  somFloatMap           = Array[0..13] of TCORBA_long; (* float map -- see def below *)
-  somFloatMapPtr        = ^somFloatMap;
+  TsomRdAppType         = TCORBA_long;       (* method signature code -- see def below *)
+  TsomFloatMap          = Array[0..13] of TCORBA_long; (* float map -- see def below *)
+  PsomFloatMap          = ^TsomFloatMap;
 
-  somMethodInfoStruct   =record
-    callType            : somRdAppType;
+  TsomMethodInfo        = record
+    callType            : TsomRdAppType;
     va_listSize         : TCORBA_long;
-    float_map           : somFloatMapPtr;
+    float_map           : PsomFloatMap;
   end;
-  somMethodInfo         = somMethodInfoStruct;
-  somMethodInfoPtr      = ^somMethodInfo;
+  PsomMethodInfo        = ^TsomMethodInfo;
 
-  somMethodDataStruct   = record
-    id                  : somId;
-    ctype               : TCORBA_long;               (* 0=static, 1=dynamic 2=nonstatic *)
-    descriptor          : somId;                 (* for use with IR interfaces *)
-    mToken              : somMToken;             (* NULL for dynamic methods *)
-    method              : somMethodPtr;          (* depends on resolution context *)
-    shared              : somSharedMethodDataPtr;
+  TsomMethodData        = record
+    id                  : TsomId;
+    ctype               : TCORBA_long;            (* 0=static, 1=dynamic 2=nonstatic *)
+    descriptor          : TsomId;                 (* for use with IR interfaces *)
+    mToken              : TsomMToken;             (* NULL for dynamic methods *)
+    method              : PsomMethod;             (* depends on resolution context *)
+    shared              : PsomSharedMethodData;
   end;
-  somMethodData         = somMethodDataStruct;
-  somMethodDataPtr      = ^somMethodDataStruct;
+  PsomMethodData        = ^TsomMethodData;
 
-  somMethodProc         = Procedure(somSelf:TRealSOMObject);
-  somMethodProcPtr      = ^somMethodProc;
+  TsomMethodProc        = Procedure(somSelf:TRealSOMObject);
+  PsomMethodProc        = ^TsomMethodProc;
 
 
 (*---------------------------------------------------------------------
@@ -198,32 +199,35 @@ type
  * are methods that receive a pointer to a somCtrlStruct as an argument.
  *)
 
-  somInitInfo           =record
-    cls                 : TRealSOMClass;(* the class whose introduced data is to be initialized *)
-    defaultInit         : somMethodProc;
-    defaultCopyInit     : somMethodProc;
-    defaultConstCopyInit: somMethodProc;
-    defaultNCArgCopyInit: somMethodProc;
+  TsomInitInfo          = record
+    cls                 : TRealSOMClass;  (* the class whose introduced data is to be initialized *)
+    defaultInit         : TsomMethodProc;
+    defaultCopyInit     : TsomMethodProc;
+    defaultConstCopyInit: TsomMethodProc;
+    defaultNCArgCopyInit: TsomMethodProc;
     dataOffset          : TCORBA_long;
-    legacyInit          : somMethodProc;
+    legacyInit          : TsomMethodProc;
   end;
+  PsomInitInfo          = ^TsomInitInfo;
 
-  somDestructInfo       =record
+  TsomDestructInfo      = record
     cls                 : TRealSOMClass;(* the class whose introduced data is to be destroyed *)
-    defaultDestruct     : somMethodProc;
+    defaultDestruct     : TsomMethodProc;
     dataOffset          : TCORBA_long;
-    legacyUninit        : somMethodProc;
+    legacyUninit        : TsomMethodProc;
   end;
+  PsomDestructInfo      = ^TsomDestructInfo;
 
-  somAssignInfo         =record
+  TsomAssignInfo        = record
     cls                 : TRealSOMClass;(* the class whose introduced data is to be assigned *)
-    defaultAssign       : somMethodProc;
-    defaultConstAssign  : somMethodProc;
-    defaultNCArgAssign  : somMethodProc;
-    udaAssign           : somMethodProc;
-    udaConstAssign      : somMethodProc;
+    defaultAssign       : TsomMethodProc;
+    defaultConstAssign  : TsomMethodProc;
+    defaultNCArgAssign  : TsomMethodProc;
+    udaAssign           : TsomMethodProc;
+    udaConstAssign      : TsomMethodProc;
     dataOffset          : TCORBA_long;
   end;
+  PsomAssignInfo        = ^TsomAssignInfo;
 
   TCORBA_sequence_octet   = record
     _maximum            : TCORBA_unsigned_long;
@@ -231,7 +235,7 @@ type
     _buffer             : PCORBA_octet;
   end;
   PCORBA_sequence_octet = ^TCORBA_sequence_octet;
-  _IDL_SEQUENCE_octet = TCORBA_sequence_octet;
+  T_IDL_SEQUENCE_octet = TCORBA_sequence_octet;
   P_IDL_SEQUENCE_octet = TCORBA_sequence_octet;
 
 {$ifdef SOM_CORBA_MEM}
@@ -246,38 +250,34 @@ type
  * A special info access structure pointed to by
  * the parentMtab entry of somCClassDataStructure.
  *)
-   somTD_somRenewNoInitNoZeroThunk      =Procedure(var buf);{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTD_somRenewNoInitNoZeroThunk      =Procedure(var buf);{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 
-  somInitInfoPtr        =^somInitInfo;
-
-  somInitCtrlStruct     =record
-    mask                : somBooleanVector;(* an array of booleans to control ancestor calls *)
-    info                : somInitInfoPtr;  (* an array of structs *)
-    infoSize            : TCORBA_long;         (* increment for info access *)
-    ctrlInfo            : somCtrlInfo;
+  TsomInitCtrl          = record
+    mask                : TsomBooleanVector; (* an array of booleans to control ancestor calls *)
+    info                : PsomInitInfo;      (* an array of structs *)
+    infoSize            : TCORBA_long;       (* increment for info access *)
+    ctrlInfo            : TsomCtrlInfo;
   end;
-  somInitCtrl           = somInitCtrlStruct;
-  som3InitCtrl          = somInitCtrlStruct;
+  PsomInitCtrl          =^TsomInitCtrl;
+  Tsom3InitCtrl         = TsomInitCtrl;
 
-  somDestructInfoPtr    = ^somDestructInfo;
-  somDestructCtrlStruct = record
-    mask                : somBooleanVector;(* an array of booleans to control ancestor calls *)
-    info                : somDestructInfoPtr;(* an array of structs *)
-    infoSize            : TCORBA_long;         (* increment for info access *)
-    ctrlInfo            : somCtrlInfo;
+  TsomDestructCtrl      = record
+    mask                : TsomBooleanVector;  (* an array of booleans to control ancestor calls *)
+    info                : PsomDestructInfo;   (* an array of structs *)
+    infoSize            : TCORBA_long;        (* increment for info access *)
+    ctrlInfo            : TsomCtrlInfo;
   end;
-  somDestructCtrl       =somDestructCtrlStruct;
-  som3DestructCtrl      =somDestructCtrlStruct;
+  PsomDestructCtrl      =^TsomDestructCtrl;
+  Tsom3DestructCtrl     = TsomDestructCtrl;
 
-  somAssignInfoPtr      =^somAssignInfo;
-  somAssignCtrlStruct   =record
-    mask                : somBooleanVector;(* an array of booleans to control ancestor calls *)
-    info                : somAssignInfoPtr;(* an array of structs *)
+  TsomAssignCtrl        = record
+    mask                : TsomBooleanVector; (* an array of booleans to control ancestor calls *)
+    info                : PsomAssignInfo;    (* an array of structs *)
     infoSize            : TCORBA_long;         (* increment for info access *)
-    ctrlInfo            : somCtrlInfo;
+    ctrlInfo            : TsomCtrlInfo;
   end;
-  somAssignCtrl         = somAssignCtrlStruct;
-  som3AssignCtrl        = somAssignCtrlStruct;
+  PsomAssignCtrl        =^TsomAssignCtrl;
+  Tsom3AssignCtrl       = TsomAssignCtrl;
 
 (*----------------------------------------------------------------------
  *  The Class Data Structures -- these are used to implement static
@@ -286,95 +286,73 @@ type
 
 type
 (* -- (Generic) Class data Structure *)
-  somClassDataStructure =record
+  TsomClassData         = record
     classObject         : TRealSOMClass;                 (* changed by shadowing *)
-    tokens              : Array[0..0] of somToken;      (* method tokens, etc. *)
+    tokens              : Array[0..0] of TsomToken;      (* method tokens, etc. *)
   end;
-  somClassDataStructurePtr=^somClassDataStructure;
-
-  somInitCtrlPtr        =^somInitCtrl;
-  somDestructCtrlPtr    =^somDestructCtrl;
-  somAssignCtrlPtr      =^somAssignCtrl;
-
-(* -- For building lists of method tables *)
-  somMethodTabPtr       =^somMethodTab;
-
-  somMethodTabs         =^somMethodTabList;
-  somMethodTabList      =record
-    mtab                :somMethodTabPtr;
-    next                :somMethodTabs;
-  end;
-
-  somParentMtabStruct   =record
-    mtab                : somMethodTabPtr;       (* this class' mtab -- changed by shadowing *)
-    next                : somMethodTabs;         (* the parent mtabs -- unchanged by shadowing *)
-    classObject         : TRealSOMClass;          (* unchanged by shadowing *)
-    somRenewNoInitNoZeroThunk:somTD_somRenewNoInitNoZeroThunk; (* changed by shadowing *)
-    instanceSize        : TCORBA_long;               (* changed by shadowing *)
-    initializers        : somMethodProcPtr;      (* resolved initializer array in releaseorder *)
-    resolvedMTokens     : somMethodProcPtr;      (* resolved methods *)
-    initCtrl            : somInitCtrl;           (* these fields are filled in if somDTSClass&2 is on *)
-    destructCtrl        : somDestructCtrl;
-    assignCtrl          : somAssignCtrl;
-    embeddedTotalCount  : TCORBA_long;
-    hierarchyTotalCount : TCORBA_long;
-    unused              : TCORBA_long;
-  end;
-  somParentMtabStructPtr=^somParentMtabStruct;
-
-(*
- * (Generic) Auxiliary Class Data Structure
- *)
-  somCClassDataStructure=record
-    parentMtab          : somParentMtabStructPtr;
-    instanceDataToken   : somDToken;
-    wrappers            : Array[0..0] of somMethodProc;  (* for valist methods *)
-  end;
-  somCClassDataStructurePtr=^somCClassDataStructure;
+  PsomClassData         =^TsomClassData;
 
 
 (*----------------------------------------------------------------------
  *  The Method Table Structure
  *)
 
-(* -- to specify an embedded object (or array of objects). *)
-  somEmbeddedObjStructPtr=^somEmbeddedObjStruct;
-  somEmbeddedObjStruct  =record
+  TsomEmbeddedObj       =record
     copp                : TRealSOMClass;  (* address of class of object ptr *)
     cnt                 : TCORBA_long;       (* object count *)
     offset              : TCORBA_long;       (* Offset to pointer (to embedded objs) *)
   end;
+(* -- to specify an embedded object (or array of objects). *)
+  PsomEmbeddedObj       =^TsomEmbeddedObj;
 
-  somMethodTabStruct    =record
+  TsomMethodTab    =record
     classObject         : TRealSOMClass;
-    classInfo           : somClassInfoPtr;
+    classInfo           : PsomClassInfo;
     className           : TCORBA_string;
     instanceSize        : TCORBA_long;
     dataAlignment       : TCORBA_long;
     mtabSize            : TCORBA_long;
     protectedDataOffset : TCORBA_long;       (* from class's introduced data *)
-    protectedDataToken  : somDToken;
-    embeddedObjs        : somEmbeddedObjStructPtr;
+    protectedDataToken  : TsomDToken;
+    embeddedObjs        : PsomEmbeddedObj;
     (* remaining structure is opaque *)
-    entries             :Array[0..0] of somMethodProc;
+    entries             :Array[0..0] of TsomMethodProc;
   end;
-  somMethodTab          =somMethodTabStruct;
+(* -- For building lists of method tables *)
+  PsomMethodTab         =^TsomMethodTab;
 
-(* -- For building lists of class objects *)
-  somClasses            =^somClassList;
-  somClassList          = record
-    cls                 : TRealSOMClass;
-    next                : somClasses;
-  end;
-
-(* -- For building lists of objects *)
-  somObjects            =^somObjectList;
-  somObjectList         = record
-    obj                 : TRealSOMObject;
-    next                : somObjects;
+  PsomMethodTabs        =^TsomMethodTabList;
+  TsomMethodTabList     =record
+    mtab                : PsomMethodTab;
+    next                : PsomMethodTabs;
   end;
 
+  TsomParentMtab        =record
+    mtab                : PsomMethodTab;       (* this class' mtab -- changed by shadowing *)
+    next                : PsomMethodTabs;        (* the parent mtabs -- unchanged by shadowing *)
+    classObject         : TRealSOMClass;          (* unchanged by shadowing *)
+    somRenewNoInitNoZeroThunk:somTD_somRenewNoInitNoZeroThunk; (* changed by shadowing *)
+    instanceSize        : TCORBA_long;               (* changed by shadowing *)
+    initializers        : PsomMethodProc;      (* resolved initializer array in releaseorder *)
+    resolvedMTokens     : PsomMethodProc;      (* resolved methods *)
+    initCtrl            : TsomInitCtrl;           (* these fields are filled in if somDTSClass&2 is on *)
+    destructCtrl        : TsomDestructCtrl;
+    assignCtrl          : TsomAssignCtrl;
+    embeddedTotalCount  : TCORBA_long;
+    hierarchyTotalCount : TCORBA_long;
+    unused              : TCORBA_long;
+  end;
+  PsomParentMtab        =^TsomParentMtab;
 
+(*
+ * (Generic) Auxiliary Class Data Structure
+ *)
+  TsomCClassData        =record
+    parentMtab          : PsomParentMtab;
+    instanceDataToken   : TsomDToken;
+    wrappers            : Array[0..0] of TsomMethodProc;  (* for valist methods *)
+  end;
+  PsomCClassData        =^TsomCClassData;
 
 (*----------------------------------------------------------------------
  * Method Stubs -- Signature Support
@@ -419,12 +397,11 @@ type
  * to generate necessary stubs dynamically.
  *)
 
-  somApRdInfoStruct     =record
-    rdStub              :somMethodProc;
-    apStub              :somMethodProc;
-    stubInfo            :somMethodInfoPtr;
+  TsomApRdInfo          =record
+    rdStub              : TsomMethodProc;
+    apStub              : TsomMethodProc;
+    stubInfo            : PsomMethodInfo;
   end;
-  somApRdInfo           =somApRdInfoStruct;
 
 
 (*
@@ -495,62 +472,56 @@ const
  *)
 
 type
-  somStaticMethodStruct =record
-    classData           :somMTokenPtr;
-    methodId            :somIdPtr;        (* this must be a simple name (no colons) *)
-    methodDescriptor    :somIdPtr;
-    method              :somMethodPtr;//somMethodProc;
-    redispatchStub      :somMethodPtr;//somMethodProc;
-    applyStub           :somMethodPtr;//somMethodProc;
+  TsomStaticMethod      = record
+    classData           : PsomMToken;
+    methodId            : PsomId;        (* this must be a simple name (no colons) *)
+    methodDescriptor    : PsomId;
+    method              : PsomMethod;//somMethodProc;
+    redispatchStub      : PsomMethod;//somMethodProc;
+    applyStub           : PsomMethod;//somMethodProc;
   end;
-  somStaticMethod_t     =somStaticMethodStruct;
-  somStaticMethod_p     =^somStaticMethod_t;
+  PsomStaticMethod      =^TsomStaticMethod;
 
 (* to specify an overridden method *)
-  somOverideMethodStruct=record
-    methodId            :somIdPtr;        (* this can be a method descriptor *)
-    method              :somMethodPtr;//somMethodProc;
+  TsomOverrideMethod     = record
+    methodId            : PsomId;        (* this can be a method descriptor *)
+    method              : PsomMethod;  //somMethodProc;
   end;
-  somOverrideMethod_t   =somOverideMethodStruct;
-  somOverrideMethod_p   =^somOverrideMethod_t;
+  PsomOverrideMethod    =^TsomOverrideMethod;
 
 (* to inherit a specific parent's method implementation *)
-  somInheritedMethodStruct=record
-    methodId            : somIdPtr;      (* identify the method *)
+  TsomInheritedMethod   = record
+    methodId            : PsomId;            (* identify the method *)
     parentNum           : TCORBA_long;       (* identify the parent *)
-    mToken              : somMTokenPtr;  (* for parentNumresolve *)
+    mToken              : PsomMToken;        (* for parentNumresolve *)
   end;
-  somInheritedMethod_t  =somInheritedMethodStruct;
-  somInheritedMethod_p  =^somInheritedMethod_t;
+  PsomInheritedMethod   =^TsomInheritedMethod;
 
 (* to register a method that has been moved from this *)
 (* class <cls> upwards in the class hierachy to class <dest> *)
-  somMigratedMethodStruct=record
-    clsMToken           :somMTokenPtr;
+  TsomMigratedMethod    = record
+    clsMToken           : PsomMToken;
                                 (* points into the <cls> classdata structure *)
                                 (* the method token in <dest> will copied here *)
-    destMToken          :somMTokenPtr;
+    destMToken          : PsomMToken;
                                 (* points into the <dest> classdata structure *)
                                 (* the method token here will be copied to <cls> *)
   end;
-  somMigratedMethod_t   =somMigratedMethodStruct;
-  somMigratedMethod_p        =^somMigratedMethod_t;
+  PsomMigratedMethod    =^TsomMigratedMethod;
 
 (* to specify non-internal data *)
-  somNonInternalDataStruct=record
-    classData           : somDTokenPtr;
+  TsomNonInternalData   = record
+    classData           : PsomDToken;
     basisForDataOffset  : PChar;
   end;
-  somNonInternalData_t  =somNonInternalDataStruct;
-  somNonInternalData_p  =^somNonInternalData_t;
+  PsomNonInternalData   =^TsomNonInternalData;
 
 (* to specify a "procedure" or "classdata" *)
-  somProcMethodsStruct  =record
-    classData           :somMethodProcPtr;
-    pEntry              :somMethodProc;
+  TsomProcMethods       = record
+    classData           : PsomMethodProc;
+    pEntry              : TsomMethodProc;
   end;
-  somProcMethods_t      =somProcMethodsStruct;
-  somProcMethods_p      =^somProcMethods_t;
+  PsomProcMethods       =^TsomProcMethods;
 
 (* to specify a general method "action" using somMethodStruct *)
 (*
@@ -584,34 +555,32 @@ type
    1: method procedure does return a structure
 *)
 
-  somMethodStruct       =record
+  TsomMethods           = record
     mtype               : TCORBA_long;
-    classData           :somMTokenPtr;
-    methodId            :somIdPtr;
-    methodDescriptor    :somIdPtr;
-    method              :somMethodProc;
-    redispatchStub      :somMethodProc;
-    applyStub           :somMethodProc;
+    classData           : PsomMToken;
+    methodId            : PsomId;
+    methodDescriptor    : PsomId;
+    method              : TsomMethodProc;
+    redispatchStub      : TsomMethodProc;
+    applyStub           : TsomMethodProc;
   end;
-  somMethods_t          =somMethodStruct;
-  somMethods_p          =^somMethods_t;
+  PsomMethods           =^TsomMethods;
 
 (* to specify a varargs function *)
-  somVarargsFuncsStruct =record
-    classData           :somMethodProcPtr;
-    vEntry              :somMethodProc;
+  TsomVarargsFuncs      = record
+    classData           : PsomMethodProc;
+    vEntry              : TsomMethodProc;
   end;
-  somVarargsFuncs_t     =somVarargsFuncsStruct;
-  somVarargsFuncs_p     =^somVarargsFuncs_t;
+  PsomVarargsFuncs      =^TsomVarargsFuncs;
 
-(* to specify dynamically computed information (incl. embbeded objs) *)
-  somDynamicSCIPtr      =^somDynamicSci;
-  somDynamicSCI         =record
+  TsomDynamicSCI         =record
     version             : TCORBA_long;       (* 1 for now *)
     instanceDataSize    : TCORBA_long;       (* true size (incl. embedded objs) *)
     dataAlignment       : TCORBA_long;       (* true alignment *)
-    embeddedObjs        : somEmbeddedObjStructPtr; (* array end == null copp *)
+    embeddedObjs        : PsomEmbeddedObj; (* array end == null copp *)
   end;
+(* to specify dynamically computed information (incl. embbeded objs) *)
+  PsomDynamicSCI        =^TsomDynamicSci;
 
 
 (*
@@ -630,7 +599,7 @@ type
  *  The Static Class Info Structure passed to somBuildClass
  *)
 
-  somStaticClassInfoStruct=record
+  TsomStaticClassInfo   = record
     layoutVersion       : TCORBA_long;  (* this struct defines layout version SOM_SCILEVEL *)
     numStaticMethods    : TCORBA_long;   (* count of smt entries *)
     numStaticOverrides  : TCORBA_long; (* count of omt entries *)
@@ -642,19 +611,19 @@ type
     instanceDataSize    : TCORBA_long;   (* instance data introduced by this class *)
     maxMethods          : TCORBA_long;         (* count numStaticMethods and numMethods *)
     numParents          : TCORBA_long;
-    classId             :somId;
-    explicitMetaId      :somId;
+    classId             : TsomId;
+    explicitMetaId      : TsomId;
     implicitParentMeta  : TCORBA_long;
-    parents             :somIdPtr;
-    cds                 :somClassDataStructurePtr;
-    ccds                :somCClassDataStructurePtr;
-    smt                 :somStaticMethod_p; (* basic "static" methods for mtab *)
-    omt                 :somOverrideMethod_p; (* overrides for mtab *)
-    nitReferenceBase    :PChar;
-    nit                 :somNonInternalData_p; (* datatokens for instance data *)
-    pmt                 :somProcMethods_p; (* Arbitrary ClassData members *)
-    vft                 :somVarargsFuncs_p; (* varargs stubs *)
-    cif                 :pointer{^somTP_somClassInitFunc}; (* class init function *)
+    parents             : PsomId;
+    cds                 : PsomClassData;
+    ccds                : PsomCClassData;
+    smt                 : PsomStaticMethod;    (* basic "static" methods for mtab *)
+    omt                 : PsomOverrideMethod;  (* overrides for mtab *)
+    nitReferenceBase    : PChar;
+    nit                 : PsomNonInternalData; (* datatokens for instance data *)
+    pmt                 : PsomProcMethods;     (* Arbitrary ClassData members *)
+    vft                 : PsomVarargsFuncs;    (* varargs stubs *)
+    cif                 : pointer{^somTP_somClassInitFunc}; (* class init function *)
     (* end of layout version 1 *)
 
     (* begin layout version 2 extensions *)
@@ -665,25 +634,24 @@ type
 
     (* begin layout version 3 extensions *)
     numDirectInitClasses: TCORBA_long;
-    directInitClasses   :somIdPtr;
+    directInitClasses   : PsomId;
     numMethods          : TCORBA_long; (* general (including nonstatic) methods for mtab *)
-    mt                  :somMethods_p;
+    mt                  : PsomMethods;
     protectedDataOffset : TCORBA_long; (* access = resolve(instanceDataToken) + offset *)
     somSCIVersion       : TCORBA_long;  (* used during development. currently = 1 *)
     numInheritedMethods : TCORBA_long;
-    imt                 :somInheritedMethod_p; (* inherited method implementations *)
+    imt                 : PsomInheritedMethod; (* inherited method implementations *)
     numClassDataEntries : TCORBA_long; (* should always be filled in *)
-    classDataEntryNames :somIdPtr; (* either NULL or ptr to an array of somIds *)
+    classDataEntryNames : PsomId; (* either NULL or ptr to an array of somIds *)
     numMigratedMethods  : TCORBA_long;
-    mmt                 :somMigratedMethod_p; (* migrated method implementations *)
+    mmt                 : PsomMigratedMethod; (* migrated method implementations *)
     numInitializers     : TCORBA_long; (* the initializers for this class *)
-    initializers        :somIdPtr;     (* in order of release *)
+    initializers        : PsomId;     (* in order of release *)
     somDTSClass         : TCORBA_long; (* used to identify a DirectToSOM class *)
-    dsci                :somDynamicSCIPtr;  (* used to register dynamically computed info *)
+    dsci                : PsomDynamicSCI;  (* used to register dynamically computed info *)
     (* end of layout version 3 *)
   end;
-  somStaticClassInfo    =somStaticClassInfoStruct;
-  somStaticClassInfoPtr =^somStaticClassInfoStruct;
+  PsomStaticClassInfo   =^TsomStaticClassInfo;
 
 (* CORBA section *)
 
@@ -748,24 +716,27 @@ const
   tk_foreign    = TypeCode_tk_foreign;
 
 type
-  SOMClass_somOffsets           = record
+  TSOMClass_somOffsets          = record
     cls                         : TRealSOMClass;
     offset                      : TCORBA_long;
   end;
 
-  _IDL_SEQUENCE_SOMClass        = packed record
+  TCORBA_SEQUENCE_SOMClass        = packed record
     _maximum                    : TCORBA_unsigned_long;
     _length                     : TCORBA_unsigned_long;
-    _buffer                     : ^PSOMClass;
+    _buffer                     : Array[0..0] of TRealSOMClass;
   end;
-  P_IDL_SEQUENCE_SOMClass=^_IDL_SEQUENCE_SOMClass;
+  PCORBA_SEQUENCE_SOMClass  = ^TCORBA_SEQUENCE_SOMClass;
+  T_IDL_SEQUENCE_SOMClass = TCORBA_SEQUENCE_SOMClass;
+  P_IDL_SEQUENCE_SOMClass = PCORBA_SEQUENCE_SOMClass;
 
-  _IDL_SEQUENCE_SOMObject       = record
+  TCORBA_SEQUENCE_SOMObject       = record
     _maximum                    : TCORBA_unsigned_long;
     _length                     : TCORBA_unsigned_long;
-    _buffer                     : PSOMObject;
+    _buffer                     : Array[0..0] of TRealSOMObject;
   end;
-  SOMClass_SOMClassSequence     = _IDL_SEQUENCE_SOMClass;
+  T_IDL_SEQUENCE_SOMObject      = TCORBA_SEQUENCE_SOMObject;
+  TSOMClass_SOMClassSequence    = TCORBA_SEQUENCE_SOMClass;
   
 (*----------------------------------------------------------------------
  *  Windows extra procedures:
@@ -794,18 +765,18 @@ Function  somAbnormalEnd: TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdec
  *  Offset-based method resolution.
  *)
 
-Function  somResolve(obj:TRealSOMObject; mdata:somMToken):somMethodProc; {$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-Function  somParentResolve(parentMtabs:somMethodTabs; mToken:somMToken):somMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-Function  somParentNumResolve(parentMtabs:somMethodTabs; parentNum: TCORBA_long; mToken:somMToken): somMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-Function  somClassResolve(obj:TRealSOMClass; mdata:somMToken):somMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-Function  somAncestorResolve(obj:TRealSOMObject; var ccds:somCClassDataStructure; mToken:somMToken):somMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-Function  somResolveByName(obj: TRealSOMObject; methodName: PCORBA_char):somMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somResolve(obj:TRealSOMObject; mdata: TsomMToken): TsomMethodProc; {$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somParentResolve(parentMtabs: PsomMethodTabs; mToken: TsomMToken): TsomMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somParentNumResolve(parentMtabs: PsomMethodTabs; parentNum: TCORBA_long; mToken: TsomMToken): TsomMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somClassResolve(obj:TRealSOMClass; mdata: TsomMToken): TsomMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somAncestorResolve(obj:TRealSOMObject; var ccds: TsomCClassData; mToken: TsomMToken): TsomMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somResolveByName(obj: TRealSOMObject; methodName: PCORBA_char): TsomMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 (*------------------------------------------------------------------------------
  * Offset-based data resolution
  *)
-Function  somDataResolve(obj:TRealSOMObject; dataId:somDToken):somToken;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-Function  somDataResolveChk(obj:TRealSOMObject; dataId:somDToken):somToken;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somDataResolve(obj:TRealSOMObject; dataId: TsomDToken): TsomToken;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somDataResolveChk(obj:TRealSOMObject; dataId: TsomDToken): TsomToken;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 (*----------------------------------------------------------------------
  *  Misc. procedures:
@@ -830,37 +801,37 @@ Function  somEnvironmentNew: TRealSOMClassMgr; {$ifdef SOM_STDCALL}stdcall;{$els
  * as returning true if and only if <obj> is a pointer to a pointer to a
  * valid SOM method table. If so, then methods can be invoked on <obj>.
  *)
-Function  somIsObj(obj:somToken): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somIsObj(obj: TsomToken): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 (*
  * Return the class that introduced the method represented by a given method token.
  *)
-Function  somGetClassFromMToken(mToken:somMToken):TRealSOMClass;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somGetClassFromMToken(mToken: TsomMToken):TRealSOMClass;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 
 (*----------------------------------------------------------------------
  *  String Manager: stem <somsm>
  *)
-Function  somCheckID(id:somId):somId;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somCheckID(id: TsomId): TsomId;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 (* makes sure that the id is registered and in normal form, returns *)
 (* the id *)
 
-Function  somRegisterId(id:somId): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somRegisterId(id: TsomId): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 (* Same as somCheckId except returns 1 (true) if this is the first *)
 (* time the string associated with this id has been registered, *)
 (* returns 0 (false) otherwise *)
 
-Function  somIDFromString(aString: TCORBA_string):somId;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somIDFromString(aString: TCORBA_string): TsomId;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 (* caller is responsible for freeing the returned id with SOMFree *)
 
 // Not found
 //Function  somIdFromStringNoFree(aString:PChar):somId;  {$ifndef vpc}{$ifdef os2}cdecl;{$endif}{$ifdef win32}stdcall;{$endif}{$endif}
 (* call is responsible for *not* freeing the returned id *)
 
-Function  somStringFromId(id:somId): TCORBA_string;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somStringFromId(id: TsomId): TCORBA_string;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 (* Return a string that must never be freed or modified. *)
 
-Function  somCompareIds(id1,id2:somId): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somCompareIds(id1,id2: TsomId): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 (* returns true (1) if the two ids are equal, else false (0) *)
 
 Function  somTotalRegIds: TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
@@ -875,7 +846,7 @@ Procedure somSetExpectedIds(numIds: TCORBA_unsigned_long);{$ifdef SOM_STDCALL}st
 (* utilization slightly, this routine must be called before the SOM *)
 (* environment is created to have any effect *)
 
-Function  somUniqueKey(id:somId): TCORBA_unsigned_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somUniqueKey(id: TsomId): TCORBA_unsigned_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 (* Returns the unique key for this id, this key will be the same as the *)
 (* key in another id if and only if the other id refers to the same *)
 (* name as this one *)
@@ -921,7 +892,7 @@ var
  * macro (for statically linked libraries), or during the _somFindClass
  * method (for libraries that are dynamically loaded).
  *)
-Procedure somRegisterClassLibrary(libraryName: TCORBA_string; libraryInitRun: somMethodProc);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Procedure somRegisterClassLibrary(libraryName: TCORBA_string; libraryInitRun: TsomMethodProc);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 (*----------------------------------------------------------------------
  * -- somApply --
@@ -944,7 +915,7 @@ Procedure somRegisterClassLibrary(libraryName: TCORBA_string; libraryInitRun: so
  * be NULL.
  *)
 
-Function  somApply(var somSelf:TRealSOMObject; var retVal:somToken; mdPtr:somMethodDataPtr; var ap): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somApply(var somSelf: TRealSOMObject; var retVal: TsomToken; mdPtr: PsomMethodData; var ap): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 (*---------------------------------------------------------------------
  * -- somBuildClass --
@@ -958,7 +929,7 @@ Function  somApply(var somSelf:TRealSOMObject; var retVal:somToken; mdPtr:somMet
  *)
 
 
-Function  somBuildClass(inherit_vars: TCORBA_long; var sci:somStaticClassInfo; majorVersion, minorVersion: TCORBA_long):TRealSOMClass;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function  somBuildClass(inherit_vars: TCORBA_long; var sci: TsomStaticClassInfo; majorVersion, minorVersion: TCORBA_long):TRealSOMClass;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
   (*
   The arguments to somBuildClass are as follows:
@@ -982,7 +953,7 @@ type
 
 Procedure somConstructClass(classInitRoutine:somTD_ClassInitRoutine;
                             parentClass,metaClass:TRealSOMClass;
-                            var cds :somClassDataStructure);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+                            var cds : TsomClassData);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 
 (*
@@ -995,14 +966,24 @@ Function somPrintf(fmt: TCORBA_string): TCORBA_long; cdecl; varargs;
 Function somPrintf(fmt: TCORBA_string; args: Array of const): TCORBA_long;
 {$endif}
 
-// vprint form of somPrintf
+(*
+ * vprint form of somPrintf
+ *)
 Function  somVPrintf(fmt: TCORBA_string; ap: Tva_list): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-// Outputs (via somPrintf) blanks to prefix a line at the indicated level
+(*
+ * Outputs (via somPrintf) blanks to prefix a line at the indicated level
+ *) 
 Procedure somPrefixLevel(level: TCORBA_long);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-// Combines somPrefixLevel and somPrintf
-Procedure somLPrintf(level: TCORBA_long;fmt: TCORBA_string;var buf);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+(*
+ * Combines somPrefixLevel and somPrintf
+ *)
+{$ifdef SOM_VARARGS}
+Procedure somLPrintf(level: TCORBA_long; fmt: TCORBA_string); cdecl; varargs;
+{$else}
+Procedure somLPrintf(level: TCORBA_long; fmt: TCORBA_string; args: Array of const);
+{$endif}
 
 (*----------------------------------------------------------------------
  * Pointers to routines used to do dynamic code loading and deleting
@@ -1013,8 +994,8 @@ type
                                           {IN}FuncName: TCORBA_string  (* functionName *);
                                           {IN}MajorVer: TCORBA_long    (* majorVersion *);
                                           {IN}MinorVer: TCORBA_long    (* minorVersion *);
-                                          {OUT}var ref: somToken (* modHandle *)): TCORBA_long;
-  somTD_SOMDeleteModule         =Function({IN} ref:somToken     (* modHandle *)): TCORBA_long;
+                                          {OUT}var ref: TsomToken (* modHandle *)): TCORBA_long;
+  somTD_SOMDeleteModule         =Function({IN} ref: TsomToken     (* modHandle *)): TCORBA_long;
   somTD_SOMClassInitFuncName    =Function: TCORBA_string;
 
 var
@@ -1030,12 +1011,12 @@ var
  *)
 
 type
-  somTD_SOMMalloc               =Function({IN} size_t: TCORBA_long   (* nbytes *)):somToken;
+  somTD_SOMMalloc               =Function({IN} size_t: TCORBA_long   (* nbytes *)): TsomToken;
   somTD_SOMCalloc               =Function({IN} size_c: TCORBA_long   (* element_count *);
-                                          {IN} size_e: TCORBA_long   (* element_size *)):somToken;
-  somTD_SOMRealloc              =Function({IN}    ref: somToken      (* memory *);
-                                          {IN}   size: TCORBA_long   (* nbytes *)):somToken;
-  somTD_SOMFree                 =Procedure({IN}   ref: somToken    (* memory *));
+                                          {IN} size_e: TCORBA_long   (* element_size *)): TsomToken;
+  somTD_SOMRealloc              =Function({IN}    ref: TsomToken      (* memory *);
+                                          {IN}   size: TCORBA_long   (* nbytes *)): TsomToken;
+  somTD_SOMFree                 =Procedure({IN}   ref: TsomToken    (* memory *));
 
 var
   SOMCalloc             :somTD_SOMCalloc; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMCalloc';{$endif}
@@ -1063,10 +1044,10 @@ var
  *)
 
 type
-  somTD_SOMCreateMutexSem       =Function({OUT}var sem:somToken ): TCORBA_long;
-  somTD_SOMRequestMutexSem      =Function({IN}sem:somToken ): TCORBA_long;
-  somTD_SOMReleaseMutexSem      =Function({IN}sem:somToken ): TCORBA_long;
-  somTD_SOMDestroyMutexSem      =Function({IN}sem:somToken ): TCORBA_long;
+  somTD_SOMCreateMutexSem       =Function({OUT}var sem: TsomToken ): TCORBA_long;
+  somTD_SOMRequestMutexSem      =Function({IN}sem: TsomToken ): TCORBA_long;
+  somTD_SOMReleaseMutexSem      =Function({IN}sem: TsomToken ): TCORBA_long;
+  somTD_SOMDestroyMutexSem      =Function({IN}sem: TsomToken ): TCORBA_long;
 
 var
   SOMCreateMutexSem     :somTD_SOMCreateMutexSem; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMCreateMutexSem';{$endif}
@@ -1174,7 +1155,7 @@ Procedure SOM_UninitEnvironment(ev: PCORBA_Environment);
  * doesn't have macro capability... (from SOMCDEV.H)
  *)
 
-function SOM_Resolve(o: TRealSOMObject; oc: TRealSOMClass; mn: somMToken): somMethodProc;
+function SOM_Resolve(o: TRealSOMObject; oc: TRealSOMClass; mn: TsomMToken): TsomMethodProc;
 
 { Change SOM_Resolve(o,ocn,mn) to...
   somTD_ocn_mn(somResolve(SOM_TestCls(o, ocnClassData.classObject), ocnClassData.mn)))
@@ -1229,72 +1210,72 @@ Procedure somCheckArgs(argc: TCORBA_long; argv: array of pchar);{$ifdef SOM_STDC
 
 Procedure somUnregisterClassLibrary (libraryName: TCORBA_string);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Function somResolveTerminal(x : PSOMClass; mdata: somMToken): somMethodProcPtr;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function somResolveTerminal(x : PRealSOMClass; mdata: TsomMToken): PsomMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Function somPCallResolve(obj: PSOMObject; callingCls: PSOMClass; method: somMToken): somMethodProcPtr;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function somPCallResolve(obj: PRealSOMObject; callingCls: PRealSOMClass; method: TsomMToken): PsomMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Function va_SOMObject_somDispatchA(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function va_SOMObject_somDispatchA(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): Pointer;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Function somva_SOMObject_somDispatchA(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function somva_SOMObject_somDispatchA(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): Pointer;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Function va_SOMObject_somDispatchL(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function va_SOMObject_somDispatchL(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): Longint;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Function somva_SOMObject_somDispatchL(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function somva_SOMObject_somDispatchL(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): Longint;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Function va_SOMObject_somDispatch(somSelf: PSOMObject;
+Function va_SOMObject_somDispatch(somSelf: PRealSOMObject;
                 retValue: PsomToken;
-                methodId: somId;
+                methodId: TsomId;
                 args: array of const): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Procedure va_SOMObject_somDispatchV(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Procedure va_SOMObject_somDispatchV(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Procedure somva_SOMObject_somDispatchV(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Procedure somva_SOMObject_somDispatchV(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Function va_SOMObject_somDispatchD(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function va_SOMObject_somDispatchD(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): double;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
-Function somva_SOMObject_somDispatchD(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function somva_SOMObject_somDispatchD(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): double;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-Function somva_SOMObject_somDispatch(somSelf: PSOMObject;
+Function somva_SOMObject_somDispatch(somSelf: PRealSOMObject;
                 retValue: PsomToken;
-                methodId: somId;
+                methodId: TsomId;
                 args: array of const): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 				
-Function somva_SOMObject_somClassDispatch(somSelf: PSOMObject;
-                clsObj: PSOMClass;
+Function somva_SOMObject_somClassDispatch(somSelf: PRealSOMObject;
+                clsObj: PRealSOMClass;
                 retValue: PsomToken;
-                methodId: somId;
+                methodId: TsomId;
                 args: array of const): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 type
-  somVaBuf = somToken;
+  TsomVaBuf = TsomToken;
 
-function somVaBuf_create(vb: somVaBuf; size: TCORBA_long): somVaBuf;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-procedure somVaBuf_get_valist(vb: somVaBuf; ap: Pva_list);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-procedure somVaBuf_destroy(vb: somVaBuf);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
-function somVaBuf_add(vb: somVaBuf; arg: somToken; typ: TCORBA_long): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+function somVaBuf_create(vb: TsomVaBuf; size: TCORBA_long): TsomVaBuf;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+procedure somVaBuf_get_valist(vb: TsomVaBuf; ap: Pva_list);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+procedure somVaBuf_destroy(vb: TsomVaBuf);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+function somVaBuf_add(vb: TsomVaBuf; arg: TsomToken; typ: TCORBA_long): TCORBA_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 function somvalistGetTarget(ap: Tva_list): TCORBA_unsigned_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 procedure somvalistSetTarget(ap: Tva_list; a: pointer);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
@@ -1318,10 +1299,10 @@ uses
   windows;
 {$endif}
 
-function somVaBuf_create(vb: somVaBuf; size: TCORBA_long): somVaBuf; external SOMTCDLL name 'somVaBuf_create';
-procedure somVaBuf_get_valist(vb: somVaBuf; ap: Pva_list); external SOMTCDLL name 'somVaBuf_get_valist';
-procedure somVaBuf_destroy(vb: somVaBuf); external SOMTCDLL name 'somVaBuf_destroy';
-function somVaBuf_add(vb: somVaBuf; arg: somToken; typ: TCORBA_long): TCORBA_long; external SOMTCDLL name 'somVaBuf_add';
+function somVaBuf_create(vb: TsomVaBuf; size: TCORBA_long): TsomVaBuf; external SOMTCDLL name 'somVaBuf_create';
+procedure somVaBuf_get_valist(vb: TsomVaBuf; ap: Pva_list); external SOMTCDLL name 'somVaBuf_get_valist';
+procedure somVaBuf_destroy(vb: TsomVaBuf); external SOMTCDLL name 'somVaBuf_destroy';
+function somVaBuf_add(vb: TsomVaBuf; arg: TsomToken; typ: TCORBA_long): TCORBA_long; external SOMTCDLL name 'somVaBuf_add';
 function somvalistGetTarget(ap: Tva_list): TCORBA_unsigned_long; external SOMTCDLL name 'somvalistGetTarget';
 procedure somvalistSetTarget(ap: Tva_list; a: pointer); external SOMTCDLL name 'somvalistSetTarget';
 
@@ -1329,31 +1310,31 @@ Procedure somSetOutChar(outch:somTD_SOMOutCharRoutine); external SOMDLL name 'so
 Function  somMainProgram:TRealSOMClassMgr; external SOMDLL name 'somMainProgram';
 Procedure somEnvironmentEnd; external SOMDLL name 'somEnvironmentEnd';
 Function  somAbnormalEnd: TCORBA_boolean; external SOMDLL name 'somAbnormalEnd';
-Function  somResolve(obj:TRealSOMObject; mdata:somMToken):somMethodProc; external SOMDLL name 'somResolve';
-Function  somParentResolve(parentMtabs:somMethodTabs; mToken:somMToken):somMethodProc; external SOMDLL name 'somParentResolve';
-Function  somParentNumResolve(parentMtabs:somMethodTabs; parentNum: TCORBA_long;mToken:somMToken):somMethodProc; external SOMDLL name 'somParentNumResolve';
-Function  somClassResolve(obj:TRealSOMClass; mdata:somMToken):somMethodProc; external SOMDLL name 'somClassResolve'; 
-Function  somAncestorResolve(obj:TRealSOMObject; var ccds:somCClassDataStructure; mToken:somMToken):somMethodProc;  external SOMDLL name 'somAncestorResolve';
-Function  somResolveByName(obj: TRealSOMObject; methodName: PCORBA_char):somMethodProc; external SOMDLL name 'somResolveByName';
-Function  somDataResolve(obj:TRealSOMObject; dataId:somDToken):somToken; external SOMDLL name 'somDataResolve';
-Function  somDataResolveChk(obj:TRealSOMObject; dataId:somDToken):somToken; external SOMDLL name 'somDataResolveChk';
+Function  somResolve(obj:TRealSOMObject; mdata: TsomMToken): TsomMethodProc; external SOMDLL name 'somResolve';
+Function  somParentResolve(parentMtabs: PsomMethodTabs; mToken: TsomMToken): TsomMethodProc; external SOMDLL name 'somParentResolve';
+Function  somParentNumResolve(parentMtabs: PsomMethodTabs; parentNum: TCORBA_long; mToken: TsomMToken): TsomMethodProc; external SOMDLL name 'somParentNumResolve';
+Function  somClassResolve(obj:TRealSOMClass; mdata: TsomMToken): TsomMethodProc; external SOMDLL name 'somClassResolve'; 
+Function  somAncestorResolve(obj:TRealSOMObject; var ccds: TsomCClassData; mToken: TsomMToken): TsomMethodProc;  external SOMDLL name 'somAncestorResolve';
+Function  somResolveByName(obj: TRealSOMObject; methodName: PCORBA_char): TsomMethodProc; external SOMDLL name 'somResolveByName';
+Function  somDataResolve(obj:TRealSOMObject; dataId: TsomDToken): TsomToken; external SOMDLL name 'somDataResolve';
+Function  somDataResolveChk(obj:TRealSOMObject; dataId: TsomDToken): TsomToken; external SOMDLL name 'somDataResolveChk';
 Function  somEnvironmentNew: TRealSOMClassMgr; external SOMDLL name 'somEnvironmentNew'; 
-Function  somIsObj(obj:somToken): TCORBA_boolean; external SOMDLL name 'somIsObj';
-Function  somGetClassFromMToken(mToken:somMToken):TRealSOMClass; external SOMDLL name 'somGetClassFromMToken';
-Function  somCheckID(id:somId):somId; external SOMDLL name 'somCheckId';
-Function  somRegisterId(id:somId): TCORBA_long; external SOMDLL name 'somRegisterId';
-Function  somIDFromString(aString: PCORBA_char):somId; external SOMDLL name 'somIdFromString';
-Function  somStringFromId(id:somId): TCORBA_string; external SOMDLL name 'somStringFromId';
-Function  somCompareIds(id1,id2:somId): TCORBA_long; external SOMDLL name 'somCompareIds';
+Function  somIsObj(obj: TsomToken): TCORBA_boolean; external SOMDLL name 'somIsObj';
+Function  somGetClassFromMToken(mToken: TsomMToken):TRealSOMClass; external SOMDLL name 'somGetClassFromMToken';
+Function  somCheckID(id: TsomId): TsomId; external SOMDLL name 'somCheckId';
+Function  somRegisterId(id: TsomId): TCORBA_long; external SOMDLL name 'somRegisterId';
+Function  somIDFromString(aString: PCORBA_char): TsomId; external SOMDLL name 'somIdFromString';
+Function  somStringFromId(id: TsomId): TCORBA_string; external SOMDLL name 'somStringFromId';
+Function  somCompareIds(id1,id2: TsomId): TCORBA_long; external SOMDLL name 'somCompareIds';
 Function  somTotalRegIds: TCORBA_long; external SOMDLL name 'somTotalRegIds';
 Procedure somSetExpectedIds(numIds: TCORBA_unsigned_long); external SOMDLL name 'somSetExpectedIds';
-Function  somUniqueKey(id:somId): TCORBA_unsigned_long; external SOMDLL name 'somUniqueKey';
+Function  somUniqueKey(id: TsomId): TCORBA_unsigned_long; external SOMDLL name 'somUniqueKey';
 Procedure somBeginPersistentIds; external SOMDLL name 'somBeginPersistentIds';
 Procedure somEndPersistentIds; external SOMDLL name 'somEndPersistentIds';
-Procedure somRegisterClassLibrary(libraryName: TCORBA_string; libraryInitRun:somMethodProc); external SOMDLL name 'somRegisterClassLibrary';
-Function  somApply(var somSelf:TRealSOMObject; var retVal:somToken; mdPtr:somMethodDataPtr; var ap): TCORBA_boolean; external SOMDLL name 'somApply';
-Function  somBuildClass(inherit_vars: TCORBA_long; var sci:somStaticClassInfo; majorVersion,minorVersion: TCORBA_long):TRealSOMClass; external SOMDLL name 'somBuildClass';
-Procedure somConstructClass(classInitRoutine:somTD_ClassInitRoutine; parentClass,metaClass:TRealSOMClass; var cds :somClassDataStructure); external SOMDLL name 'somConstructClass';
+Procedure somRegisterClassLibrary(libraryName: TCORBA_string; libraryInitRun: TsomMethodProc); external SOMDLL name 'somRegisterClassLibrary';
+Function  somApply(var somSelf: TRealSOMObject; var retVal: TsomToken; mdPtr: PsomMethodData; var ap): TCORBA_boolean; external SOMDLL name 'somApply';
+Function  somBuildClass(inherit_vars: TCORBA_long; var sci: TsomStaticClassInfo; majorVersion,minorVersion: TCORBA_long):TRealSOMClass; external SOMDLL name 'somBuildClass';
+Procedure somConstructClass(classInitRoutine:somTD_ClassInitRoutine; parentClass,metaClass:TRealSOMClass; var cds : TsomClassData); external SOMDLL name 'somConstructClass';
 Function  somVPrintf(fmt: PCORBA_char; ap: Tva_list): TCORBA_long; external SOMDLL name 'somVprintf';
 {$ifdef SOM_VARARGS}
 Function  somPrintf(fmt: TCORBA_string): TCORBA_long; cdecl; varargs; external SOMDLL name 'somPrintf';
@@ -1361,7 +1342,7 @@ Function  somPrintf(fmt: TCORBA_string): TCORBA_long; cdecl; varargs; external S
 Function  somPrintf(fmt: TCORBA_string; args: array of const): TCORBA_long;
 var
   ap: tva_list;
-  vb: somVaBuf;
+  vb: TsomVaBuf;
   i: integer;
 begin
   vb:=somVaBuf_create(nil, 0);
@@ -1389,7 +1370,17 @@ end;
 {$endif}
 
 Procedure somPrefixLevel(level: TCORBA_long); external SOMDLL name 'somPrefixLevel';
-Procedure somLPrintf(level: TCORBA_long; fmt: TCORBA_string; var buf); external SOMDLL name 'somLPrintf';
+
+{$ifdef SOM_VARARGS}
+Procedure somLPrintf(level: TCORBA_long; fmt: TCORBA_string); cdecl; varargs; external SOMDLL name 'somLPrintf';
+{$else}
+Procedure somLPrintf(level: TCORBA_long; fmt: TCORBA_string; args: array of const);
+begin
+  somPrefixLevel(Level);
+  somPrintf(fmt, args);
+end;
+{$endif}
+
 Function  somTestCls(obj:TRealSOMObject; classObj:TRealSOMClass; fileName: TCORBA_string; lineNumber: TCORBA_long):TRealSOMObject; external SOMDLL name 'somTestCls';
 Procedure somTest(condition,severity: TCORBA_long; fileName: TCORBA_string; lineNum: TCORBA_long; msg: TCORBA_string); external SOMDLL name 'somTest';
 Procedure somAssert(condition,ecode: TCORBA_long; fileName: TCORBA_string; lineNum: TCORBA_long; msg: TCORBA_string); external SOMDLL name 'somAssert';
@@ -1400,73 +1391,73 @@ Procedure somSetException(var ev: TCORBA_Environment; major: TCORBA_exception_ty
 Function  somGetGlobalEnvironment: PCORBA_Environment; external SOMDLL name 'somGetGlobalEnvironment';
 Procedure somCheckArgs(argc: TCORBA_long; argv: array of pchar); external SOMDLL name 'somCheckArgs';
 Procedure somUnregisterClassLibrary (libraryName: TCORBA_string); external SOMDLL name 'somUnregisterClassLibrary';
-Function somResolveTerminal(x : PSOMClass; mdata: somMToken): somMethodProcPtr; external SOMDLL name 'somResolveTerminal';
-Function somPCallResolve(obj: PSOMObject; callingCls: PSOMClass; method: somMToken): somMethodProcPtr; external SOMDLL name 'somPCallResolve';
-Function va_SOMObject_somDispatchA(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function somResolveTerminal(x : PRealSOMClass; mdata: TsomMToken): PsomMethodProc; external SOMDLL name 'somResolveTerminal';
+Function somPCallResolve(obj: PRealSOMObject; callingCls: PRealSOMClass; method: TsomMToken): PsomMethodProc; external SOMDLL name 'somPCallResolve';
+Function va_SOMObject_somDispatchA(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): Pointer;
   external SOMDLL name 'va_SOMObject_somDispatchA';
-Function somva_SOMObject_somDispatchA(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function somva_SOMObject_somDispatchA(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): Pointer;
   external SOMDLL name 'somva_SOMObject_somDispatchA';
-Function va_SOMObject_somDispatchL(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function va_SOMObject_somDispatchL(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): Longint;
   external SOMDLL name 'va_SOMObject_somDispatchL';
-Function somva_SOMObject_somDispatchL(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function somva_SOMObject_somDispatchL(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): Longint;
   external SOMDLL name 'somva_SOMObject_somDispatchL';
 
-Function va_SOMObject_somDispatch(somSelf: PSOMObject;
+Function va_SOMObject_somDispatch(somSelf: PRealSOMObject;
                 retValue: PsomToken;
-                methodId: somId;
+                methodId: TsomId;
                 args: array of const): TCORBA_boolean; external SOMDLL name 'va_SOMObject_somDispatch';
 
-Procedure va_SOMObject_somDispatchV(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Procedure va_SOMObject_somDispatchV(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const); external SOMDLL name 'va_SOMObject_somDispatchV';
 
-Procedure somva_SOMObject_somDispatchV(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Procedure somva_SOMObject_somDispatchV(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const); external SOMDLL name 'somva_SOMObject_somDispatchV';
 
-Function va_SOMObject_somDispatchD(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function va_SOMObject_somDispatchD(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): double; external SOMDLL name 'va_SOMObject_somDispatchD';
 
-Function somva_SOMObject_somDispatchD(somSelf: PSOMObject;
-                methodId: somId;
-                descriptor: somId;
+Function somva_SOMObject_somDispatchD(somSelf: PRealSOMObject;
+                methodId: TsomId;
+                descriptor: TsomId;
                 args: array of const): double; external SOMDLL name 'somva_SOMObject_somDispatchD';
-Function somva_SOMObject_somDispatch(somSelf: PSOMObject;
+Function somva_SOMObject_somDispatch(somSelf: PRealSOMObject;
                 retValue: PsomToken;
-                methodId: somId;
+                methodId: TsomId;
                 args: array of const): TCORBA_boolean; external SOMDLL name 'somva_SOMObject_somDispatch';
 				
-Function somva_SOMObject_somClassDispatch(somSelf: PSOMObject;
-                clsObj: PSOMClass;
+Function somva_SOMObject_somClassDispatch(somSelf: PRealSOMObject;
+                clsObj: PRealSOMClass;
                 retValue: PsomToken;
-                methodId: somId;
+                methodId: TsomId;
                 args: array of const): TCORBA_boolean; external SOMDLL name 'somva_SOMObject_somClassDispatch';
 
 /////////////////////////////////////////////////////////////////////
 
-function SOM_Resolve(o: TRealSOMObject; oc: TRealSOMClass; mn: somMToken): somMethodProc;
+function SOM_Resolve(o: TRealSOMObject; oc: TRealSOMClass; mn: TsomMToken): TsomMethodProc;
 begin
   //@todo Test_cls here
   {$ifdef SOM_METHOD_THUNKS}
-  Result := somMethodProc(mn);
+  Result := TsomMethodProc(mn);
   {$else}
-  Result := somMethodProc(somResolve(o, mn));
+  Result := TsomMethodProc(somResolve(o, mn));
   {$endif}
 end;
 
@@ -1526,7 +1517,7 @@ var
 // Our custom memory management. Alow us to store some info about SOM classes and Object Pascal classes linking.
 
 
-Function MyMalloc(size_t:Integer):somToken;
+Function MyMalloc(size_t:Integer): TsomToken;
 begin
 //  somprintf('Malloc', []);
   if size_t<=0 then begin
@@ -1544,14 +1535,14 @@ begin
 //  somprintf('%08X', [result]);
 end;
 
-Function MyCalloc(size_c:Integer; size_e:Integer):somToken;
+Function MyCalloc(size_c:Integer; size_e:Integer): TsomToken;
 begin
 //  somprintf('Calloc', []);
   Result := somTD_SOMCalloc(OldCalloc)(size_c,size_e);
   //somprintf('c',[]);
 end;
 
-Procedure MyFree(ref:somToken);
+Procedure MyFree(ref: TsomToken);
 var
   size          : Longint;
 begin
@@ -1568,7 +1559,7 @@ begin
   end;
 end;
 
-Function MyRealloc(ref:somToken; size:Integer):somToken;
+Function MyRealloc(ref: TsomToken; size:Integer): TsomToken;
 var
   oldsize       : Longint;
   //oldtype       : Longint;

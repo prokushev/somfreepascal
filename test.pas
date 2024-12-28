@@ -1,4 +1,5 @@
 {$I som.inc}
+{$R-}
 
 uses sysutils, som, somobj, somcls, somcm, math;
 
@@ -27,7 +28,7 @@ end;
 var
   clsmgr: TRealSOMObject;
   tst: somTD_SOMObject_somDumpSelf;
-  a: _IDL_SEQUENCE_SOMClass;
+  a: TSOMClass_SOMClassSequence;
   i: integer;
 //  cmo: TSOMObject;
   m: somTD_SOMObject_somPrintSelf;
@@ -98,7 +99,7 @@ exit;
 
   // Try to resolve SOMClassManager operation by somMToken
   WriteLn('SOMClassMgr.somDumpSelf');
-  {$ifdef fpc}somMethodProc(tst):={$else}@tst:=Pointer{$endif}(SOM_Resolve(clsmgr, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelf));
+  {$ifdef fpc}TsomMethodProc(tst):={$else}@tst:=Pointer{$endif}(SOM_Resolve(clsmgr, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelf));
   tst(clsmgr, 0);
 (*
   // Try to resolve SOMClassManager operation by procedural-style bindings
@@ -109,7 +110,7 @@ exit;
   // Now Dump SOMClassMgr class to know _get_somRegisteredClasses method address
   SOMClass_somDumpSelf(SOMClassMgr_somGetClass(SOMClassMgrObject), 0);  {Dump class data}
   // Try to get method and print address
-  WriteLn(Inttohex(longint(SOMResolveByName(SOMClassMgrObject, '_get_somRegisteredClasses')),8));
+  WriteLn(Inttohex(longint(SOMResolveByName(SOMClassMgrObject, '_get_somRegisteredClasses')),8));*)
   // And try exec via mapping
   a:=SOMClassMgr__get_somRegisteredClasses(SOMClassMgrObject);
   // Dump sequence info
@@ -120,7 +121,6 @@ exit;
     WriteLn(IntToHex(longint(a._buffer[i]), 8));
     SOMObject_somDumpSelf(a._buffer[i], 0);
   end;
-*)
 
   // Try via Pascal class
 {  WriteLn('test object pascal...');

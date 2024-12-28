@@ -1,5 +1,5 @@
 {
-    Copyright (c) 1994-1996 by International Business Machines Corporation
+    Copyright (c) 1994-1996 Interfaces by International Business Machines Corporation
     Copyright (c) 1997 Antony T Curtis.
     Copyright (c) 2002-2007, 2025 Yuri Prokushev (yuri.prokushev@gmail.com)
     Copyright (c) 2004-2005 Andrey Vasilkin
@@ -36,43 +36,49 @@ const
   SOMClassMgr_MajorVersion = 1;
   SOMClassMgr_MinorVersion = 4;
 
+type
+  TSOMClassMgrCClassData   = record
+    parentMtab                  : PsomMethodTabs;
+    instanceDataToken           : TsomDToken;
+  end;
+
 var
-  SOMClassMgrCClassData         : somCClassDataStructure; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMClassMgrCClassData';{$endif}
+  SOMClassMgrCClassData         : TSOMClassMgrCClassData; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMClassMgrCClassData';{$endif}
 
 type
   TSOMClassMgrClassDataStructure = record
     classObject                 : TRealSOMClass;
 	// SOM 1 Methods
-    somFindClsInFile            : somMToken;
-    somFindClass                : somMToken;
-    somClassFromId              : somMToken;
-    somRegisterClass            : somMToken;
-    somUnregisterClass          : somMToken;
-    somLocateClassFile          : somMToken;
-    somLoadClassFile            : somMToken;
-    somUnloadClassFile          : somMToken;
-    somGetInitFunction          : somMToken;
-    somMergeInto                : somMToken;
-    somGetRelatedClasses        : somMToken;
+    somFindClsInFile            : TsomMToken;
+    somFindClass                : TsomMToken;
+    somClassFromId              : TsomMToken;
+    somRegisterClass            : TsomMToken;
+    somUnregisterClass          : TsomMToken;
+    somLocateClassFile          : TsomMToken;
+    somLoadClassFile            : TsomMToken;
+    somUnloadClassFile          : TsomMToken;
+    somGetInitFunction          : TsomMToken;
+    somMergeInto                : TsomMToken;
+    somGetRelatedClasses        : TsomMToken;
 	// SOM 2 Methods
 	{$ifdef SOM_VERSION_2}
-    somSubstituteClass          : somMToken;
-    _get_somInterfaceRepository : somMToken;
-    _set_somInterfaceRepository : somMToken;
-    _get_somRegisteredClasses   : somMToken;
-    somBeginPersistentClasses   : somMToken;
-    somEndPersistentClasses     : somMToken;
-    somReleaseClasses           : somMToken;
-    somRegisterThreadUsage      : somMToken;
-    somRegisterClassLibrary     : somMToken;
-    somJoinAffinityGroup        : somMToken;
-    somUnregisterClassLibrary	: somMToken;
+    somSubstituteClass          : TsomMToken;
+    _get_somInterfaceRepository : TsomMToken;
+    _set_somInterfaceRepository : TsomMToken;
+    _get_somRegisteredClasses   : TsomMToken;
+    somBeginPersistentClasses   : TsomMToken;
+    somEndPersistentClasses     : TsomMToken;
+    somReleaseClasses           : TsomMToken;
+    somRegisterThreadUsage      : TsomMToken;
+    somRegisterClassLibrary     : TsomMToken;
+    somJoinAffinityGroup        : TsomMToken;
+    somUnregisterClassLibrary	: TsomMToken;
 	{$endif}
 	// SOM 3 Methods
 	{$ifdef SOM_VERSION_3}
-    somImportObject				: somMToken;
-    somCIBFromClassId			: somMToken;
-    somCopyOnImport				: somMToken;
+    somImportObject				: TsomMToken;
+    somCIBFromClassId			: TsomMToken;
+    somCopyOnImport				: TsomMToken;
 	{$endif}
   end;
 
@@ -96,11 +102,11 @@ const
 
 type
   somTP_SOMClassMgr_somLoadClassFile = function(somSelf: TRealSOMClassMgr;
-    classId: somId; majorVersion, minorVersion: LongInt;
+    classId: TsomId; majorVersion, minorVersion: LongInt;
     fileName: PCORBA_char): TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somLoadClassFile = somTP_SOMClassMgr_somLoadClassFile;
 
-function SOMClassMgr_somLoadClassFile(somSelf: TRealSOMClassMgr; classId: somId;
+function SOMClassMgr_somLoadClassFile(somSelf: TRealSOMClassMgr; classId: TsomId;
   majorVersion, minorVersion: LongInt; fileName: PCORBA_char): TRealSOMClass;
 
 (*
@@ -120,10 +126,10 @@ const
 
 type
   somTP_SOMClassMgr_somLocateClassFile = function(somSelf: TRealSOMClassMgr;
-    classId: somId; majorVersion, minorVersion: LongInt): PCORBA_char; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+    classId: TsomId; majorVersion, minorVersion: LongInt): PCORBA_char; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somLocateClassFile = somTP_SOMClassMgr_somLocateClassFile;
 
-function SOMClassMgr_somLocateClassFile(somSelf: TRealSOMClassMgr; classId: somId;
+function SOMClassMgr_somLocateClassFile(somSelf: TRealSOMClassMgr; classId: TsomId;
   majorVersion, minorVersion: LongInt): PCORBA_char;
 
 (*
@@ -256,10 +262,10 @@ const
   somMD_SOMClassMgr_somClassFromId = '::SOMClassMgr::somClassFromId';
 
 type
-  somTP_SOMClassMgr_somClassFromId = function(somSelf: TRealSOMClassMgr; classId: somId): TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMClassMgr_somClassFromId = function(somSelf: TRealSOMClassMgr; classId: TsomId): TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somClassFromId = somTP_SOMClassMgr_somClassFromId;
 
-function SOMClassMgr_somClassFromId(somSelf: TRealSOMClassMgr; classId: somId): TRealSOMClass;
+function SOMClassMgr_somClassFromId(somSelf: TRealSOMClassMgr; classId: TsomId): TRealSOMClass;
 
 (*
  * New Method: somFindClass
@@ -276,10 +282,10 @@ const
 
 type
   somTP_SOMClassMgr_somFindClass = function(somSelf: TRealSOMClassMgr;
-    classId: somId; majorVersion, minorVersion: LongInt): TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+    classId: TsomId; majorVersion, minorVersion: LongInt): TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somFindClass = somTP_SOMClassMgr_somFindClass;
 
-function SOMClassMgr_somFindClass(somSelf: TRealSOMClassMgr; classId: somId; majorVersion, minorVersion: LongInt): TRealSOMClass;
+function SOMClassMgr_somFindClass(somSelf: TRealSOMClassMgr; classId: TsomId; majorVersion, minorVersion: LongInt): TRealSOMClass;
 
 (*
  * New Method: somFindClsInFile
@@ -297,11 +303,11 @@ const
 
 type
   somTP_SOMClassMgr_somFindClsInFile = function(somSelf: TRealSOMClassMgr;
-    classId: somId; majorVersion, minorVersion: LongInt; fileName: PCORBA_char):
+    classId: TsomId; majorVersion, minorVersion: LongInt; fileName: PCORBA_char):
     TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somFindClsInFile = somTP_SOMClassMgr_somFindClsInFile;
 
-function SOMClassMgr_somFindClsInFile(somSelf: TRealSOMClassMgr; classId: somId;
+function SOMClassMgr_somFindClsInFile(somSelf: TRealSOMClassMgr; classId: TsomId;
   majorVersion, minorVersion: LongInt; fileName: PCORBA_char): TRealSOMClass;
 
 (*
@@ -416,11 +422,10 @@ const
   somMD_SOMClassMgr__get_somRegisteredClasses = '::SOMClassMgr::_get_somRegisteredClasses';
 
 type
-  somTP_SOMClassMgr__get_somRegisteredClasses = function(somSelf: TRealSOMClassMgr):
-    _IDL_SEQUENCE_SOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTP_SOMClassMgr__get_somRegisteredClasses = function(somSelf: TRealSOMClassMgr): TSOMClass_SOMClassSequence; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr__get_somRegisteredClasses = somTP_SOMClassMgr__get_somRegisteredClasses;
 
-function SOMClassMgr__get_somRegisteredClasses(somSelf: TRealSOMClassMgr): _IDL_SEQUENCE_SOMClass;
+function SOMClassMgr__get_somRegisteredClasses(somSelf: TRealSOMClassMgr): TSOMClass_SOMClassSequence;
 
 (*
  * New Method: somBeginPersistentClasses
@@ -577,24 +582,24 @@ function SOMClassMgr_somGetClassName(somSelf: TRealSOMClassMgr): PCORBA_char;
 function SOMClassMgr_somGetSize(somSelf: TRealSOMClassMgr): LongInt;
 function SOMClassMgr_somIsA(somSelf: TRealSOMClassMgr; aClassObj: TRealSOMClass): TCORBA_boolean;
 function SOMClassMgr_somIsInstanceOf(somSelf: TRealSOMClassMgr; aClassObj: TRealSOMClass): TCORBA_boolean;
-function SOMClassMgr_somRespondsTo(somSelf: TRealSOMClassMgr; mId: somId): TCORBA_boolean;
+function SOMClassMgr_somRespondsTo(somSelf: TRealSOMClassMgr; mId: TsomId): TCORBA_boolean;
 function SOMClassMgr_somPrintSelf(somSelf: TRealSOMClassMgr): TRealSOMObject;
 procedure SOMClassMgr_somDumpSelf(somSelf: TRealSOMClassMgr; level: LongInt);
 procedure SOMClassMgr_somDumpSelfInt(somSelf: TRealSOMClassMgr; level: LongInt);
 
 {$ifdef SOM_VERSION_2}
-procedure SOMClassMgr_somDefaultInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr);
-procedure SOMClassMgr_somDestruct(somSelf: TRealSOMClassMgr; doFree: TCORBA_boolean; ctrl: somDestructCtrlPtr);
-procedure SOMClassMgr_somDefaultCopyInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
-function SOMClassMgr_somDefaultAssign(somSelf: TRealSOMClassMgr; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
-procedure SOMClassMgr_somDefaultConstCopyInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
-procedure SOMClassMgr_somDefaultVCopyInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
-procedure SOMClassMgr_somDefaultConstVCopyInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
-function SOMClassMgr_somDefaultConstAssign(somSelf: TRealSOMClassMgr; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
-function SOMClassMgr_somDefaultVAssign(somSelf: TRealSOMClassMgr; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
-function SOMClassMgr_somDefaultConstVAssign(somSelf: TRealSOMClassMgr; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
-function SOMClassMgr_somDispatch(somSelf: TRealSOMClassMgr; var retValue: somToken; methodId: somId; ap: Tva_list{array of const}): TCORBA_boolean;
-function SOMClassMgr_somClassDispatch(somSelf: TRealSOMClassMgr; clsObj: TRealSOMClass; var retValue: somToken; methodId: somId; ap: tva_list{array of const}): TCORBA_boolean;
+procedure SOMClassMgr_somDefaultInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl);
+procedure SOMClassMgr_somDestruct(somSelf: TRealSOMClassMgr; doFree: TCORBA_boolean; ctrl: PsomDestructCtrl);
+procedure SOMClassMgr_somDefaultCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
+function SOMClassMgr_somDefaultAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
+procedure SOMClassMgr_somDefaultConstCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
+procedure SOMClassMgr_somDefaultVCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
+procedure SOMClassMgr_somDefaultConstVCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
+function SOMClassMgr_somDefaultConstAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMClassMgr_somDefaultVAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMClassMgr_somDefaultConstVAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMClassMgr_somDispatch(somSelf: TRealSOMClassMgr; var retValue: TsomToken; methodId: TsomId; ap: Tva_list{array of const}): TCORBA_boolean;
+function SOMClassMgr_somClassDispatch(somSelf: TRealSOMClassMgr; clsObj: TRealSOMClass; var retValue: TsomToken; methodId: TsomId; ap: tva_list{array of const}): TCORBA_boolean;
 function SOMClassMgr_somCastObj(somSelf: TRealSOMClassMgr; castedCls: TRealSOMClass): TCORBA_boolean;
 function SOMClassMgr_somResetObj(somSelf: TRealSOMClassMgr): TCORBA_boolean;
 {$endif}
@@ -638,21 +643,21 @@ Implementation
 
 Function SOMClassMgrNewClass(majorVersion,minorVersion:Longint):TRealSOMClass; external SOMDLL name 'SOMClassMgrNewClass';
 
-function SOMClassMgr_somLoadClassFile(somSelf: TRealSOMClassMgr; classId: somId;
+function SOMClassMgr_somLoadClassFile(somSelf: TRealSOMClassMgr; classId: TsomId;
   majorVersion, minorVersion: LongInt; fileName: PCORBA_char): TRealSOMClass;
 var
   mt: somTD_SOMClassMgr_somLoadClassFile;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somLoadClassFile));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somLoadClassFile));
   Result := mt(somSelf, classId, majorVersion, minorVersion, fileName);
 end;
 
-function SOMClassMgr_somLocateClassFile(somSelf: TRealSOMClassMgr; classId: somId;
+function SOMClassMgr_somLocateClassFile(somSelf: TRealSOMClassMgr; classId: TsomId;
   majorVersion, minorVersion: LongInt): PCORBA_char;
 var
   mt: somTD_SOMClassMgr_somLocateClassFile;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somLocateClassFile));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somLocateClassFile));
   Result := mt(somSelf, classId, majorVersion, minorVersion);
 end;
 
@@ -661,7 +666,7 @@ procedure SOMClassMgr_somRegisterClass(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somRegisterClass;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somRegisterClass));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somRegisterClass));
   mt(somSelf, classObj);
 end;
 
@@ -669,7 +674,7 @@ function SOMClassMgr_somUnloadClassFile(somSelf: TRealSOMClassMgr; classObj: TRe
 var
   mt: somTD_SOMClassMgr_somUnloadClassFile;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somUnloadClassFile));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somUnloadClassFile));
   Result := mt(somSelf, classObj);
 end;
 
@@ -678,7 +683,7 @@ function SOMClassMgr_somUnregisterClass(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somUnregisterClass;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somUnregisterClass));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somUnregisterClass));
   Result := mt(somSelf, classObj);
 end;
 
@@ -686,7 +691,7 @@ function SOMClassMgr_somGetInitFunction(somSelf: TRealSOMClassMgr): PCORBA_char;
 var
   mt: somTD_SOMClassMgr_somGetInitFunction;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somGetInitFunction));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somGetInitFunction));
   Result := mt(somSelf);
 end;
 
@@ -695,31 +700,31 @@ function SOMClassMgr_somGetRelatedClasses(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somGetRelatedClasses;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somGetRelatedClasses));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somGetRelatedClasses));
   Result :=mt(somSelf, classObj);
 end;
 
-function SOMClassMgr_somClassFromId(somSelf: TRealSOMClassMgr; classId: somId): TRealSOMClass;
+function SOMClassMgr_somClassFromId(somSelf: TRealSOMClassMgr; classId: TsomId): TRealSOMClass;
 var
   mt: somTD_SOMClassMgr_somClassFromId;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somClassFromId));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somClassFromId));
   Result := mt(somSelf, classId);
 end;
 
-function SOMClassMgr_somFindClass(somSelf: TRealSOMClassMgr; classId: somId; majorVersion, minorVersion: LongInt): TRealSOMClass;
+function SOMClassMgr_somFindClass(somSelf: TRealSOMClassMgr; classId: TsomId; majorVersion, minorVersion: LongInt): TRealSOMClass;
 var
   mt: somTD_SOMClassMgr_somFindClass;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somFindClass));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somFindClass));
   Result := mt(somSelf, classId, majorVersion, minorVersion);
 end;
 
-function SOMClassMgr_somFindClsInFile(somSelf: TRealSOMClassMgr; classId: somId; majorVersion, minorVersion: LongInt; fileName: PCORBA_char): TRealSOMClass;
+function SOMClassMgr_somFindClsInFile(somSelf: TRealSOMClassMgr; classId: TsomId; majorVersion, minorVersion: LongInt; fileName: PCORBA_char): TRealSOMClass;
 var
   mt: somTD_SOMClassMgr_somFindClsInFile;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somFindClsInFile));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somFindClsInFile));
   Result := mt(somSelf, classId, majorVersion, minorVersion, fileName);
 end;
 
@@ -727,7 +732,7 @@ procedure SOMClassMgr_somMergeInto(somSelf: TRealSOMClassMgr; targetObj: TRealSO
 var
   mt: somTD_SOMClassMgr_somMergeInto;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somMergeInto));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somMergeInto));
   mt(somSelf, targetObj);
 end;
 
@@ -738,7 +743,7 @@ function SOMClassMgr_somSubstituteClass(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somSubstituteClass;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somSubstituteClass));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somSubstituteClass));
   Result := mt(somSelf, origClassName, newClassName);
 end;
 
@@ -746,7 +751,7 @@ function SOMClassMgr__get_somInterfaceRepository(somSelf: TRealSOMClassMgr): TRe
 var
   mt: somTD_SOMClassMgr__get_somInterfaceRepository;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData._get_somInterfaceRepository));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData._get_somInterfaceRepository));
   Result := mt(somSelf);
 end;
 
@@ -755,15 +760,15 @@ procedure SOMClassMgr__set_somInterfaceRepository(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr__set_somInterfaceRepository;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData._set_somInterfaceRepository));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData._set_somInterfaceRepository));
   mt(somSelf, somInterfaceRepository);
 end;
 
-function SOMClassMgr__get_somRegisteredClasses(somSelf: TRealSOMClassMgr): _IDL_SEQUENCE_SOMClass; 
+function SOMClassMgr__get_somRegisteredClasses(somSelf: TRealSOMClassMgr): TSOMClass_SOMClassSequence; 
 var
   mt: somTP_SOMClassMgr__get_somRegisteredClasses;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData._get_somRegisteredClasses));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData._get_somRegisteredClasses));
   Result:=mt(somSelf);
 end;
 
@@ -771,7 +776,7 @@ procedure SOMClassMgr_somBeginPersistentClasses(somSelf: TRealSOMClassMgr);
 var
   mt: somTD_SOMClassMgr_somBeginPersistentClasses;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somBeginPersistentClasses));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somBeginPersistentClasses));
   mt(somSelf);
 end;
 
@@ -779,7 +784,7 @@ procedure SOMClassMgr_somEndPersistentClasses(somSelf: TRealSOMClassMgr);
 var
   mt: somTD_SOMClassMgr_somEndPersistentClasses;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somEndPersistentClasses));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somEndPersistentClasses));
   mt(somSelf);
 end;
 
@@ -788,7 +793,7 @@ procedure SOMClassMgr_somRegisterClassLibrary(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somRegisterClassLibrary;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somRegisterClassLibrary));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somRegisterClassLibrary));
   mt(somSelf, libraryName, libraryInitRtn);
 end;
 
@@ -797,7 +802,7 @@ function SOMClassMgr_somJoinAffinityGroup(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somJoinAffinityGroup;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somJoinAffinityGroup));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somJoinAffinityGroup));
   Result := mt(somSelf, newClass, affClass);
 end;
 
@@ -807,7 +812,7 @@ procedure SOMClassMgr_somUnregisterClassLibrary(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somUnregisterClassLibrary;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somUnregisterClassLibrary));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somUnregisterClassLibrary));
   mt(somSelf, libraryName);
 end;
 
@@ -820,7 +825,7 @@ function SOMClassMgr_somImportObject(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somImportObject;
 begin
-  {$ifdef fpc}somMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somImportObject));
+  {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somImportObject));
   Result := mt(somSelf, objToBeShared);
 end;
 
@@ -867,7 +872,7 @@ begin
   Result:=SOMObject_somIsInstanceOf(somSelf, aClassObj);
 end;
 
-function SOMClassMgr_somRespondsTo(somSelf: TRealSOMClassMgr; mId: somId): TCORBA_boolean;
+function SOMClassMgr_somRespondsTo(somSelf: TRealSOMClassMgr; mId: TsomId): TCORBA_boolean;
 begin
   Result:=SOMObject_somRespondsTo(somSelf, mId);
 end;
@@ -889,63 +894,63 @@ end;
 
 {$ifdef SOM_VERSION_2}
 
-procedure SOMClassMgr_somDefaultInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr);
+procedure SOMClassMgr_somDefaultInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl);
 begin
   SOMObject_somDefaultInit(somSelf, ctrl);
 end;
 
 
-procedure SOMClassMgr_somDestruct(somSelf: TRealSOMClassMgr; doFree: TCORBA_boolean; ctrl: somDestructCtrlPtr);
+procedure SOMClassMgr_somDestruct(somSelf: TRealSOMClassMgr; doFree: TCORBA_boolean; ctrl: PsomDestructCtrl);
 begin
   SOMObject_somDestruct(somSelf, doFree, ctrl);
 end;
 
-procedure SOMClassMgr_somDefaultCopyInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMClassMgr_somDefaultCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 begin
   SOMObject_somDefaultCopyInit(somSelf, ctrl, fromObj);
 end;
 
-function SOMClassMgr_somDefaultAssign(somSelf: TRealSOMClassMgr; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMClassMgr_somDefaultAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 begin
   Result:=SOMObject_somDefaultAssign(somSelf, ctrl, fromObj);
 end;
 
-procedure SOMClassMgr_somDefaultConstCopyInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMClassMgr_somDefaultConstCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 begin
   SOMObject_somDefaultConstCopyInit(somSelf, ctrl, fromObj);
 end;
 
-procedure SOMClassMgr_somDefaultVCopyInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMClassMgr_somDefaultVCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 begin
   SOMObject_somDefaultVCopyInit(somSelf, ctrl, fromObj);
 end;
 
-procedure SOMClassMgr_somDefaultConstVCopyInit(somSelf: TRealSOMClassMgr; ctrl: somInitCtrlPtr; fromObj: TRealSOMObject);
+procedure SOMClassMgr_somDefaultConstVCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 begin
   SOMObject_somDefaultConstVCopyInit(somSelf, ctrl, fromObj);
 end;
 
-function SOMClassMgr_somDefaultConstAssign(somSelf: TRealSOMClassMgr; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMClassMgr_somDefaultConstAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 begin
   Result:=SOMObject_somDefaultConstAssign(somSelf, ctrl, fromObj);
 end;
 
-function SOMClassMgr_somDefaultVAssign(somSelf: TRealSOMClassMgr; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMClassMgr_somDefaultVAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 begin
   Result:=SOMObject_somDefaultVAssign(somSelf, ctrl, fromObj);
 end;
 
-function SOMClassMgr_somDefaultConstVAssign(somSelf: TRealSOMClassMgr; ctrl: somAssignCtrlPtr; fromObj: TRealSOMObject): TRealSOMObject;
+function SOMClassMgr_somDefaultConstVAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 begin
   Result:=SOMObject_somDefaultConstVAssign(somSelf, ctrl, fromObj);
 end;
 
-function SOMClassMgr_somDispatch(somSelf: TRealSOMClassMgr; var retValue: somToken; methodId: somId; ap: Tva_list{array of const}): TCORBA_boolean;
+function SOMClassMgr_somDispatch(somSelf: TRealSOMClassMgr; var retValue: TsomToken; methodId: TsomId; ap: Tva_list{array of const}): TCORBA_boolean;
 begin
   Result:=SOMObject_somDispatch(somSelf, retValue, methodId, ap);
 end;
 
-function SOMClassMgr_somClassDispatch(somSelf: TRealSOMClassMgr; clsObj: TRealSOMClass; var retValue: somToken; methodId: somId; ap: tva_list{array of const}): TCORBA_boolean;
+function SOMClassMgr_somClassDispatch(somSelf: TRealSOMClassMgr; clsObj: TRealSOMClass; var retValue: TsomToken; methodId: TsomId; ap: tva_list{array of const}): TCORBA_boolean;
 begin
   Result:=SOMObject_somClassDispatch(somSelf, clsObj, retValue, methodId, ap);
 end;

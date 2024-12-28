@@ -58,47 +58,57 @@
   {$define SOM_EXTVAR}
   {$define SOM_VARARGS}
   {$define SOM_LONG_LONG}
+  {$define SOM_WCHAR}
 {$ENDIF}
 
 {$ifdef ver90} {Delphi 2}
   {$define SOM_STDCALL}
+  {$define SOM_WCHAR}
 {$endif}
 
 {$ifdef VER100} {Delphi 3}
   {$define SOM_STDCALL}
+  {$define SOM_WCHAR}
 {$endif}
 
 {$ifdef VER120} {Delphi 4}
   {$define SOM_STDCALL}
+  {$define SOM_WCHAR}
 {$endif}
 
 {$ifdef VER130} {Delphi 5}
   {$define SOM_STDCALL}
+  {$define SOM_WCHAR}
 {$endif}
 
 {$ifdef VER140} {Delphi 6}
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
+  {$define SOM_WCHAR}
 {$endif}
 
 {$ifdef VER150} {Delphi 7}
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
+  {$define SOM_WCHAR}
 {$endif}
 
 {$ifdef VER160} {Delphi 8 for Net}
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
+  {$define SOM_WCHAR}
 {$endif}
 
 {$ifdef VER160} {Delphi 8 for Net}
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
+  {$define SOM_WCHAR}
 {$endif}
 
 {$ifdef VER170} {Delphi 2005}
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
+  {$define SOM_WCHAR}
 {$endif}
 
 (*************************************************************************************
@@ -159,4 +169,12 @@
 
 {.$define SOM_VARARGS}
 
+(*************************************************************************************
+ *
+ * Turn on long long types support:
+ *
+ *************************************************************************************)
+
 {.$define SOM_LONG_LONG}
+
+{.$define SOM_WCHAR}
