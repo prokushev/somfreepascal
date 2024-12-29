@@ -31,7 +31,10 @@ var
   i: integer;
 //  cmo: TSOMObject;
   m: somTD_SOMObject_somPrintSelf;
+  buf : byte;
 begin
+  // Disable buffering...
+  SetTextBuf(Output,buf,sizeof(buf));
   WriteLn('Testing types');
 
   WriteLn('TCORBA_short max: ', High(TCORBA_short)); 
