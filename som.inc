@@ -51,6 +51,9 @@
   {$ifdef os2}
     {$CALLING CDECL} 
   {$endif}
+  {$ifdef UNIX}
+    {$CALLING CDECL} 
+  {$endif}
   {$ifdef MSWINDOWS}
     {$CALLING STDCALL} 
     {$define SOM_STDCALL}

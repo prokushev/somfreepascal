@@ -1221,20 +1221,22 @@ Function va_SOMObject_somDispatchA(somSelf: PRealSOMObject;
                 descriptor: TsomId;
                 args: array of const): Pointer;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
+{$ifdef SOM_VARARGS}
 Function somva_SOMObject_somDispatchA(somSelf: PRealSOMObject;
                 methodId: TsomId;
-                descriptor: TsomId;
-                args: array of const): Pointer;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+                descriptor: TsomId): Pointer; varargs; cdecl;
+{$endif}
 
 Function va_SOMObject_somDispatchL(somSelf: PRealSOMObject;
                 methodId: TsomId;
                 descriptor: TsomId;
                 args: array of const): Longint;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
+{$ifdef SOM_VARARGS}
 Function somva_SOMObject_somDispatchL(somSelf: PRealSOMObject;
                 methodId: TsomId;
-                descriptor: TsomId;
-                args: array of const): Longint;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+                descriptor: TsomId): Longint; varargs; cdecl;
+{$endif}
 
 Function va_SOMObject_somDispatch(somSelf: PRealSOMObject;
                 retValue: PsomToken;
@@ -1246,30 +1248,31 @@ Procedure va_SOMObject_somDispatchV(somSelf: PRealSOMObject;
                 descriptor: TsomId;
                 args: array of const);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
+{$ifdef SOM_VARARGS}
 Procedure somva_SOMObject_somDispatchV(somSelf: PRealSOMObject;
                 methodId: TsomId;
-                descriptor: TsomId;
-                args: array of const);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+                descriptor: TsomId); varargs; cdecl;
+{$endif}
 
 Function va_SOMObject_somDispatchD(somSelf: PRealSOMObject;
                 methodId: TsomId;
                 descriptor: TsomId;
                 args: array of const): double;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
+{$ifdef SOM_VARARGS}
 Function somva_SOMObject_somDispatchD(somSelf: PRealSOMObject;
                 methodId: TsomId;
-                descriptor: TsomId;
-                args: array of const): double;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+                descriptor: TsomId): double; varargs; cdecl;
+
 Function somva_SOMObject_somDispatch(somSelf: PRealSOMObject;
                 retValue: PsomToken;
-                methodId: TsomId;
-                args: array of const): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+                methodId: TsomId): TCORBA_boolean; varargs; cdecl;
 				
 Function somva_SOMObject_somClassDispatch(somSelf: PRealSOMObject;
                 clsObj: PRealSOMClass;
                 retValue: PsomToken;
-                methodId: TsomId;
-                args: array of const): TCORBA_boolean;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+                methodId: TsomId): TCORBA_boolean; varargs; cdecl;
+{$endif}
 
 type
   TsomVaBuf = TsomToken;
@@ -1400,21 +1403,25 @@ Function va_SOMObject_somDispatchA(somSelf: PRealSOMObject;
                 descriptor: TsomId;
                 args: array of const): Pointer;
   external SOMDLL name 'va_SOMObject_somDispatchA';
+
+{$ifdef SOM_VARARGS}
 Function somva_SOMObject_somDispatchA(somSelf: PRealSOMObject;
                 methodId: TsomId;
-                descriptor: TsomId;
-                args: array of const): Pointer;
-  external SOMDLL name 'somva_SOMObject_somDispatchA';
+                descriptor: TsomId): Pointer; varargs; cdecl; external SOMDLL name 'somva_SOMObject_somDispatchA';
+{$endif}
+
 Function va_SOMObject_somDispatchL(somSelf: PRealSOMObject;
                 methodId: TsomId;
                 descriptor: TsomId;
                 args: array of const): Longint;
   external SOMDLL name 'va_SOMObject_somDispatchL';
+
+
+{$ifdef SOM_VARARGS}
 Function somva_SOMObject_somDispatchL(somSelf: PRealSOMObject;
                 methodId: TsomId;
-                descriptor: TsomId;
-                args: array of const): Longint;
-  external SOMDLL name 'somva_SOMObject_somDispatchL';
+                descriptor: TsomId): Longint; varargs; cdecl; external SOMDLL name 'somva_SOMObject_somDispatchL';
+{$endif}
 
 Function va_SOMObject_somDispatch(somSelf: PRealSOMObject;
                 retValue: PsomToken;
@@ -1426,31 +1433,31 @@ Procedure va_SOMObject_somDispatchV(somSelf: PRealSOMObject;
                 descriptor: TsomId;
                 args: array of const); external SOMDLL name 'va_SOMObject_somDispatchV';
 
+{$ifdef SOM_VARARGS}
 Procedure somva_SOMObject_somDispatchV(somSelf: PRealSOMObject;
                 methodId: TsomId;
-                descriptor: TsomId;
-                args: array of const); external SOMDLL name 'somva_SOMObject_somDispatchV';
+                descriptor: TsomId); varargs; cdecl; external SOMDLL name 'somva_SOMObject_somDispatchV';
+{$endif}
 
 Function va_SOMObject_somDispatchD(somSelf: PRealSOMObject;
                 methodId: TsomId;
                 descriptor: TsomId;
                 args: array of const): double; external SOMDLL name 'va_SOMObject_somDispatchD';
 
+{$ifdef SOM_VARARGS}
+
 Function somva_SOMObject_somDispatchD(somSelf: PRealSOMObject;
                 methodId: TsomId;
-                descriptor: TsomId;
-                args: array of const): double; external SOMDLL name 'somva_SOMObject_somDispatchD';
+                descriptor: TsomId): double; varargs; cdecl; external SOMDLL name 'somva_SOMObject_somDispatchD';
 Function somva_SOMObject_somDispatch(somSelf: PRealSOMObject;
                 retValue: PsomToken;
-                methodId: TsomId;
-                args: array of const): TCORBA_boolean; external SOMDLL name 'somva_SOMObject_somDispatch';
+                methodId: TsomId): TCORBA_boolean; varargs; cdecl; external SOMDLL name 'somva_SOMObject_somDispatch';
 				
 Function somva_SOMObject_somClassDispatch(somSelf: PRealSOMObject;
                 clsObj: PRealSOMClass;
                 retValue: PsomToken;
-                methodId: TsomId;
-                args: array of const): TCORBA_boolean; external SOMDLL name 'somva_SOMObject_somClassDispatch';
-
+                methodId: TsomId): TCORBA_boolean; varargs; cdecl; external SOMDLL name 'somva_SOMObject_somClassDispatch';
+{$endif}
 /////////////////////////////////////////////////////////////////////
 
 function SOM_Resolve(o: TRealSOMObject; oc: TRealSOMClass; mn: TsomMToken): TsomMethodProc;
