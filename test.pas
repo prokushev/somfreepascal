@@ -91,7 +91,6 @@ begin
   somPrintf('somPrintf test: %d %s'#13#10, 123, 'string');
 {$endif}
 {$endif}
-exit;
   WriteLn('SOMClassMgrObject.somPrintSelf');
   SOMObject_somPrintSelf(SOMClassMgrObject);
   // Try to resolve SOMClassManager operation by name
@@ -101,7 +100,6 @@ exit;
   WriteLn('SOMClassMgr.somDumpSelf');
   {$ifdef fpc}TsomMethodProc(tst):={$else}@tst:=Pointer{$endif}(SOM_Resolve(clsmgr, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelf));
   tst(clsmgr, 0);
-(*
   // Try to resolve SOMClassManager operation by procedural-style bindings
   SOMObject_somPrintSelf(clsmgr); {This is direct call of parent code}
   SOMClassMgr_somPrintSelf(clsmgr); {This is parent call via wrapper}
@@ -110,12 +108,13 @@ exit;
   // Now Dump SOMClassMgr class to know _get_somRegisteredClasses method address
   SOMClass_somDumpSelf(SOMClassMgr_somGetClass(SOMClassMgrObject), 0);  {Dump class data}
   // Try to get method and print address
-  WriteLn(Inttohex(longint(SOMResolveByName(SOMClassMgrObject, '_get_somRegisteredClasses')),8));*)
+//  WriteLn(Inttohex(longint(SOMResolveByName(SOMClassMgrObject, '_get_somRegisteredClasses')),8));
   // And try exec via mapping
   a:=SOMClassMgr__get_somRegisteredClasses(SOMClassMgrObject);
   // Dump sequence info
   WriteLn(a._maximum);
   WriteLn(a._length);
+exit;
   For I:=0 to Pred(a._length) do
   begin
     WriteLn(IntToHex(longint(a._buffer[i]), 8));

@@ -1586,6 +1586,7 @@ Begin
   SOMObjectClassDataPtr := GetProcAddress(hLib1, 'SOMObjectClassData');
   SOMObjectClassData:=SOMObjectClassDataPtr^;
   FreeLibrary(hLib1);
-  
+{$else}
+  SOMObjectClassDataPtr := @SOMObjectClassData;
 {$endif}
 end.

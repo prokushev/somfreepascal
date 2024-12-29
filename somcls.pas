@@ -148,9 +148,7 @@ type
 
 var
   SOMClassClassData             : TSOMClassClassDataStructure; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMClassClassData';{$endif}
-
-const
-  SOMClassClassDataPtr: ^TSOMClassClassDataStructure = @SOMClassClassData;
+  SOMClassClassDataPtr: ^TSOMClassClassDataStructure;
 
 Function SOMClassNewClass(majorVersion,minorVersion:Longint):TRealSOMClass; {$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
@@ -1227,6 +1225,11 @@ function SOMClass_somResetObj(somSelf: TRealSOMClass): TCORBA_boolean;
 
 Implementation
 
+{$ifndef SOM_EXTVAR}
+uses
+  windows;
+{$endif}
+
 Function SOMClassNewClass(majorVersion,minorVersion:Longint):TRealSOMClass; external SOMDLL name 'SOMClassNewClass';
 
 ///////////////////// SOMClass class ////////////////////////////////
@@ -1781,4 +1784,18 @@ end;
 
 {$endif}
 
+{$ifndef SOM_EXTVAR}
+var
+  hLib1: THandle;
+{$endif}
+Begin
+{$ifndef SOM_EXTVAR}
+
+  hLib1 := LoadLibrary(SOMDLL);
+  SOMClassClassDataPtr := GetProcAddress(hLib1, 'SOMClassClassData');
+  SOMClassClassData:=SOMClassClassDataPtr^;
+  FreeLibrary(hLib1);
+{$else}  
+  SOMClassClassDataPtr := @SOMClassClassData;
+{$endif}
 end.

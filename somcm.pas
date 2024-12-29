@@ -92,6 +92,7 @@ type
 
 var
   SOMClassMgrClassData          : TSOMClassMgrClassDataStructure; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMClassMgrClassData';{$endif}
+  SOMClassMgrClassDataPtr       : ^TSOMClassMgrClassDataStructure;
 
 type
   SOMClassMgr_SOMClassArray = ^TRealSOMClass;
@@ -647,6 +648,11 @@ type
 
 Implementation
 
+{$ifndef SOM_EXTVAR}
+uses
+  windows;
+{$endif}
+
 /////////////////////// SOMClassMgr Class ///////////////////////////
 
 Function SOMClassMgrNewClass(majorVersion,minorVersion:Longint):TRealSOMClass; external SOMDLL name 'SOMClassMgrNewClass';
@@ -975,4 +981,18 @@ end;
 
 {$endif}
 
+{$ifndef SOM_EXTVAR}
+var
+  hLib1: THandle;
+{$endif}
+Begin
+{$ifndef SOM_EXTVAR}
+
+  hLib1 := LoadLibrary(SOMDLL);
+  SOMClassMgrClassDataPtr := GetProcAddress(hLib1, 'SOMClassMgrClassData');
+  SOMClassMgrClassData:=SOMClassMgrClassDataPtr^;
+  FreeLibrary(hLib1);
+{$else}  
+  SOMClassMgrClassDataPtr := @SOMClassMgrClassData;
+{$endif}
 End.

@@ -729,6 +729,7 @@ type
   PCORBA_SEQUENCE_SOMClass  = ^TCORBA_SEQUENCE_SOMClass;
   T_IDL_SEQUENCE_SOMClass = TCORBA_SEQUENCE_SOMClass;
   P_IDL_SEQUENCE_SOMClass = PCORBA_SEQUENCE_SOMClass;
+  TSOMClass_SOMClassSequence    = TCORBA_SEQUENCE_SOMClass;
 
   TCORBA_SEQUENCE_SOMObject       = record
     _maximum                    : TCORBA_unsigned_long;
@@ -736,7 +737,6 @@ type
     _buffer                     : Array[0..0] of TRealSOMObject;
   end;
   T_IDL_SEQUENCE_SOMObject      = TCORBA_SEQUENCE_SOMObject;
-  TSOMClass_SOMClassSequence    = TCORBA_SEQUENCE_SOMClass;
   
 (*----------------------------------------------------------------------
  *  Windows extra procedures:
@@ -1894,7 +1894,7 @@ Finalization
   SOMFree    := OldFree;
 {$endif}
 
-  somEnvironmentNew;
+  somEnvironmentEnd;
 
 (*
 ³ 00038 ³ somSaveMetrics // not found
