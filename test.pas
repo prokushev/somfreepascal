@@ -107,7 +107,7 @@ begin
   somPrintf('%d'#13#10, a._length);
   For I:=0 to Pred(a._length) do
   begin
-    somPrintf('%s'#13#10, IntToHex(longint(a._buffer[i]), 8));
+    somPrintf('%s'#13#10, PChar(IntToHex(longint(a._buffer[i]), 8)));
     SOMObject_somDumpSelf(a._buffer[i], 0);
   end;
 exit;
