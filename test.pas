@@ -1,5 +1,4 @@
 {$I som.inc}
-{$R-}
 
 uses sysutils, som, somobj, somcls, somcm, math;
 
@@ -104,11 +103,11 @@ begin
   somPrintf('And try exec via mapping'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   a:=SOMClassMgr__get_somRegisteredClasses(SOMClassMgrObject);
   // Dump sequence info
-  WriteLn(a._maximum);
-  WriteLn(a._length);
+  somPrintf('%d'#13#10, a._maximum);
+  somPrintf('%d'#13#10, a._length);
   For I:=0 to Pred(a._length) do
   begin
-    WriteLn(IntToHex(longint(a._buffer[i]), 8));
+    somPrintf('%s'#13#10, IntToHex(longint(a._buffer[i]), 8));
     SOMObject_somDumpSelf(a._buffer[i], 0);
   end;
 exit;
