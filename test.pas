@@ -80,6 +80,7 @@ begin
   // Check two variables (must be same)
   WriteLn('SOMClassMgr=', inttohex(longint(clsmgr),8));
   WriteLn('SOMClassMgr=', inttohex(longint(SOMClassMgrObject),8));
+  Flush(Output);
   // Try var args function
   somPrintf('somPrintf test: %d %s'#13#10, {$ifndef SOM_VARARGS}[{$endif}123, 'string'{$ifndef SOM_VARARGS}]{$endif});
   somPrintf('SOMClassMgrObject.somPrintSelf'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
