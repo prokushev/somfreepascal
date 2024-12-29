@@ -11,9 +11,9 @@ rem somFree
 if "%SOMBASE%x" == "x" if exist "%ProgramFiles%\somtk" set SOMBASE=%ProgramFiles%\somtk
 if "%SOMBASE%x" == "x" if exist "%ProgramFiles(x86)%\somtk" set SOMBASE=%ProgramFiles(x86)%\somtk
 
-dir "%ProgramFiles%"
-dir "%ProgramFiles(x86)%"
-dir c:\
+rem dir "%ProgramFiles%"
+rem dir "%ProgramFiles(x86)%"
+rem dir c:\
 dir c:\lazarus\fpc\3.2.2\bin\
 
 if "%SOMBASE%x" == "x" goto firsttime
@@ -23,7 +23,8 @@ set SOMENV=%SOMBASE%\etc\somenv.ini
 set SC=%SOMBASE%\bin\sc.exe
 set LIB=%SOMBASE%\lib;%LIB%
 set INCLUDE=%SOMBASE%\include;%INCLUDE%
-set PATH=%SOMBASE%\bin;%PATH%;C:\lazarus\FPC\3.2.2\bin\i386-Win32
+set PATH=%SOMBASE%\bin;%PATH%;C:\lazarus\FPC\3.2.2\bin\x86_64-win64
+rem i386-Win32
 rem SOM 2.1 NT uses this
 set DPATH=%SOMBASE%\msg;%DPATH%
 rem SOM 3.0 NT uses this
