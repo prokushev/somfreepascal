@@ -44,16 +44,25 @@ jobs:
 
             - name: Install somFree
               run:  wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-rte_1.0.0.89_amd64.deb/download' -O somtk-rte_1.0.0.89_amd64.deb &&
-                    sudo dpkg --install somtk-rte_1.0.0.89_amd64.deb &&
+                    sudo dpkg -D10 --install somtk-rte_1.0.0.89_amd64.deb &&
                     rm somtk-rte_1.0.0.89_amd64.deb &&
+                    wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-ir_1.0.0.89_amd64.deb/download' -O somtk-ir_1.0.0.89_amd64.deb &&
+                    sudo dpkg -D10 --install somtk-ir_1.0.0.89_amd64.deb &&
+                    rm somtk-ir_1.0.0.89_amd64.deb &&
                     wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-comp_1.0.0.89_amd64.deb/download' -O somtk-comp_1.0.0.89_amd64.deb &&
                     sudo dpkg --install somtk-comp_1.0.0.89_amd64.deb &&
                     rm somtk-comp_1.0.0.89_amd64.deb  &&
                     wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-dev_1.0.0.89_amd64.deb/download' -O somtk-dev_1.0.0.89_amd64.deb &&
-                    sudo dpkg -D10 --install somtk-dev_1.0.0.89_amd64.deb &&
+                    sudo dpkg --install somtk-dev_1.0.0.89_amd64.deb &&
                     rm somtk-dev_1.0.0.89_amd64.deb
 
             # Build
             - name:  Build
-              run:   fpc -Fl/usr/lib/somtk/lib test.pas
+              run: |
+                   fpc -Fl/usr/lib/somtk/lib test.pas
+                   sudo find / -name libsom.so
+                   echo $LD_LIBRARY_PATH
+                   LD_LIBRARY_PATH=/usr/local/lib
+                   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/somtk/lib/
+                   ./test
               
