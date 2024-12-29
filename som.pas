@@ -721,10 +721,10 @@ type
     offset                      : TCORBA_long;
   end;
 
-  TCORBA_SEQUENCE_SOMClass        = packed record
+  TCORBA_SEQUENCE_SOMClass      = record
     _maximum                    : TCORBA_unsigned_long;
     _length                     : TCORBA_unsigned_long;
-    _buffer                     : Array[0..0] of TRealSOMClass;
+    _buffer                     : PRealSOMClass;
   end;
   PCORBA_SEQUENCE_SOMClass  = ^TCORBA_SEQUENCE_SOMClass;
   T_IDL_SEQUENCE_SOMClass = TCORBA_SEQUENCE_SOMClass;
@@ -734,7 +734,7 @@ type
   TCORBA_SEQUENCE_SOMObject       = record
     _maximum                    : TCORBA_unsigned_long;
     _length                     : TCORBA_unsigned_long;
-    _buffer                     : Array[0..0] of TRealSOMObject;
+    _buffer                     : PRealSOMObject;
   end;
   T_IDL_SEQUENCE_SOMObject      = TCORBA_SEQUENCE_SOMObject;
   

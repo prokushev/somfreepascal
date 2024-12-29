@@ -106,12 +106,12 @@ begin
   // Dump sequence info
   WriteLn(a._maximum);
   WriteLn(a._length);
-exit;
   For I:=0 to Pred(a._length) do
   begin
     WriteLn(IntToHex(longint(a._buffer[i]), 8));
     SOMObject_somDumpSelf(a._buffer[i], 0);
   end;
+exit;
 
   // Try via Pascal class
 {  WriteLn('test object pascal...');
