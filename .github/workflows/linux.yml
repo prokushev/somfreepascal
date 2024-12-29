@@ -50,10 +50,10 @@ jobs:
                     sudo dpkg --install somtk-comp_1.0.0.89_amd64.deb &&
                     rm somtk-comp_1.0.0.89_amd64.deb  &&
                     wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-dev_1.0.0.89_amd64.deb/download' -O somtk-dev_1.0.0.89_amd64.deb &&
-                    sudo dpkg --install somtk-dev_1.0.0.89_amd64.deb &&
+                    sudo dpkg -D10 --install somtk-dev_1.0.0.89_amd64.deb &&
                     rm somtk-dev_1.0.0.89_amd64.deb
 
             # Build
             - name:  Build
-              run:   fpc test.pas
+              run:   fpc -Fl/usr/lib/somtk/lib test.pas
               
