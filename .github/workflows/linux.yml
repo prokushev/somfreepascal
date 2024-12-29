@@ -55,5 +55,5 @@ jobs:
 
             # Build
             - name:  Build
-              run:   fpc test.pas
+              run:   fpc -Fl/usr/lib/somtk/lib test.pas
               
