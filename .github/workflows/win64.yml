@@ -49,7 +49,7 @@ jobs:
               run: start  /wait wget --no-check-certificate https://downloads.sourceforge.net/project/freepascal/Win32/3.2.2/fpc-3.2.2.i386-win32.exe -P "%tmp%"
               
             - name:  Install fpc
-              run: cd %tmp% & cd & start /wait fpc-3.2.2.i386-win32.exe /verysilent
+              run: start /wait %tmp%\fpc-3.2.2.i386-win32.exe /verysilent
 
 
             # Build
