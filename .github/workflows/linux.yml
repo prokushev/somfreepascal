@@ -40,7 +40,7 @@ jobs:
               run: |
                    export DEBIAN_FRONTEND=noninteractive
                    sudo apt-get update
-                   sudo apt-get install -y fpcstart /wait %tmp%\fpc-3.2.2.i386-win32.exe /verysilent
+                   sudo apt-get install -y fpc
 
             - name: Install somFree
               run:  start /wait msiexec /i https://sourceforge.net/projects/somfree/files/Win32/msvs2022/somtk-1.1.0.91.msi/download /QB-!
