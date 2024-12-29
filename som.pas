@@ -1521,9 +1521,8 @@ var
 
 Function MyMalloc(size_t:Integer): TsomToken;
 begin
-//  somprintf('Malloc', []);
   if size_t<=0 then begin
-    somPrintf('%s',['Z']);
+    {somPrintf('%s',['Z']);}
     Result := nil
   end else begin
     GetMem(Result,size_t + 2*BufSize);
@@ -1532,7 +1531,7 @@ begin
       PCardinal(Cardinal(Result)-4)^ := 0;
       PCardinal(Cardinal(Result)-8)^ := size_t;
     end else  
-    somprintf('%s', ['M']);
+    {somprintf('%s', ['M'])};
   end;
 //  somprintf('%08X', [result]);
 end;
@@ -1555,7 +1554,7 @@ begin
     try
       FreeMem(ref,size + BufSize*2); // Possible leak!!!
     except
-      somprintf('%s',['F']);
+      {somprintf('%s',['F'])};
     end;
     //somprintf('f', []);
   end;
@@ -1588,7 +1587,7 @@ begin
         end;
         MyFree(ref);
       end else
-      somprintf('%s',['R']);
+      {somprintf('%s',['R'])};
     end;
   end;
   //somprintf('r',nil);
@@ -1736,7 +1735,8 @@ var
 var
   hLib1: THandle;
 {$endif}
-Begin
+Initialization
+
   somEnvironmentNew;
 {$ifndef SOM_EXTVAR}
   {$ifdef win32}
@@ -1865,14 +1865,18 @@ Begin
   SOMCalloc  := @MyCalloc;
   SOMMalloc  := @MyMalloc;
 {$endif}
-
-{ Place to our exit proc
-  SOMMalloc  := somTD_SOMMalloc(OldMalloc);
-  SOMCalloc  := somTD_SOMCalloc(OldCalloc);
-  SOMRealloc := somTD_SOMRealloc(OldRealloc);
-  SOMFree    := somTD_SOMFree(OldFree);
-}
 {$endif}
+
+Finalization
+
+{$ifdef SOM_OBJECTS}
+  SOMMalloc  := OldMalloc;
+  SOMCalloc  := OldCalloc;
+  SOMRealloc := OldRealloc;
+  SOMFree    := OldFree;
+{$endif}
+
+  somEnvironmentNew;
 
 (*
 ³ 00038 ³ somSaveMetrics // not found

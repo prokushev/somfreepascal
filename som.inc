@@ -85,30 +85,35 @@
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
   {$define SOM_WCHAR}
+  {$J+} {Typed constants writeable}
 {$endif}
 
 {$ifdef VER150} {Delphi 7}
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
   {$define SOM_WCHAR}
+  {$J+} {Typed constants writeable}
 {$endif}
 
 {$ifdef VER160} {Delphi 8 for Net}
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
   {$define SOM_WCHAR}
+  {$J+} {Typed constants writeable}
 {$endif}
 
 {$ifdef VER160} {Delphi 8 for Net}
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
   {$define SOM_WCHAR}
+  {$J+} {Typed constants writeable}
 {$endif}
 
 {$ifdef VER170} {Delphi 2005}
   {$define SOM_STDCALL}
   {$define SOM_VARARGS}
   {$define SOM_WCHAR}
+  {$J+} {Typed constants writeable}
 {$endif}
 
 (*************************************************************************************
@@ -176,5 +181,11 @@
  *************************************************************************************)
 
 {.$define SOM_LONG_LONG}
+
+(*************************************************************************************
+ *
+ * Turn on wchar types support:
+ *
+ *************************************************************************************)
 
 {.$define SOM_WCHAR}

@@ -706,7 +706,7 @@ type
     Procedure   somUnInit;
     Procedure   somFree;
 	{$ifdef SOM_VERSION_2}
-    Procedure   somDefaultVCopyInit(ctrl:somInitCtrlPtr;fromObj:TSOMObject);
+    Procedure   somDefaultVCopyInit(ctrl: PsomInitCtrl; fromObj:TSOMObject);
 	{$endif}
     Function    somGetClassName:PChar;
     Function    somGetClass:TSOMClass;
@@ -718,7 +718,7 @@ type
     Procedure   somDumpSelfInt(level:longint);
     Function    somPrintSelf: TSOMObject;
     {$ifdef SOM_VERSION_2}
-	Procedure   somDefaultConstVCopyInit(ctrl:somInitCtrlPtr;fromObj:TSOMObject);
+	Procedure   somDefaultConstVCopyInit(ctrl: PsomInitCtrl;fromObj:TSOMObject);
 	{$endif}
     Procedure   somDispatchV(methodId: TsomId; descriptor: TsomId; ap:tva_list);
     Function    somDispatchL(methodId: TsomId; descriptor: TsomId; ap:tva_list):Longint;
@@ -730,18 +730,18 @@ type
     Function    somClassDispatch(clsObj:TSOMClass;var retValue: TsomToken;methodId: TsomId;ap: tva_list): TCORBA_boolean;
     Function    somCastObj(cls:TSOMClass): TCORBA_boolean;
     Function    somResetObj: TCORBA_boolean;
-    Procedure   somDefaultInit(ctrl:somInitCtrlPtr);
-    Procedure   somDestruct(doFree: TCORBA_boolean;ctrl:somDestructCtrlPtr);
+    Procedure   somDefaultInit(ctrl: PsomInitCtrl);
+    Procedure   somDestruct(doFree: TCORBA_boolean; ctrl: PsomDestructCtrl);
 
 //    somComputeForwardVisitMask  : somMToken;
 //    somsomComputeReverseVisitMask : somMToken;
 
-    Procedure   somDefaultCopyInit(ctrl:somInitCtrlPtr;fromObj:TSOMObject);
-    Procedure   somDefaultConstCopyInit(ctrl:somInitCtrlPtr;fromObj:TSOMObject);
-    Function    somDefaultAssign(ctrl:somAssignCtrlPtr;fromObj:TSOMObject):TSOMObject;
-    Function    somDefaultConstAssign(ctrl:somAssignCtrlPtr;fromObj:TSOMObject):TSOMObject;
-    Function    somDefaultVAssign(ctrl:somAssignCtrlPtr;fromObj:TSOMObject):TSOMObject;
-    Function    somDefaultConstVAssign(ctrl:somAssignCtrlPtr;fromObj:TSOMObject):TSOMObject;
+    Procedure   somDefaultCopyInit(ctrl: PsomInitCtrl; fromObj:TSOMObject);
+    Procedure   somDefaultConstCopyInit(ctrl: PsomInitCtrl; fromObj:TSOMObject);
+    Function    somDefaultAssign(ctrl: PsomAssignCtrl; fromObj:TSOMObject):TSOMObject;
+    Function    somDefaultConstAssign(ctrl: PsomAssignCtrl; fromObj:TSOMObject):TSOMObject;
+    Function    somDefaultVAssign(ctrl: PsomAssignCtrl; fromObj:TSOMObject):TSOMObject;
+    Function    somDefaultConstVAssign(ctrl: PsomAssignCtrl; fromObj:TSOMObject):TSOMObject;
     {$endif}
     // Start of SOM 3.0 methods (class version 1.7)
 	{$ifdef SOM_VERSION_3}
@@ -1367,9 +1367,10 @@ end;
 
 class function TSOMObject.RegisterClass:TSOMObjectClass;
 const
-  firsttime     : Boolean       = True;
+  firsttime     : Boolean = True;
 begin
-  if (SOMObjectClassData.classObject=nil) or firsttime then begin
+  if (SOMObjectClassData.classObject=nil) or firsttime then
+  begin
     firsttime:=false;
     SOMObjectNewClass(SOMObject_MajorVersion,SOMObject_MinorVersion);
     CastClass(SOMObjectClassData.classObject,TSOMClass.RegisterClass);   // SOM Metaclass is SOMClass
@@ -1500,52 +1501,52 @@ begin
 end;
 
 {$ifdef SOM_VERSION_2}
-Procedure TSOMObject.somDefaultInit(ctrl:somInitCtrlPtr);
+Procedure TSOMObject.somDefaultInit(ctrl: PsomInitCtrl);
 begin
   SOMObject_somDefaultInit(somSelf,ctrl);
 end;
 
-Procedure TSOMObject.somDestruct(doFree: TCORBA_boolean;ctrl:somDestructCtrlPtr);
+Procedure TSOMObject.somDestruct(doFree: TCORBA_boolean;ctrl: PsomDestructCtrl);
 begin
   SOMObject_somDestruct(somSelf,doFree,ctrl);
 end;
 
-Procedure TSOMObject.somDefaultCopyInit(ctrl:somInitCtrlPtr;fromObj:TSOMObject);
+Procedure TSOMObject.somDefaultCopyInit(ctrl: PsomInitCtrl; fromObj:TSOMObject);
 begin
   SOMObject_somDefaultCopyInit(somSelf,ctrl,fromObj.somSelf);
 end;
 
-Procedure TSOMObject.somDefaultConstCopyInit(ctrl:somInitCtrlPtr;fromObj:TSOMObject);
+Procedure TSOMObject.somDefaultConstCopyInit(ctrl: PsomInitCtrl; fromObj:TSOMObject);
 begin
   SOMObject_somDefaultConstCopyInit(somSelf,ctrl,fromObj.somSelf);
 end;
 
-Procedure TSOMObject.somDefaultVCopyInit(ctrl:somInitCtrlPtr;fromObj:TSOMObject);
+Procedure TSOMObject.somDefaultVCopyInit(ctrl: PsomInitCtrl; fromObj:TSOMObject);
 begin
   SOMObject_somDefaultVCopyInit(somSelf,ctrl,fromObj.somSelf);
 end;
 
-Procedure TSOMObject.somDefaultConstVCopyInit(ctrl:somInitCtrlPtr;fromObj:TSOMObject);
+Procedure TSOMObject.somDefaultConstVCopyInit(ctrl: PsomInitCtrl; fromObj:TSOMObject);
 begin
   SOMObject_somDefaultConstVCopyInit(somSelf,ctrl,fromObj.somSelf);
 end;
 
-Function TSOMObject.somDefaultAssign(ctrl:somAssignCtrlPtr;fromObj:TSOMObject):TSOMObject;
+Function TSOMObject.somDefaultAssign(ctrl: PsomAssignCtrl; fromObj:TSOMObject):TSOMObject;
 begin
   Result := ResolveClass(SOMObject_somDefaultAssign(somSelf,ctrl,fromObj.somSelf));
 end;
 
-Function TSOMObject.somDefaultConstAssign(ctrl:somAssignCtrlPtr;fromObj:TSOMObject):TSOMObject;
+Function TSOMObject.somDefaultConstAssign(ctrl: PsomAssignCtrl; fromObj:TSOMObject):TSOMObject;
 begin
   Result := ResolveClass(SOMObject_somDefaultConstAssign(somSelf,ctrl,fromObj.somSelf));
 end;
 
-Function TSOMObject.somDefaultVAssign(ctrl:somAssignCtrlPtr;fromObj:TSOMObject):TSOMObject;
+Function TSOMObject.somDefaultVAssign(ctrl: PsomAssignCtrl; fromObj:TSOMObject):TSOMObject;
 begin
   Result := ResolveClass(SOMObject_somDefaultVAssign(somSelf,ctrl,fromObj.somSelf));
 end;
 
-Function TSOMObject.somDefaultConstVAssign(ctrl:somAssignCtrlPtr;fromObj:TSOMObject):TSOMObject;
+Function TSOMObject.somDefaultConstVAssign(ctrl: PsomAssignCtrl; fromObj:TSOMObject):TSOMObject;
 begin
   Result := ResolveClass(SOMObject_somDefaultConstVAssign(somSelf,ctrl,fromObj.somSelf));
 end;
