@@ -13,7 +13,8 @@ if "%SOMBASE%x" == "x" if exist "%ProgramFiles(x86)%\somtk" set SOMBASE=%Program
 
 dir "%ProgramFiles%"
 dir "%ProgramFiles(x86)%"
-
+dir c:\
+dir c:\lazarus
 
 if "%SOMBASE%x" == "x" goto firsttime
 
