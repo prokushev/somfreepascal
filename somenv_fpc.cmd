@@ -11,6 +11,10 @@ rem somFree
 if "%SOMBASE%x" == "x" if exist "%ProgramFiles%\somtk" set SOMBASE=%ProgramFiles%\somtk
 if "%SOMBASE%x" == "x" if exist "%ProgramFiles(x86)%\somtk" set SOMBASE=%ProgramFiles(x86)%\somtk
 
+dir "%ProgramFiles%"
+dir "%ProgramFiles(x86)%"
+
+
 if "%SOMBASE%x" == "x" goto firsttime
 
 set SOMIR=%SOMBASE%\etc\som.ir;som.ir
