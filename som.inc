@@ -48,7 +48,7 @@
   {$warning This units doesn't work because FPC/2 doesn't implements external vars}
   {$endif}
   {$R-}
-  {$PACKRECORDS 1}
+  {$PACKRECORDS C}
   {$inline on}
   {$ifdef os2}
     {$CALLING CDECL} 
