@@ -102,10 +102,12 @@ begin
   SOMClassMgr_somDumpSelf(SOMClassMgrObject, 0); {This is parent call via wrapper}
   somPrintf('Now Dump SOMClassMgr class to know _get_somRegisteredClasses method address'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   SOMClass_somDumpSelf(SOMClassMgr_somGetClass(SOMClassMgrObject), 0);  {Dump class data}
+exit;
 //  somPrintf('Try to get method and print address');
 //  WriteLn(Inttohex(longint(SOMResolveByName(SOMClassMgrObject, '_get_somRegisteredClasses')),8));
   somPrintf('And try exec via mapping'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   a:=SOMClassMgr__get_somRegisteredClasses(SOMClassMgrObject);
+exit;
   // Dump sequence info
   somPrintf('%d'#13#10, a._maximum);
   somPrintf('%d'#13#10, a._length);
