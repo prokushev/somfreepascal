@@ -46,6 +46,9 @@ jobs:
               run:  wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-rte_1.0.0.89_amd64.deb/download' -O somtk-rte_1.0.0.89_amd64.deb &&
                     sudo dpkg --install somtk-rte_1.0.0.89_amd64.deb &&
                     rm somtk-rte_1.0.0.89_amd64.deb &&
+                    wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-comp_1.0.0.89_amd64.deb/download' -O somtk-comp_1.0.0.89_amd64.deb &&
+                    sudo dpkg --install somtk-comp_1.0.0.89_amd64.deb &&
+                    rm somtk-comp_1.0.0.89_amd64.deb  &&
                     wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-dev_1.0.0.89_amd64.deb/download' -O somtk-dev_1.0.0.89_amd64.deb &&
                     sudo dpkg --install somtk-dev_1.0.0.89_amd64.deb &&
                     rm somtk-dev_1.0.0.89_amd64.deb
