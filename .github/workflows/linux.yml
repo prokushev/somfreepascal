@@ -49,5 +49,5 @@ jobs:
 
             # Build
             - name:  Build
-              run:   somenv_fpc_ubuntu.sh
+              run:   fpc test.pas
               
