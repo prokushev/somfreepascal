@@ -1,4 +1,4 @@
-name: osFree userland Windows build and tests
+name: somFree Pascal Windows build and tests
 
 # Controls when the workflow will run
 on:
