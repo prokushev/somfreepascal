@@ -43,9 +43,11 @@ jobs:
                    sudo apt-get install -y fpc
 
             - name: Install somFree
-              run:  start /wait msiexec /i https://sourceforge.net/projects/somfree/files/Win32/msvs2022/somtk-1.1.0.91.msi/download /QB-!
+              run:  wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-rte_1.0.0.89_amd64.deb/download' &&
+                    dpkg --install somtk-rte_1.0.0.89_amd64.deb &&
+                    rm somtk-rte_1.0.0.89_amd64.deb
 
             # Build
             - name:  Build
-              run:   somenv_fpc_win64.cmd
+              run:   somenv_fpc_ubuntu.sh
               
