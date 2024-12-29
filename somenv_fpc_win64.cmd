@@ -18,8 +18,7 @@ set SOMENV=%SOMBASE%\etc\somenv.ini
 set SC=%SOMBASE%\bin\sc.exe
 set LIB=%SOMBASE%\lib;%LIB%
 set INCLUDE=%SOMBASE%\include;%INCLUDE%
-set PATH=%SOMBASE%\bin;%PATH%;C:\lazarus\FPC\3.2.2\bin\x86_64-win64
-rem i386-Win32
+set PATH=%SOMBASE%\bin;%PATH%;C:\lazarus\FPC\3.2.2\bin\i386-Win32
 rem SOM 2.1 NT uses this
 set DPATH=%SOMBASE%\msg;%DPATH%
 rem SOM 3.0 NT uses this
