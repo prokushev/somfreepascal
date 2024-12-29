@@ -985,6 +985,10 @@ Procedure somLPrintf(level: TCORBA_long; fmt: TCORBA_string); cdecl; varargs;
 Procedure somLPrintf(level: TCORBA_long; fmt: TCORBA_string; args: Array of const);
 {$endif}
 
+
+type
+  TsomLibraryHandle=TCORBA_long;
+
 (*----------------------------------------------------------------------
  * Pointers to routines used to do dynamic code loading and deleting
  *)
@@ -994,8 +998,8 @@ type
                                           {IN}FuncName: TCORBA_string  (* functionName *);
                                           {IN}MajorVer: TCORBA_long    (* majorVersion *);
                                           {IN}MinorVer: TCORBA_long    (* minorVersion *);
-                                          {OUT}var ref: TsomToken (* modHandle *)): TCORBA_long;
-  somTD_SOMDeleteModule         =Function({IN} ref: TsomToken     (* modHandle *)): TCORBA_long;
+                                          {OUT}var ref: TsomLibraryHandle (* modHandle *)): TCORBA_long;
+  somTD_SOMDeleteModule         =Function({IN} ref: TsomLibraryHandle     (* modHandle *)): TCORBA_long;
   somTD_SOMClassInitFuncName    =Function: TCORBA_string;
 
 var
@@ -1196,14 +1200,12 @@ var
 // Control the printing of warning messages, 0-none, 1-all
 var
   SOM_WarnLevel: TCORBA_long; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOM_WarnLevel';{$endif}
-const
-  SOM_WarnLevelPtr: PCORBA_long = @SOM_WarnLevel;
+  SOM_WarnLevelPtr: PCORBA_long;
 
 // Control the printing of successful assertions, 0-none, 1-user, 2-core&user
 var
   SOM_AssertLevel: TCORBA_long; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOM_AssertLevel';{$endif}
-const
-  SOM_AssertLevelPtr: PCORBA_long = @SOM_AssertLevel;
+  SOM_AssertLevelPtr: PCORBA_long;
 
 // ToDo: Move this to corresponding place
 Procedure somCheckArgs(argc: TCORBA_long; argv: array of pchar);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
@@ -1739,22 +1741,28 @@ Begin
 {$ifndef SOM_EXTVAR}
   {$ifdef win32}
   hLib1 := LoadLibrary(SOMDLL);
-  SOMClassMgrObjectPtr := GetProcAddress(hLib1, 'SOMClassMgrObject');
-  SOMClassMgrObject := SOMClassMgrObjectPtr^;
   SOM_MajorVersionPtr := GetProcAddress(hLib1, 'SOM_MajorVersion');
   SOM_MajorVersion:=SOM_MajorVersionPtr^;
   SOM_MinorVersionPtr := GetProcAddress(hLib1, 'SOM_MinorVersion');
   SOM_MinorVersion:=SOM_MinorVersionPtr^;
-  SOM_MaxThreadsPtr := GetProcAddress(hLib1, 'SOM_MaxThreads');
-  SOM_MaxThreads:=SOM_MaxThreadsPtr^;
   SOM_TraceLevelPtr := GetProcAddress(hLib1, 'SOM_TraceLevel');
   SOM_TraceLevel:=SOM_TraceLevelPtr^;
+  SOM_WarnLevelPtr := GetProcAddress(hLib1, 'SOM_WarnLevel');
+  SOM_WarnLevel:=SOM_WarnLevelPtr^;
+  SOM_AssertLevelPtr := GetProcAddress(hLib1, 'SOM_AssertLevel');
+  SOM_AssertLevel:=SOM_AssertLevelPtr^;
+  SOM_MaxThreadsPtr := GetProcAddress(hLib1, 'SOM_MaxThreads');
+  SOM_MaxThreads:=SOM_MaxThreadsPtr^;
+  SOMClassMgrObjectPtr := GetProcAddress(hLib1, 'SOMClassMgrObject');
+  SOMClassMgrObject := SOMClassMgrObjectPtr^;
   FreeLibrary(hLib1);
   {$endif}
 {$else}
   SOM_MajorVersionPtr:=@SOM_MajorVersion;
   SOM_MinorVersionPtr:=@SOM_MinorVersion;
   SOM_TraceLevelPtr:= @SOM_TraceLevel;
+  SOM_WarnLevelPtr:= @SOM_WarnLevel;
+  SOM_AssertLevelPtr:= @SOM_AssertLevel;
   SOM_MaxThreadsPtr:=@SOM_MaxThreadsPtr;
   SOMClassMgrObjectPtr := @SOMClassMgrObject;
 {$endif}
