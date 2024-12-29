@@ -46,10 +46,10 @@ jobs:
               run: choco install wget
               
             - name:  Download fpc
-              run: wget --no-check-certificate https://downloads.sourceforge.net/project/freepascal/Win32/3.2.2/fpc-3.2.2.i386-win32.exe -P "%tmp%"
+              run: start  /wait wget --no-check-certificate https://downloads.sourceforge.net/project/freepascal/Win32/3.2.2/fpc-3.2.2.i386-win32.exe -P "%tmp%"
               
             - name:  Install fpc
-              run: cd %tmp% & fpc-3.2.2.i386-win32.exe /verysilent
+              run: cd %tmp% & cd & start /wait fpc-3.2.2.i386-win32.exe /verysilent
 
 
             # Build
