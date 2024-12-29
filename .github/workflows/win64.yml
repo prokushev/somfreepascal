@@ -41,8 +41,9 @@ jobs:
             # Install prerequisites
             - name: Install somFree
               run:  start /wait msiexec /i https://sourceforge.net/projects/somfree/files/Win32/msvs2022/somtk-1.1.0.91.msi/download /QB-!
-            - name:  Install Lazarus
-              run:   choco install lazarus
+            - name:  Install fpc
+              run: choco install wget & wget --no-check-certificate https://downloads.sourceforge.net/project/freepascal/Win32/3.2.2/fpc-3.2.2.i386-win32.exe -P "%tmp%" & "%tmp%\fpc-3.2.2.i386-win32.exe" /verysilent
+
 
             # Build
             - name:  Build
