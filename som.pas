@@ -1210,11 +1210,13 @@ var
 // ToDo: Move this to corresponding place
 Procedure somCheckArgs(argc: TCORBA_long; argv: array of pchar);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
+{$ifdef notfoundinsomFree}
 Procedure somUnregisterClassLibrary (libraryName: TCORBA_string);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 Function somResolveTerminal(x : PRealSOMClass; mdata: TsomMToken): PsomMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 Function somPCallResolve(obj: PRealSOMObject; callingCls: PRealSOMClass; method: TsomMToken): PsomMethodProc;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+{$endif}
 
 {$ifdef SOM_VARARGS}
 Function va_SOMObject_somDispatchA(somSelf: PRealSOMObject;
@@ -1400,9 +1402,11 @@ Procedure somExceptionFree(ev: PCORBA_Environment); external SOMDLL name 'somExc
 Procedure somSetException(var ev: TCORBA_Environment; major: TCORBA_exception_type; exception_name: PCORBA_char;params:pointer); external SOMDLL name 'somSetException';
 Function  somGetGlobalEnvironment: PCORBA_Environment; external SOMDLL name 'somGetGlobalEnvironment';
 Procedure somCheckArgs(argc: TCORBA_long; argv: array of pchar); external SOMDLL name 'somCheckArgs';
+{$ifdef notfoundinsomFree}
 Procedure somUnregisterClassLibrary (libraryName: TCORBA_string); external SOMDLL name 'somUnregisterClassLibrary';
 Function somResolveTerminal(x : PRealSOMClass; mdata: TsomMToken): PsomMethodProc; external SOMDLL name 'somResolveTerminal';
 Function somPCallResolve(obj: PRealSOMObject; callingCls: PRealSOMClass; method: TsomMToken): PsomMethodProc; external SOMDLL name 'somPCallResolve';
+{$endif}
 
 {$ifdef SOM_VARARGS}
 Function va_SOMObject_somDispatchA(somSelf: PRealSOMObject;
