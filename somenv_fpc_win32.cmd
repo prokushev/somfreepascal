@@ -23,7 +23,7 @@ rem SOM 2.1 NT uses this
 set DPATH=%SOMBASE%\msg;%DPATH%
 rem SOM 3.0 NT uses this
 set NLSPATH=%SOMBASE%\msg\%%N;%NLSPATH%
-fpc test
+fpc -Twin32 test
 test
 goto end
 
