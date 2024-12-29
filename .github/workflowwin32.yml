@@ -39,7 +39,10 @@ jobs:
                   submodules: recursive
 
             # Install prerequisites
-            - name:  Install prerequisites
+            - name: Install somFree
+              run: msiexec /i https://sourceforge.net/projects/somfree/files/Win32/msvs2022/somtk-1.1.0.91.msi/download
+
+            - name:  Install Lazarus
               run:   choco install lazarus
 
             # Build
