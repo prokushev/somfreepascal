@@ -37,8 +37,8 @@ Interface
 
 const
   {$IFDEF UNIX}
-    SOMDLL='libsom';
-    SOMTCDLL='libsomtc';
+    SOMDLL='libsom.so';
+    SOMTCDLL='libsomtc.so';
   {$ELSE}
     SOMDLL='som.dll';
     SOMTCDLL='somtc.dll';
