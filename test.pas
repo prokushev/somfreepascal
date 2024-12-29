@@ -82,34 +82,26 @@ begin
   WriteLn('SOMClassMgr=', inttohex(longint(clsmgr),8));
   WriteLn('SOMClassMgr=', inttohex(longint(SOMClassMgrObject),8));
   // Try var args function
-{$ifdef virtualpascal}
-  somPrintf('somPrintf test: %d '#13#10, [123]);
-{$else}
-{$ifdef VER90}
-  somPrintf('somPrintf test: %d %d %s'#13#10, [123, 432, 'string']);
-{$else}
-  somPrintf('somPrintf test: %d %s'#13#10, 123, 'string');
-{$endif}
-{$endif}
-  WriteLn('SOMClassMgrObject.somPrintSelf');
+  somPrintf('somPrintf test: %d %s'#13#10, {$ifndef SOM_VARARGS}[{$endif}123, 'string'{$ifndef SOM_VARARGS}]{$endif});
+  somPrintf('SOMClassMgrObject.somPrintSelf'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   SOMObject_somPrintSelf(SOMClassMgrObject);
   // Try to resolve SOMClassManager operation by name
 //  somTD_SOMObject_somPrintSelf(somResolveByName(clsmgr, 'somPrintSelf'))(clsmgr);
 
-  // Try to resolve SOMClassManager operation by somMToken
-  WriteLn('SOMClassMgr.somDumpSelf');
+  somPrintf('Try to resolve SOMClassManager operation by somMToken'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
+  somPrintf('SOMClassMgr.somDumpSelf'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   {$ifdef fpc}TsomMethodProc(tst):={$else}@tst:=Pointer{$endif}(SOM_Resolve(clsmgr, SOMObjectClassData.classObject, SOMObjectClassData.somDumpSelf));
   tst(clsmgr, 0);
-  // Try to resolve SOMClassManager operation by procedural-style bindings
+  somPrintf('Try to resolve SOMClassManager operation by procedural-style bindings'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   SOMObject_somPrintSelf(clsmgr); {This is direct call of parent code}
   SOMClassMgr_somPrintSelf(clsmgr); {This is parent call via wrapper}
-  // Dump SOMClassMgr instance
+  somPrintf('Dump SOMClassMgr instance'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   SOMClassMgr_somDumpSelf(SOMClassMgrObject, 0); {This is parent call via wrapper}
-  // Now Dump SOMClassMgr class to know _get_somRegisteredClasses method address
+  somPrintf('Now Dump SOMClassMgr class to know _get_somRegisteredClasses method address'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   SOMClass_somDumpSelf(SOMClassMgr_somGetClass(SOMClassMgrObject), 0);  {Dump class data}
-  // Try to get method and print address
+//  somPrintf('Try to get method and print address');
 //  WriteLn(Inttohex(longint(SOMResolveByName(SOMClassMgrObject, '_get_somRegisteredClasses')),8));
-  // And try exec via mapping
+  somPrintf('And try exec via mapping'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   a:=SOMClassMgr__get_somRegisteredClasses(SOMClassMgrObject);
   // Dump sequence info
   WriteLn(a._maximum);
