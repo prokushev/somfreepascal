@@ -43,7 +43,7 @@ jobs:
                    sudo apt-get install -y fpc
 
             - name: Install somFree
-              run:  wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-rte_1.0.0.89_amd64.deb/download' &&
+              run:  wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-rte_1.0.0.89_amd64.deb/download' -O somtk-rte_1.0.0.89_amd64.deb &&
                     sudo dpkg --install somtk-rte_1.0.0.89_amd64.deb &&
                     rm somtk-rte_1.0.0.89_amd64.deb
 
