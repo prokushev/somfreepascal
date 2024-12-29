@@ -51,7 +51,7 @@
   {$ifdef os2}
     {$CALLING CDECL} 
   {$endif}
-  {$ifdef win32}
+  {$ifdef MSWINDOWS}
     {$CALLING STDCALL} 
     {$define SOM_STDCALL}
   {$endif}
