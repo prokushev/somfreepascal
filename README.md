@@ -2,7 +2,7 @@
 
 Tested compiler: Free Pascal Compiler 3.2.2, Borland Delphi 2, Borland Delphi 6, Virtual Pascal Compiler 2
 
-Tested platforms: Win32
+Tested platforms: Win32, Linux
 
 Tested SOM: SOM 2.1, SOM 3.0, somFree
 
