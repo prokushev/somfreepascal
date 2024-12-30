@@ -759,7 +759,7 @@ type
     // Pascal class helper methods
     Constructor Create;
     function    somSelf: TRealSOMObject;
-  private          // Private methods... for SOM.. Pas Touche!
+  public          // Private methods... for SOM.. Pas Touche!
     class function NewInstance:TObject; override; {$ifndef vpc}register;{$endif}
     procedure      FreeInstance; override; {$ifndef vpc}register;{$endif}
   public//protected        // User Class Definition...
@@ -821,8 +821,11 @@ procedure SOMObject_somFree(somSelf: TRealSOMObject);
 var
     m: somTD_SOMObject_somFree;
 begin
+    somPrintf('somFree1=%08X'#13#10, cardinal(somSelf));
     {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somFree));
+    somPrintf('somFree2'#13#10);
     m(somSelf);
+    somPrintf('somFree3'#13#10);
 end;
 
 (*
@@ -1284,7 +1287,7 @@ type
   PVPSOMRECORD          = ^VPSOMRECORD;
   VPSOMRECORD           = record
     VPCls               : TSOMObjectClass;
-    SOMCls              : ^TRealSOMClass;
+    SOMCls              : PRealSOMClass;
     Next                : PVPSOMRECORD;
   end;
 
@@ -1315,14 +1318,19 @@ begin
   until false;
 end;
 
-Function CastClass(obj:TRealSOMObject;cls:TSOMObjectClass):TSOMObjectClass;
+(*
+Function CastClass(obj:TRealSOMObject; cls:TSOMObjectClass): TSOMObjectClass;
 begin
-  if not somIsObj(obj) then Result := nil else begin
-    dec(Longint(obj),4); Result := TSOMObjectClass(Pointer(obj));
-    PLongint(obj)^ := Longint(cls);
+  if not somIsObj(obj) then
+  begin
+    Result := nil
+  end else begin
+    dec(Cardinal(obj),4);
+    Result := TSOMObjectClass(Pointer(obj));
+    PCardinal(obj)^ := Cardinal(cls);
   end;
 end;
-
+*)
 
 Function ResolveClass(obj:TRealSOMObject):TSOMObject;
 var
@@ -1333,15 +1341,15 @@ var
 begin
   if not somIsObj(obj) then Result := nil else
   begin
-    obj2 := Pointer(Longint(obj)-4); Result := TSOMObject(Pointer(obj2));
+    obj2 := Pointer(Cardinal(obj)-4); Result := TSOMObject(Pointer(obj2));
 
-    if PLongint(obj2)^<>0 then exit;  // Class already resolved;
+    if PCardinal(obj2)^<>0 then exit;  // Class already resolved;
 
     {$ifdef fpc}TsomMethodProc(_somIsInstance):={$else}@_somIsInstance:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsInstanceOf));
     p := @RSOMObject;                   // First check for specific instances...
     while (p<>nil)and(not _somIsInstance(obj,p^.SOMCls^)) do p:=p^.Next;
     if p<>nil then begin
-      PLongint(obj2)^ := Longint(p^.VPCls);
+      PCardinal(obj2)^ := Cardinal(p^.VPCls);
       exit;
     end;
 
@@ -1353,7 +1361,7 @@ begin
       p := p^.Next;
     end;
 
-    PLongint(obj2)^ := Longint(q^.VPCls);
+    PCardinal(obj2)^ := Cardinal(q^.VPCls);
   end;
 end;
 
@@ -1369,13 +1377,6 @@ class function TSOMObject.RegisterClass:TSOMObjectClass;
 const
   firsttime     : Boolean = True;
 begin
-  if (SOMObjectClassData.classObject=nil) or firsttime then
-  begin
-    firsttime:=false;
-    SOMObjectNewClass(SOMObject_MajorVersion,SOMObject_MinorVersion);
-    CastClass(SOMObjectClassData.classObject,TSOMClass.RegisterClass);   // SOM Metaclass is SOMClass
-  end;
-  RegisterVPClass(RSOMObject);
   Result := TSOMObject;
 end;
 
@@ -1389,34 +1390,85 @@ begin
   {$endif}
 end;
 
-class function TSOMObject.NewInstance:TObject; {$ifndef vpc}register;{$endif}
+class function TSOMObject.NewInstance: TObject; {$ifndef vpc}register;{$endif}
 type
   somTD_SOMClass_somNewNoInit = function(somSelf: TRealSOMClass): TRealSOMObject;
 var
   somNewNoInit          : somTD_SOMClass_somNewNoInit;
   NewObj                : TRealSOMObject;
   NewCls                : TSOMObjectClass;
+  p: pointer;
+const
+  firsttime: boolean = true;
 begin
-  Result := nil;
-  NewCls := RegisterClass;
-  if (InstanceSize>4)or(NewCls=nil) then exit;
-  {$ifdef fpc}TsomMethodProc(somNewNoInit):={$else}@somNewNoInit:=Pointer{$endif}(somResolveByName(InstanceClass, 'somNewNoInit'{SOMClassClassData.somNewNoInit}));
-  NewObj := somNewNoInit(InstanceClass);
-  if NewObj=nil then exit;
-  dec(Longint(NewObj),4);
-  PLongint(NewObj)^ := Longint(NewCls);
-  Result := TObject(NewObj);
+{ Original NewInstance 
+           getmem(p, InstanceSize);
+           if p <> nil then
+              InitInstance(p);
+           NewInstance:=TObject(p);
+}
+
+  // Allocate instance size plus size of SOM object
+  GetMem(p, InstanceSize+sizeof(TRealSOMObject));
+
+  if p <> nil then
+  begin
+    // Create SOM class if no yet
+    if (SOMObjectClassData.classObject=nil) then
+    begin
+      SOMObjectNewClass(SOMObject_MajorVersion,SOMObject_MinorVersion);
+    end;
+    //CastClass(SOMObjectClassData.classObject,TSOMClass.RegisterClass);   // SOM Metaclass is SOMClass
+
+    //Store SOM class -> Pascal class mapping in our database (if not yet)
+    if firsttime then
+    begin
+      RegisterVPClass(RSOMObject);
+      firsttime:=false;
+    end;
+
+    // Resolve SOM object creation method
+    {$ifdef fpc}TsomMethodProc(somNewNoInit):={$else}@somNewNoInit:=Pointer{$endif}(somResolveByName(InstanceClass, 'somNewNoInit'{SOMClassClassData.somNewNoInit}));
+
+    // Create SOM object and store it
+    ppointer(p)^:=pointer(somNewNoInit(InstanceClass));
+
+    // Skip SOM object
+    Inc(Cardinal(p), sizeof(TRealSOMObject));
+
+    // Initialize Pascal object instance
+    InitInstance(p);
+  end;
+
+  // Return Pascal object (4 bytes back contains SOM object)
+  NewInstance:=TObject(p);
 end;
 
 procedure TSOMObject.FreeInstance; {$ifndef vpc}register;{$endif}
 begin
+{ Original FreeInstance
+           CleanupInstance;
+           FreeMem(Pointer(Self));
+}
+  // First, destroy SOM object
   SOMObject_somFree(somSelf);
+
+  // Cleanup Pascal object
+  CleanupInstance;
+
+  // Get original pointer back
+  Dec(Cardinal(Self),4);
+
+  // Free Pascal object
+  FreeMem(Pointer(Self));
 end;
 
+// Return SOM Object 
 function TSOMObject.somSelf:TRealSOMObject;
 begin
   Result := Self;
-  if Result<>nil then inc(Longint(Result),4);
+  if Result<>nil then Dec(Cardinal(Result),4);
+  result:=PPointer(Result)^;
 end;
 
 Procedure TSOMObject.somFree;
@@ -1436,7 +1488,7 @@ end;
 
 Function TSOMObject.somGetClass:TSOMClass;
 begin
-  Result := TSOMClass(CastClass(SOMObject_somGetClass(somSelf),TSOMClass));
+//  Result := TSOMClass(CastClass(SOMObject_somGetClass(somSelf),TSOMClass));
 end;
 
 Function TSOMObject.somGetClassName:PChar;
@@ -1581,7 +1633,6 @@ var
 {$endif}
 Begin
 {$ifndef SOM_EXTVAR}
-
   hLib1 := LoadLibrary(SOMDLL);
   SOMObjectClassDataPtr := GetProcAddress(hLib1, 'SOMObjectClassData');
   SOMObjectClassData:=SOMObjectClassDataPtr^;

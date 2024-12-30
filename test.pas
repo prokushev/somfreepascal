@@ -1,6 +1,6 @@
 {$I som.inc}
 
-uses sysutils, som, somobj, somcls, somcm, math;
+uses som, somobj, somcls, somcm, math;
 
 {$ifdef virtualpascal}
 procedure Assert(s: boolean; msg: String);
@@ -26,12 +26,15 @@ end;
 
 var
   clsmgr: TRealSOMObject;
+  tstobj: TRealSOMObject;
   tst: somTD_SOMObject_somDumpSelf;
   a: TSOMClass_SOMClassSequence;
   i: integer;
-//  cmo: TSOMObject;
   m: somTD_SOMObject_somPrintSelf;
   buf : byte;
+{$ifdef SOM_OBJECTS}
+  cmo: TSOMObject;
+{$endif}
 begin
   // Disable buffering...
   SetTextBuf(Output,buf,sizeof(buf));
@@ -65,31 +68,36 @@ begin
 
   WriteLn('TCORBA_float size: ', SizeOf(TCORBA_float));
   WriteLn('TCORBA_double size: ', SizeOf(TCORBA_double));
-//  Assert(SizeOf(TCORBA_long_double)=8, 'TCORBA_long_double size');
+  WriteLn('TCORBA_long_double size:', SizeOf(TCORBA_long_double));
 
   WriteLn('TCORBA_char size: ', SizeOf(TCORBA_char));
   WriteLn('TCORBA_octet size: ', SizeOf(TCORBA_octet));
 
-  WriteLn('Test trace level control support');
+  Flush(Output);
+
+  // Try var args function
+  somPrintf('somPrintf test: %d %s'#13#10, {$ifndef SOM_VARARGS}[{$endif}123, 'string'{$ifndef SOM_VARARGS}]{$endif});
+
+  somPrintf('Test trace level control support'#13#10);
   SOM_TraceLevelPtr^:=2;
   SOM_WarnLevelPtr^:=2;
   SOM_AssertLevelPtr^:=2;
 
+  somPrintf('Init SOM runtime'#13#10);
   clsmgr:=somEnvironmentNew;
+
   // Dump some variables
-  WriteLn('SOM API Version: ', SOM_MajorVersion, '.', SOM_MinorVersion);
-  WriteLn('SOM MaxThreads: ', SOM_MaxThreads);
+  somPrintf('SOM API Version: %d.%d'#13#10, SOM_MajorVersion, SOM_MinorVersion);
+  somPrintf('SOM MaxThreads: %d'#13#10, SOM_MaxThreads);
 
   // Check two variables (must be same)
-  WriteLn('SOMClassMgr=', inttohex(longint(clsmgr),8));
-  WriteLn('SOMClassMgr=', inttohex(longint(SOMClassMgrObject),8));
-  Flush(Output);
-  // Try var args function
-  somPrintf('somPrintf test: %d %s'#13#10, {$ifndef SOM_VARARGS}[{$endif}123, 'string'{$ifndef SOM_VARARGS}]{$endif});
+  somPrintf('SOMClassMgr=0X%08X'#13#10, longint(clsmgr));
+  somPrintf('SOMClassMgr=0X%08X'#13#10, longint(SOMClassMgrObject));
   somPrintf('SOMClassMgrObject.somPrintSelf'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   SOMObject_somPrintSelf(SOMClassMgrObject);
-  // Try to resolve SOMClassManager operation by name
-//  somTD_SOMObject_somPrintSelf(somResolveByName(clsmgr, 'somPrintSelf'))(clsmgr);
+
+  somPrintf('Try to resolve SOMClassManager operation by name'#13#10);
+  somTD_SOMObject_somPrintSelf(somResolveByName(clsmgr, 'somPrintSelf'))(clsmgr);
 
   somPrintf('Try to resolve SOMClassManager operation by somMToken'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   somPrintf('SOMClassMgr.somDumpSelf'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
@@ -102,28 +110,53 @@ begin
   SOMClassMgr_somDumpSelf(SOMClassMgrObject, 0); {This is parent call via wrapper}
   somPrintf('Now Dump SOMClassMgr class to know _get_somRegisteredClasses method address'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   SOMClass_somDumpSelf(SOMClassMgr_somGetClass(SOMClassMgrObject), 0);  {Dump class data}
-//  somPrintf('Try to get method and print address');
-//  WriteLn(Inttohex(longint(SOMResolveByName(SOMClassMgrObject, '_get_somRegisteredClasses')),8));
+  somPrintf('Try to get method and print address'#13#10);
+  somPrintf('0X%8d'#13#10, longint(SOMResolveByName(SOMClassMgrObject, '_get_somRegisteredClasses')));
   somPrintf('And try exec via mapping'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
   a:=SOMClassMgr__get_somRegisteredClasses(SOMClassMgrObject);
-exit; // Aaaand...  Trup under Linux... cdecl struct return problem???
+  // Aaaand...  Trap under Linux... cdecl struct return problem???
   // Dump sequence info
   somPrintf('%d'#13#10, a._maximum);
   somPrintf('%d'#13#10, a._length);
   For I:=0 to Pred(a._length) do
   begin
-    somPrintf('%s'#13#10, PChar(IntToHex(longint(a._buffer[i]), 8)));
+    somPrintf('0X%08X'#13#10, longint(a._buffer[i]));
     SOMObject_somDumpSelf(a._buffer[i], 0);
   end;
-exit;
 
-  // Try via Pascal class
-{  WriteLn('test object pascal...');
+  somPrintf('test create SOMObject'#13#10);
+//  SOMObjectNewClass(SOMObject_MajorVersion,SOMObject_MinorVersion);
+  tstobj:=SOMClass_somNewNoInit(SOMObjectClassData.classObject);
+  somObject_somInit(tstobj);
+  somObject_somDumpSelf(tstobj, 0);
+  somPrintf('test destroy SOMObject'#13#10);
+  somObject_somUnInit(tstobj);
+  SOMObject_somFree(tstobj);
+
+  somPrintf('test create TSOMObject'#13#10);
   cmo:=TSOMObject.Create;
+  somPrintf('dump TSOMObject'#13#10);
+  cmo.somDumpSelf(0);
+  somPrintf('0X%08X'#13#10, longint(cmo));
+  somPrintf('0X%08X'#13#10, longint(TSOMObject));
+  somPrintf('test destroy TSOMObject'#13#10);
+  cmo.Destroy;
+
+
+{$IFDEF SOM_OBJECTS}
+  somPrintf('test object pascal...'#13#10);
+  cmo:=TSOMObject.Create;
+  SOMClassMgr_somDumpSelf(SOMClassMgrObject, 0);
   cmo.somDumpSelf(0);
   cmo.somDumpSelfInt(0);
   WriteLn('test casting...');
-  cmo.somPrintSelf.somDumpSelf(0);
-  cmo.somFree;}
-  somEnvironmentEnd;
+  cmo.somPrintSelf;//.somDumpSelf(0);
+  somPrintf('self=%08X'#13#10,longint(cmo.somSelf));
+  SOMClassMgr_somDumpSelf(cmo.somSelf, 0);
+  cmo.Free; // Trap here because bug in class registration
+{$endif}
+
+  somPrintf('Shutdown SOM runtime'#13#10);
+//  somEnvironmentEnd;
+  somPrintf('Finished'#13#10);
 end.

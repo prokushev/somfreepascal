@@ -1015,12 +1015,12 @@ var
  *)
 
 type
-  somTD_SOMMalloc               =Function({IN} size_t: TCORBA_long   (* nbytes *)): TsomToken;
+  somTD_SOMMalloc               =Function({IN} size_t: TCORBA_long   (* nbytes *)): TsomToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMCalloc               =Function({IN} size_c: TCORBA_long   (* element_count *);
-                                          {IN} size_e: TCORBA_long   (* element_size *)): TsomToken;
+                                          {IN} size_e: TCORBA_long   (* element_size *)): TsomToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMRealloc              =Function({IN}    ref: TsomToken      (* memory *);
-                                          {IN}   size: TCORBA_long   (* nbytes *)): TsomToken;
-  somTD_SOMFree                 =Procedure({IN}   ref: TsomToken    (* memory *));
+                                          {IN}   size: TCORBA_long   (* nbytes *)): TsomToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+  somTD_SOMFree                 =Procedure({IN}   ref: TsomToken    (* memory *));{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 
 var
   SOMCalloc             :somTD_SOMCalloc; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMCalloc';{$endif}
@@ -1537,48 +1537,48 @@ var
 // Our custom memory management. Alow us to store some info about SOM classes and Object Pascal classes linking.
 
 
-Function MyMalloc(size_t:Integer): TsomToken;
+Function MyMalloc(size_t:Integer): TsomToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 begin
   if size_t<=0 then begin
-    {somPrintf('%s',['Z']);}
+    somPrintf('Z'#13#10);
     Result := nil
   end else begin
-    GetMem(Result,size_t + 2*BufSize);
+    GetMem(Result,size_t + BufSize*2);
     if Result<>nil then begin
       inc(Cardinal(Result),BufSize);
       PCardinal(Cardinal(Result)-4)^ := 0;
       PCardinal(Cardinal(Result)-8)^ := size_t;
     end else  
-    {somprintf('%s', ['M'])};
+      somprintf('M'#13#10);
   end;
-//  somprintf('%08X', [result]);
+  somprintf('Malloc %08X'#13#10, result);
 end;
 
-Function MyCalloc(size_c:Integer; size_e:Integer): TsomToken;
+Function MyCalloc(size_c:Integer; size_e:Integer): TsomToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 begin
-//  somprintf('Calloc', []);
+  somprintf('Calloc'#13#10);
   Result := somTD_SOMCalloc(OldCalloc)(size_c,size_e);
-  //somprintf('c',[]);
+  somprintf('c'#13#10);
 end;
 
-Procedure MyFree(ref: TsomToken);
+Procedure MyFree(ref: TsomToken);{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 var
   size          : Longint;
 begin
-//  somprintf('Free %08X', [ref]);
+  somprintf('Free %08X'#13#10, ref);
   if ref<>nil then begin
     size := PCardinal(Cardinal(ref)-8)^;
     dec(Cardinal(ref),BufSize);
     try
       FreeMem(ref,size + BufSize*2); // Possible leak!!!
     except
-      {somprintf('%s',['F'])};
+      somprintf('F'#13#10);
     end;
-    //somprintf('f', []);
+    somprintf('f'#13#10);
   end;
 end;
 
-Function MyRealloc(ref: TsomToken; size:Integer): TsomToken;
+Function MyRealloc(ref: TsomToken; size:Integer): TsomToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 var
   oldsize       : Longint;
   //oldtype       : Longint;
@@ -1741,7 +1741,7 @@ end;
 
 {$ifdef os2}
 const
-  ModuleName   : PChar = SOMDLL;             // Name of module
+  ModuleName   : PChar = SOMDLL;                // Name of module
 var
   LoadError    : Array[0..255] of Char;         // Area for Load failure information
   ModuleHandle : hModule;                       // Module handle
@@ -1754,8 +1754,6 @@ var
   hLib1: THandle;
 {$endif}
 Initialization
-
-  somEnvironmentNew;
 {$ifndef SOM_EXTVAR}
   {$ifdef win32}
   hLib1 := LoadLibrary(SOMDLL);
@@ -1866,7 +1864,7 @@ Initialization
   rc:=DosFreeModule(ModuleHandle);
 {$endif}
 
-{$ifdef SOM_OBJECTS}
+{$ifdef aSOM_OBJECTS}
   // Play some memory games...
   OldMalloc  := SOMMalloc;
   OldCalloc  := SOMCalloc;
@@ -1885,9 +1883,15 @@ Initialization
 {$endif}
 {$endif}
 
+  SOM_TraceLevelPtr^:=2;
+  SOM_WarnLevelPtr^:=2;
+  SOM_AssertLevelPtr^:=2;
+
+  somEnvironmentNew;
+
 Finalization
 
-{$ifdef SOM_OBJECTS}
+{$ifdef aSOM_OBJECTS}
   SOMMalloc  := OldMalloc;
   SOMCalloc  := OldCalloc;
   SOMRealloc := OldRealloc;

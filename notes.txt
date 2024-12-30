@@ -1,0 +1,5 @@
+Another somFree incompatabilities
+
+1. somEnvironmentNew raises exception if call twice under somFree, but OK in IBM SOM 2.1 and 3.0
+2. Base classes in SOM.DLL preconstructer. So, trick of VPSOM with memory allocation functions doesn't work,
+Need another solution...
