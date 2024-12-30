@@ -1,4 +1,4 @@
-name: somFree Pascal Linux build and tests
+name: somFree Pascal MacOS build and tests
 
 # Controls when the workflow will run
 on:
