@@ -1,0 +1,64 @@
+name: somFree Pascal Linux build and tests
+
+# Controls when the workflow will run
+on:
+    # Triggers the workflow on push or pull request events but only for the master branch
+
+    # run at the event pushed by Jenkins
+    repository_dispatch:
+
+    push:
+        branches: [ main ]
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
+    # This workflow contains a single job called "build"
+    build:
+        # The type of runner that the job will run on
+        runs-on: macos-latest
+
+        permissions:
+          contents: write
+
+        # Steps represent a sequence of tasks that will be executed as part of the job
+        steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - name: Check out from repository
+              uses: actions/checkout@v4
+              with:
+                  # repository: {owner}/repo
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  submodules: recursive
+
+            # Install prerequisites
+              
+            - name: Install FPC
+              run: |
+                   brew update
+                   brew install fpc
+    
+            - name: Install somFree
+              run:  wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-rte_1.0.0.89_amd64.deb/download' -O somtk-rte_1.0.0.89_amd64.deb &&
+                    sudo dpkg --install somtk-rte_1.0.0.89_amd64.deb &&
+                    rm somtk-rte_1.0.0.89_amd64.deb &&
+                    wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-ir_1.0.0.89_amd64.deb/download' -O somtk-ir_1.0.0.89_amd64.deb &&
+                    sudo dpkg --install somtk-ir_1.0.0.89_amd64.deb &&
+                    rm somtk-ir_1.0.0.89_amd64.deb &&
+                    wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-comp_1.0.0.89_amd64.deb/download' -O somtk-comp_1.0.0.89_amd64.deb &&
+                    sudo dpkg --install somtk-comp_1.0.0.89_amd64.deb &&
+                    rm somtk-comp_1.0.0.89_amd64.deb  &&
+                    wget 'https://sourceforge.net/projects/somfree/files/Ubuntu/22.04/somtk-dev_1.0.0.89_amd64.deb/download' -O somtk-dev_1.0.0.89_amd64.deb &&
+                    sudo dpkg --install somtk-dev_1.0.0.89_amd64.deb &&
+                    rm somtk-dev_1.0.0.89_amd64.deb
+
+            # Build
+            - name:  Build
+              run: |
+                   fpc -Fl/usr/lib/somtk/lib test.pas
+                   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/somtk/lib/
+                   ./test
+              
