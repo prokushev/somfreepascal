@@ -43,7 +43,7 @@ jobs:
     
             - name: Install somFree
               run:  wget 'https://sourceforge.net/projects/somfree/files/MacOS/11.0/SOMTK-11.0-1.0.0.95.pkg/download' -O SOMTK-11.0-1.0.0.95.pkg &&
-                    sudo installer -pkg SOMTK-11.0-1.0.0.95.pkg &&
+                    sudo installer -pkg SOMTK-11.0-1.0.0.95.pkg -target /Library/Frameworks &&
                     rm SOMTK-11.0-1.0.0.95.pkg
 
             # Build
