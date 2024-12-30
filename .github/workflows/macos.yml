@@ -50,7 +50,7 @@ jobs:
             # Build
             - name:  Build
               run: |
-                   fpc -k-framework -kSOMTK -k-F /Library/Frameworks test.pas
+                   fpc -k-framework -kSOMTK test.pas
                    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/somtk/lib/
                    ./test
               
