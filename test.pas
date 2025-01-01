@@ -24,20 +24,8 @@ begin
 end;
 {$endif}
 
-var
-  clsmgr: TRealSOMObject;
-  tstobj: TRealSOMObject;
-  tst: somTD_SOMObject_somDumpSelf;
-  a: TSOMClass_SOMClassSequence;
-  i: integer;
-  m: somTD_SOMObject_somPrintSelf;
-  buf : byte;
-{$ifdef SOM_OBJECTS}
-  cmo: TSOMObject;
-{$endif}
+Procedure TestTypes;
 begin
-  // Disable buffering...
-  SetTextBuf(Output,buf,sizeof(buf));
   WriteLn('Testing types');
 
   WriteLn('TCORBA_short max: ', High(TCORBA_short)); 
@@ -72,6 +60,25 @@ begin
 
   WriteLn('TCORBA_char size: ', SizeOf(TCORBA_char));
   WriteLn('TCORBA_octet size: ', SizeOf(TCORBA_octet));
+end;
+
+var
+  clsmgr: TRealSOMObject;
+  tstobj: TRealSOMObject;
+  tst: somTD_SOMObject_somDumpSelf;
+  a: TSOMClass_SOMClassSequence;
+  i: integer;
+  m: somTD_SOMObject_somPrintSelf;
+  buf : byte;
+{$ifdef SOM_OBJECTS}
+  cmo: TSOMObject;
+{$endif}
+  p: pointer;
+begin
+  // Disable buffering...
+  SetTextBuf(Output,buf,sizeof(buf));
+
+  TestTypes;
 
   Flush(Output);
 
@@ -121,9 +128,16 @@ begin
   For I:=0 to Pred(a._length) do
   begin
     somPrintf('0X%08X'#13#10, longint(a._buffer[i]));
+{
+    p:=a._buffer[i];
+    Dec(Cardinal(p), 4);
+    somPrintf('0X%08X'#13#10, PCardinal(Cardinal(p))^);
+    Dec(Cardinal(p), 4);
+    somPrintf('0X%08X'#13#10, PCardinal(Cardinal(p))^);
+}
     SOMObject_somDumpSelf(a._buffer[i], 0);
   end;
-
+//exit;
   somPrintf('test create SOMObject'#13#10);
 //  SOMObjectNewClass(SOMObject_MajorVersion,SOMObject_MinorVersion);
   tstobj:=SOMClass_somNewNoInit(SOMObjectClassData.classObject);
@@ -133,27 +147,27 @@ begin
   somObject_somUnInit(tstobj);
   SOMObject_somFree(tstobj);
 
+{$IFDEF SOM_OBJECTS}
   somPrintf('test create TSOMObject'#13#10);
   cmo:=TSOMObject.Create;
   somPrintf('dump TSOMObject'#13#10);
   cmo.somDumpSelf(0);
   somPrintf('0X%08X'#13#10, longint(cmo));
   somPrintf('0X%08X'#13#10, longint(TSOMObject));
+  somPrintf('0X%08X'#13#10, longint(cmo.somGetClass));
+  cmo.somGetClass.somPrintSelf;
   somPrintf('test destroy TSOMObject'#13#10);
   cmo.Destroy;
 
 
-{$IFDEF SOM_OBJECTS}
   somPrintf('test object pascal...'#13#10);
   cmo:=TSOMObject.Create;
   SOMClassMgr_somDumpSelf(SOMClassMgrObject, 0);
   cmo.somDumpSelf(0);
   cmo.somDumpSelfInt(0);
-  WriteLn('test casting...');
-  cmo.somPrintSelf;//.somDumpSelf(0);
-  somPrintf('self=%08X'#13#10,longint(cmo.somSelf));
-  SOMClassMgr_somDumpSelf(cmo.somSelf, 0);
-  cmo.Free; // Trap here because bug in class registration
+  somPrintf('testing GetClass and type casting'#13#10);
+  cmo.somGetClass.somPrintSelf;
+  cmo.Destroy; // Trap here because bug in class registration
 {$endif}
 
   somPrintf('Shutdown SOM runtime'#13#10);

@@ -54,7 +54,7 @@ var
   SOMClassMgrCClassData         : TSOMClassMgrCClassData; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMClassMgrCClassData';{$endif}
 
 type
-  TSOMClassMgrClassDataStructure = record
+  TSOMClassMgrClassData         = record
     classObject                 : TRealSOMClass;
 	// SOM 1 Methods
     somFindClsInFile            : TsomMToken;
@@ -91,13 +91,13 @@ type
   end;
 
 var
-  SOMClassMgrClassData          : TSOMClassMgrClassDataStructure; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMClassMgrClassData';{$endif}
-  SOMClassMgrClassDataPtr       : ^TSOMClassMgrClassDataStructure;
+  SOMClassMgrClassData          : TSOMClassMgrClassData; {$ifdef SOM_EXTVAR}external SOMDLL name 'SOMClassMgrClassData';{$endif}
+  SOMClassMgrClassDataPtr       : ^TSOMClassMgrClassData;
 
 type
   SOMClassMgr_SOMClassArray = ^TRealSOMClass;
 
-Function SOMClassMgrNewClass(majorVersion,minorVersion:Longint):TRealSOMClass; {$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
+Function SOMClassMgrNewClass(majorVersion,minorVersion: TCORBA_long):TRealSOMClass; {$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
 (*
  * New Method: somLoadClassFile
@@ -111,12 +111,12 @@ const
 
 type
   somTP_SOMClassMgr_somLoadClassFile = function(somSelf: TRealSOMClassMgr;
-    classId: TsomId; majorVersion, minorVersion: LongInt;
+    classId: TsomId; majorVersion, minorVersion: TCORBA_long;
     fileName: PCORBA_char): TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somLoadClassFile = somTP_SOMClassMgr_somLoadClassFile;
 
 function SOMClassMgr_somLoadClassFile(somSelf: TRealSOMClassMgr; classId: TsomId;
-  majorVersion, minorVersion: LongInt; fileName: PCORBA_char): TRealSOMClass;
+  majorVersion, minorVersion: TCORBA_long; fileName: PCORBA_char): TRealSOMClass;
 
 (*
  * New Method: somLocateClassFile
@@ -135,11 +135,11 @@ const
 
 type
   somTP_SOMClassMgr_somLocateClassFile = function(somSelf: TRealSOMClassMgr;
-    classId: TsomId; majorVersion, minorVersion: LongInt): PCORBA_char; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+    classId: TsomId; majorVersion, minorVersion: TCORBA_long): PCORBA_char; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somLocateClassFile = somTP_SOMClassMgr_somLocateClassFile;
 
 function SOMClassMgr_somLocateClassFile(somSelf: TRealSOMClassMgr; classId: TsomId;
-  majorVersion, minorVersion: LongInt): PCORBA_char;
+  majorVersion, minorVersion: TCORBA_long): PCORBA_char;
 
 (*
  * New Method: somRegisterClass
@@ -174,11 +174,11 @@ const
 
 type
   somTP_SOMClassMgr_somUnloadClassFile = function(somSelf: TRealSOMClassMgr;
-    classObj: TRealSOMClass): LongInt; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+    classObj: TRealSOMClass): TCORBA_long; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somUnloadClassFile = somTP_SOMClassMgr_somUnloadClassFile;
 
 function SOMClassMgr_somUnloadClassFile(somSelf: TRealSOMClassMgr;
-  classObj: TRealSOMClass): LongInt;
+  classObj: TRealSOMClass): TCORBA_long;
 
 (*
  * New Method: somUnregisterClass
@@ -194,11 +194,11 @@ const
 
 type
   somTP_SOMClassMgr_somUnregisterClass = function(somSelf: TRealSOMClassMgr;
-    classObj: TRealSOMClass): LongInt; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+    classObj: TRealSOMClass): TCORBA_long; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somUnregisterClass = somTP_SOMClassMgr_somUnregisterClass;
 
 function SOMClassMgr_somUnregisterClass(somSelf: TRealSOMClassMgr;
-  classObj: TRealSOMClass): LongInt;
+  classObj: TRealSOMClass): TCORBA_long;
 
 
 (*
@@ -291,10 +291,10 @@ const
 
 type
   somTP_SOMClassMgr_somFindClass = function(somSelf: TRealSOMClassMgr;
-    classId: TsomId; majorVersion, minorVersion: LongInt): TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+    classId: TsomId; majorVersion, minorVersion: TCORBA_long): TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somFindClass = somTP_SOMClassMgr_somFindClass;
 
-function SOMClassMgr_somFindClass(somSelf: TRealSOMClassMgr; classId: TsomId; majorVersion, minorVersion: LongInt): TRealSOMClass;
+function SOMClassMgr_somFindClass(somSelf: TRealSOMClassMgr; classId: TsomId; majorVersion, minorVersion: TCORBA_long): TRealSOMClass;
 
 (*
  * New Method: somFindClsInFile
@@ -312,12 +312,12 @@ const
 
 type
   somTP_SOMClassMgr_somFindClsInFile = function(somSelf: TRealSOMClassMgr;
-    classId: TsomId; majorVersion, minorVersion: LongInt; fileName: PCORBA_char):
+    classId: TsomId; majorVersion, minorVersion: TCORBA_long; fileName: PCORBA_char):
     TRealSOMClass; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somFindClsInFile = somTP_SOMClassMgr_somFindClsInFile;
 
 function SOMClassMgr_somFindClsInFile(somSelf: TRealSOMClassMgr; classId: TsomId;
-  majorVersion, minorVersion: LongInt; fileName: PCORBA_char): TRealSOMClass;
+  majorVersion, minorVersion: TCORBA_long; fileName: PCORBA_char): TRealSOMClass;
 
 (*
  * New Method: somMergeInto
@@ -371,10 +371,10 @@ const
 
 type
   somTP_SOMClassMgr_somSubstituteClass = function(somSelf: TRealSOMClassMgr;
-    origClassName, newClassName: PCORBA_char): LongInt; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+    origClassName, newClassName: PCORBA_char): TCORBA_long; {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
   somTD_SOMClassMgr_somSubstituteClass = somTP_SOMClassMgr_somSubstituteClass;
 
-function SOMClassMgr_somSubstituteClass(somSelf: TRealSOMClassMgr; origClassName, newClassName: PCORBA_char): LongInt;
+function SOMClassMgr_somSubstituteClass(somSelf: TRealSOMClassMgr; origClassName, newClassName: PCORBA_char): TCORBA_long;
 
 (*
  * New Method: _get_somInterfaceRepository
@@ -489,7 +489,7 @@ procedure SOMClassMgr_somEndPersistentClasses(somSelf: TRealSOMClassMgr);
  *)
 
 type
- somTD_SOMInitModule = procedure(majorVersion, minorVersion: LongInt; className: PCORBA_char); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
+ somTD_SOMInitModule = procedure(majorVersion, minorVersion: TCORBA_long; className: PCORBA_char); {$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 
 const
   somMD_SOMClassMgr_somRegisterClassLibrary = '::SOMClassMgr::somRegisterClassLibrary';
@@ -588,13 +588,13 @@ procedure SOMClassMgr_somUninit(somSelf: TRealSOMClassMgr);
 procedure SOMClassMgr_somFree(somSelf: TRealSOMClassMgr);
 function SOMClassMgr_somGetClass(somSelf: TRealSOMClassMgr): TRealSOMClass;
 function SOMClassMgr_somGetClassName(somSelf: TRealSOMClassMgr): PCORBA_char;
-function SOMClassMgr_somGetSize(somSelf: TRealSOMClassMgr): LongInt;
+function SOMClassMgr_somGetSize(somSelf: TRealSOMClassMgr): TCORBA_long;
 function SOMClassMgr_somIsA(somSelf: TRealSOMClassMgr; aClassObj: TRealSOMClass): TCORBA_boolean;
 function SOMClassMgr_somIsInstanceOf(somSelf: TRealSOMClassMgr; aClassObj: TRealSOMClass): TCORBA_boolean;
 function SOMClassMgr_somRespondsTo(somSelf: TRealSOMClassMgr; mId: TsomId): TCORBA_boolean;
 function SOMClassMgr_somPrintSelf(somSelf: TRealSOMClassMgr): TRealSOMObject;
-procedure SOMClassMgr_somDumpSelf(somSelf: TRealSOMClassMgr; level: LongInt);
-procedure SOMClassMgr_somDumpSelfInt(somSelf: TRealSOMClassMgr; level: LongInt);
+procedure SOMClassMgr_somDumpSelf(somSelf: TRealSOMClassMgr; level: TCORBA_long);
+procedure SOMClassMgr_somDumpSelfInt(somSelf: TRealSOMClassMgr; level: TCORBA_long);
 
 {$ifdef SOM_VERSION_2}
 procedure SOMClassMgr_somDefaultInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl);
@@ -655,22 +655,24 @@ uses
 
 /////////////////////// SOMClassMgr Class ///////////////////////////
 
-Function SOMClassMgrNewClass(majorVersion,minorVersion:Longint):TRealSOMClass; external SOMDLL name 'SOMClassMgrNewClass';
+Function SOMClassMgrNewClass(majorVersion,minorVersion:TCORBA_long):TRealSOMClass; external SOMDLL name 'SOMClassMgrNewClass';
 
 function SOMClassMgr_somLoadClassFile(somSelf: TRealSOMClassMgr; classId: TsomId;
-  majorVersion, minorVersion: LongInt; fileName: PCORBA_char): TRealSOMClass;
+  majorVersion, minorVersion: TCORBA_long; fileName: PCORBA_char): TRealSOMClass;
 var
   mt: somTD_SOMClassMgr_somLoadClassFile;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somLoadClassFile));
   Result := mt(somSelf, classId, majorVersion, minorVersion, fileName);
 end;
 
 function SOMClassMgr_somLocateClassFile(somSelf: TRealSOMClassMgr; classId: TsomId;
-  majorVersion, minorVersion: LongInt): PCORBA_char;
+  majorVersion, minorVersion: TCORBA_long): PCORBA_char;
 var
   mt: somTD_SOMClassMgr_somLocateClassFile;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somLocateClassFile));
   Result := mt(somSelf, classId, majorVersion, minorVersion);
 end;
@@ -680,23 +682,26 @@ procedure SOMClassMgr_somRegisterClass(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somRegisterClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somRegisterClass));
   mt(somSelf, classObj);
 end;
 
-function SOMClassMgr_somUnloadClassFile(somSelf: TRealSOMClassMgr; classObj: TRealSOMClass): LongInt;
+function SOMClassMgr_somUnloadClassFile(somSelf: TRealSOMClassMgr; classObj: TRealSOMClass): TCORBA_long;
 var
   mt: somTD_SOMClassMgr_somUnloadClassFile;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somUnloadClassFile));
   Result := mt(somSelf, classObj);
 end;
 
 function SOMClassMgr_somUnregisterClass(somSelf: TRealSOMClassMgr;
-  classObj: TRealSOMClass): LongInt;
+  classObj: TRealSOMClass): TCORBA_long;
 var
   mt: somTD_SOMClassMgr_somUnregisterClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somUnregisterClass));
   Result := mt(somSelf, classObj);
 end;
@@ -705,6 +710,7 @@ function SOMClassMgr_somGetInitFunction(somSelf: TRealSOMClassMgr): PCORBA_char;
 var
   mt: somTD_SOMClassMgr_somGetInitFunction;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somGetInitFunction));
   Result := mt(somSelf);
 end;
@@ -714,6 +720,7 @@ function SOMClassMgr_somGetRelatedClasses(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somGetRelatedClasses;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somGetRelatedClasses));
   Result :=mt(somSelf, classObj);
 end;
@@ -722,22 +729,25 @@ function SOMClassMgr_somClassFromId(somSelf: TRealSOMClassMgr; classId: TsomId):
 var
   mt: somTD_SOMClassMgr_somClassFromId;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somClassFromId));
   Result := mt(somSelf, classId);
 end;
 
-function SOMClassMgr_somFindClass(somSelf: TRealSOMClassMgr; classId: TsomId; majorVersion, minorVersion: LongInt): TRealSOMClass;
+function SOMClassMgr_somFindClass(somSelf: TRealSOMClassMgr; classId: TsomId; majorVersion, minorVersion: TCORBA_long): TRealSOMClass;
 var
   mt: somTD_SOMClassMgr_somFindClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somFindClass));
   Result := mt(somSelf, classId, majorVersion, minorVersion);
 end;
 
-function SOMClassMgr_somFindClsInFile(somSelf: TRealSOMClassMgr; classId: TsomId; majorVersion, minorVersion: LongInt; fileName: PCORBA_char): TRealSOMClass;
+function SOMClassMgr_somFindClsInFile(somSelf: TRealSOMClassMgr; classId: TsomId; majorVersion, minorVersion: TCORBA_long; fileName: PCORBA_char): TRealSOMClass;
 var
   mt: somTD_SOMClassMgr_somFindClsInFile;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somFindClsInFile));
   Result := mt(somSelf, classId, majorVersion, minorVersion, fileName);
 end;
@@ -746,6 +756,7 @@ procedure SOMClassMgr_somMergeInto(somSelf: TRealSOMClassMgr; targetObj: TRealSO
 var
   mt: somTD_SOMClassMgr_somMergeInto;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somMergeInto));
   mt(somSelf, targetObj);
 end;
@@ -753,10 +764,11 @@ end;
 {$ifdef SOM_VERSION_2}
 
 function SOMClassMgr_somSubstituteClass(somSelf: TRealSOMClassMgr;
-  origClassName, newClassName: PCORBA_char): LongInt;
+  origClassName, newClassName: PCORBA_char): TCORBA_long;
 var
   mt: somTD_SOMClassMgr_somSubstituteClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somSubstituteClass));
   Result := mt(somSelf, origClassName, newClassName);
 end;
@@ -765,6 +777,7 @@ function SOMClassMgr__get_somInterfaceRepository(somSelf: TRealSOMClassMgr): TRe
 var
   mt: somTD_SOMClassMgr__get_somInterfaceRepository;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData._get_somInterfaceRepository));
   Result := mt(somSelf);
 end;
@@ -774,6 +787,7 @@ procedure SOMClassMgr__set_somInterfaceRepository(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr__set_somInterfaceRepository;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData._set_somInterfaceRepository));
   mt(somSelf, somInterfaceRepository);
 end;
@@ -782,6 +796,7 @@ function SOMClassMgr__get_somRegisteredClasses(somSelf: TRealSOMClassMgr): TSOMC
 var
   mt: somTP_SOMClassMgr__get_somRegisteredClasses;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData._get_somRegisteredClasses));
   Result:=mt(somSelf);
 end;
@@ -790,6 +805,7 @@ procedure SOMClassMgr_somBeginPersistentClasses(somSelf: TRealSOMClassMgr);
 var
   mt: somTD_SOMClassMgr_somBeginPersistentClasses;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somBeginPersistentClasses));
   mt(somSelf);
 end;
@@ -798,6 +814,7 @@ procedure SOMClassMgr_somEndPersistentClasses(somSelf: TRealSOMClassMgr);
 var
   mt: somTD_SOMClassMgr_somEndPersistentClasses;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somEndPersistentClasses));
   mt(somSelf);
 end;
@@ -807,25 +824,26 @@ procedure SOMClassMgr_somRegisterClassLibrary(somSelf: TRealSOMClassMgr;
 var
   mt: somTD_SOMClassMgr_somRegisterClassLibrary;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somRegisterClassLibrary));
   mt(somSelf, libraryName, libraryInitRtn);
 end;
 
-function SOMClassMgr_somJoinAffinityGroup(somSelf: TRealSOMClassMgr;
-  newClass, affClass: TRealSOMClass): TCORBA_boolean;
+function SOMClassMgr_somJoinAffinityGroup(somSelf: TRealSOMClassMgr; newClass, affClass: TRealSOMClass): TCORBA_boolean;
 var
   mt: somTD_SOMClassMgr_somJoinAffinityGroup;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somJoinAffinityGroup));
   Result := mt(somSelf, newClass, affClass);
 end;
 
 
-procedure SOMClassMgr_somUnregisterClassLibrary(somSelf: TRealSOMClassMgr;
-  libraryName: PCORBA_char);
+procedure SOMClassMgr_somUnregisterClassLibrary(somSelf: TRealSOMClassMgr; libraryName: PCORBA_char);
 var
   mt: somTD_SOMClassMgr_somUnregisterClassLibrary;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somUnregisterClassLibrary));
   mt(somSelf, libraryName);
 end;
@@ -834,75 +852,88 @@ end;
 
 {$ifdef SOM_VERSION_3}
 
-function SOMClassMgr_somImportObject(somSelf: TRealSOMClassMgr;
-  objToBeShared: TRealSOMObject): TCORBA_boolean;
+function SOMClassMgr_somImportObject(somSelf: TRealSOMClassMgr; objToBeShared: TRealSOMObject): TCORBA_boolean;
 var
   mt: somTD_SOMClassMgr_somImportObject;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   {$ifdef fpc}TsomMethodProc(mt):={$else}@mt:=Pointer{$endif}(SOM_Resolve(somSelf, SOMClassMgrClassData.classObject, SOMClassMgrClassData.somImportObject));
   Result := mt(somSelf, objToBeShared);
 end;
 
 {$endif}
+
 ////////////// SOMClassMgr parent methods ////////////////////////////////////
 
 procedure SOMClassMgr_somInit(somSelf: TRealSOMClassMgr);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somInit(somSelf);
 end;
 
 procedure SOMClassMgr_somUninit(somSelf: TRealSOMClassMgr);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somUninit(somSelf);
 end;
 
 procedure SOMClassMgr_somFree(somSelf: TRealSOMClassMgr);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somFree(somSelf);
 end;
 
 function SOMClassMgr_somGetClass(somSelf: TRealSOMClassMgr): TRealSOMClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somGetClass(somSelf);
 end;
 
 function SOMClassMgr_somGetClassName(somSelf: TRealSOMClassMgr): PCORBA_char;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somGetClassName(somSelf);
 end;
 
-function SOMClassMgr_somGetSize(somSelf: TRealSOMClassMgr): LongInt;
+function SOMClassMgr_somGetSize(somSelf: TRealSOMClassMgr): TCORBA_long;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somGetSize(somSelf);
 end;
 
 function SOMClassMgr_somIsA(somSelf: TRealSOMClassMgr; aClassObj: TRealSOMClass): TCORBA_boolean;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMClassMgr_somIsA(somSelf, aClassObj);
 end;
 
 function SOMClassMgr_somIsInstanceOf(somSelf: TRealSOMClassMgr; aClassObj: TRealSOMClass): TCORBA_boolean;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somIsInstanceOf(somSelf, aClassObj);
 end;
 
 function SOMClassMgr_somRespondsTo(somSelf: TRealSOMClassMgr; mId: TsomId): TCORBA_boolean;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somRespondsTo(somSelf, mId);
 end;
 
 function SOMClassMgr_somPrintSelf(somSelf: TRealSOMClassMgr): TRealSOMObject;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somPrintSelf(somSelf);
 end;
 
-procedure SOMClassMgr_somDumpSelf(somSelf: TRealSOMClassMgr; level: LongInt);
+procedure SOMClassMgr_somDumpSelf(somSelf: TRealSOMClassMgr; level: TCORBA_long);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somDumpSelf(somSelf, level);
 end;
 
-procedure SOMClassMgr_somDumpSelfInt(somSelf: TRealSOMClassMgr; level: LongInt);
+procedure SOMClassMgr_somDumpSelfInt(somSelf: TRealSOMClassMgr; level: TCORBA_long);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somDumpSelfInt(somSelf, level);
 end;
 
@@ -910,72 +941,86 @@ end;
 
 procedure SOMClassMgr_somDefaultInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somDefaultInit(somSelf, ctrl);
 end;
 
 
 procedure SOMClassMgr_somDestruct(somSelf: TRealSOMClassMgr; doFree: TCORBA_boolean; ctrl: PsomDestructCtrl);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somDestruct(somSelf, doFree, ctrl);
 end;
 
 procedure SOMClassMgr_somDefaultCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somDefaultCopyInit(somSelf, ctrl, fromObj);
 end;
 
 function SOMClassMgr_somDefaultAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somDefaultAssign(somSelf, ctrl, fromObj);
 end;
 
 procedure SOMClassMgr_somDefaultConstCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somDefaultConstCopyInit(somSelf, ctrl, fromObj);
 end;
 
 procedure SOMClassMgr_somDefaultVCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somDefaultVCopyInit(somSelf, ctrl, fromObj);
 end;
 
 procedure SOMClassMgr_somDefaultConstVCopyInit(somSelf: TRealSOMClassMgr; ctrl: PsomInitCtrl; fromObj: TRealSOMObject);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   SOMObject_somDefaultConstVCopyInit(somSelf, ctrl, fromObj);
 end;
 
 function SOMClassMgr_somDefaultConstAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somDefaultConstAssign(somSelf, ctrl, fromObj);
 end;
 
 function SOMClassMgr_somDefaultVAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somDefaultVAssign(somSelf, ctrl, fromObj);
 end;
 
 function SOMClassMgr_somDefaultConstVAssign(somSelf: TRealSOMClassMgr; ctrl: PsomAssignCtrl; fromObj: TRealSOMObject): TRealSOMObject;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somDefaultConstVAssign(somSelf, ctrl, fromObj);
 end;
 
 function SOMClassMgr_somDispatch(somSelf: TRealSOMClassMgr; var retValue: TsomToken; methodId: TsomId; ap: Tva_list{array of const}): TCORBA_boolean;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somDispatch(somSelf, retValue, methodId, ap);
 end;
 
 function SOMClassMgr_somClassDispatch(somSelf: TRealSOMClassMgr; clsObj: TRealSOMClass; var retValue: TsomToken; methodId: TsomId; ap: tva_list{array of const}): TCORBA_boolean;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somClassDispatch(somSelf, clsObj, retValue, methodId, ap);
 end;
 
 function SOMClassMgr_somCastObj(somSelf: TRealSOMClassMgr; castedCls: TRealSOMClass): TCORBA_boolean;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somCastObj(somSelf, castedCls);
 end;
 
 function SOMClassMgr_somResetObj(somSelf: TRealSOMClassMgr): TCORBA_boolean;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   Result:=SOMObject_somResetObj(somSelf);
 end;
 
@@ -987,7 +1032,6 @@ var
 {$endif}
 Begin
 {$ifndef SOM_EXTVAR}
-
   hLib1 := LoadLibrary(SOMDLL);
   SOMClassMgrClassDataPtr := GetProcAddress(hLib1, 'SOMClassMgrClassData');
   SOMClassMgrClassData:=SOMClassMgrClassDataPtr^;

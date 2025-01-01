@@ -1291,6 +1291,7 @@ function somVaBuf_add(vb: TsomVaBuf; arg: TsomToken; typ: TCORBA_long): TCORBA_l
 function somvalistGetTarget(ap: Tva_list): TCORBA_unsigned_long;{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 procedure somvalistSetTarget(ap: Tva_list; a: pointer);{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}
 
+
 Implementation
 
 {$ifdef vpc}
@@ -1310,6 +1311,7 @@ uses
 uses
   windows;
 {$endif}
+
 
 function somVaBuf_create(vb: TsomVaBuf; size: TCORBA_long): TsomVaBuf; external SOMTCDLL name 'somVaBuf_create';
 procedure somVaBuf_get_valist(vb: TsomVaBuf; ap: Pva_list); external SOMTCDLL name 'somVaBuf_get_valist';
@@ -1526,7 +1528,7 @@ end;
 {$ifdef SOM_OBJECTS}
 
 const
-  BufSize               = 8;
+  BufSize               = 16;
 
 var
   OldMalloc             : somTD_SOMMalloc;
@@ -1547,7 +1549,7 @@ begin
     if Result<>nil then begin
       inc(Cardinal(Result),BufSize);
       PCardinal(Cardinal(Result)-4)^ := 0;
-      PCardinal(Cardinal(Result)-8)^ := size_t;
+      PCardinal(Cardinal(Result)-8)^ := $DEADBEAF;
     end else  
       somprintf('M'#13#10);
   end;
@@ -1570,7 +1572,7 @@ begin
     size := PCardinal(Cardinal(ref)-8)^;
     dec(Cardinal(ref),BufSize);
     try
-      FreeMem(ref,size + BufSize*2); // Possible leak!!!
+      FreeMem(ref{,size + BufSize*2}); // Possible leak!!!
     except
       somprintf('F'#13#10);
     end;
@@ -1864,7 +1866,7 @@ Initialization
   rc:=DosFreeModule(ModuleHandle);
 {$endif}
 
-{$ifdef aSOM_OBJECTS}
+{$ifdef SOM_OBJECTS}
   // Play some memory games...
   OldMalloc  := SOMMalloc;
   OldCalloc  := SOMCalloc;
@@ -1891,7 +1893,7 @@ Initialization
 
 Finalization
 
-{$ifdef aSOM_OBJECTS}
+{$ifdef SOM_OBJECTS}
   SOMMalloc  := OldMalloc;
   SOMCalloc  := OldCalloc;
   SOMRealloc := OldRealloc;
