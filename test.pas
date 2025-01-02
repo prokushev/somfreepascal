@@ -138,17 +138,17 @@ begin
     SOMObject_somDumpSelf(a._buffer[i], 0);
   end;
 //exit;
-  somPrintf('test create SOMObject'#13#10);
+  somPrintf('Create SOMObject'#13#10);
 //  SOMObjectNewClass(SOMObject_MajorVersion,SOMObject_MinorVersion);
   tstobj:=SOMClass_somNewNoInit(SOMObjectClassData.classObject);
   somObject_somInit(tstobj);
   somObject_somDumpSelf(tstobj, 0);
-  somPrintf('test destroy SOMObject'#13#10);
+  somPrintf('Destroy SOMObject'#13#10);
   somObject_somUnInit(tstobj);
   SOMObject_somFree(tstobj);
 
 {$IFDEF SOM_OBJECTS}
-  somPrintf('test create TSOMObject'#13#10);
+  somPrintf('Create TSOMObject'#13#10);
   cmo:=TSOMObject.Create;
   somPrintf('dump TSOMObject'#13#10);
   cmo.somDumpSelf(0);
@@ -156,21 +156,20 @@ begin
 //  somPrintf('0X%08X'#13#10, longint(TSOMObject));
 //  somPrintf('0X%08X'#13#10, longint(cmo.somGetClass));
   cmo.somGetClass.somPrintSelf;
-  somPrintf('test destroy TSOMObject'#13#10);
+  somPrintf('Destroy TSOMObject'#13#10);
   cmo.Destroy;
 
 
-  somPrintf('test object pascal...'#13#10);
+  somPrintf('Create TSOMObject'#13#10);
   cmo:=TSOMObject.Create;
-  SOMClassMgr_somDumpSelf(SOMClassMgrObject, 0);
   cmo.somDumpSelf(0);
-  cmo.somDumpSelfInt(0);
-  somPrintf('testing GetClass and type casting'#13#10);
+  somPrintf('call GetClass and type casting'#13#10);
   cmo.somGetClass.somDumpSelf(0);
-  cmo.Destroy;
+  somPrintf('Destroy TSOMObject'#13#10);
+  cmo.somFree;
 {$endif}
 
   somPrintf('Shutdown SOM runtime'#13#10);
-//  somEnvironmentEnd;
+//  somEnvironmentEnd; called in SOM.PAS finalization section
   somPrintf('Finished'#13#10);
 end.
