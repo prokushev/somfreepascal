@@ -152,9 +152,9 @@ begin
   cmo:=TSOMObject.Create;
   somPrintf('dump TSOMObject'#13#10);
   cmo.somDumpSelf(0);
-  somPrintf('0X%08X'#13#10, longint(cmo));
-  somPrintf('0X%08X'#13#10, longint(TSOMObject));
-  somPrintf('0X%08X'#13#10, longint(cmo.somGetClass));
+//  somPrintf('0X%08X'#13#10, longint(cmo));
+//  somPrintf('0X%08X'#13#10, longint(TSOMObject));
+//  somPrintf('0X%08X'#13#10, longint(cmo.somGetClass));
   cmo.somGetClass.somPrintSelf;
   somPrintf('test destroy TSOMObject'#13#10);
   cmo.Destroy;
@@ -167,7 +167,7 @@ begin
   cmo.somDumpSelfInt(0);
   somPrintf('testing GetClass and type casting'#13#10);
   cmo.somGetClass.somPrintSelf;
-  cmo.Destroy; // Trap here because bug in class registration
+  cmo.Destroy;
 {$endif}
 
   somPrintf('Shutdown SOM runtime'#13#10);

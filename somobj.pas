@@ -771,7 +771,7 @@ type
   PVPSOMRECORD          = ^VPSOMRECORD;
   VPSOMRECORD           = record
     VPCls               : TSOMObjectClass;
-    SOMCls              : TRealSOMClass;
+    SOMCls              : PRealSOMClass;
     Next                : PVPSOMRECORD;
   end;
 
@@ -835,11 +835,11 @@ var
     m: somTD_SOMObject_somFree;
 begin
     if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
-    somPrintf('somFree1=%08X'#13#10, cardinal(somSelf));
+//    somPrintf('somFree1=%08X'#13#10, cardinal(somSelf));
     {$ifdef fpc}TsomMethodProc(m):={$else}@m:=Pointer{$endif}(SOM_Resolve(somSelf, SOMObjectClassData.classObject, SOMObjectClassData.somFree));
-    somPrintf('somFree2'#13#10);
+//    somPrintf('somFree2'#13#10);
     m(somSelf);
-    somPrintf('somFree3'#13#10);
+//    somPrintf('somFree3'#13#10);
 end;
 
 (*
@@ -1330,12 +1330,19 @@ const
     SOMCls              : @SOMObjectClassData;
   );
 
+Procedure RegisterSOMPasClass(PasCls: TSOMObjectClass; SOMCls: PRealSOMObject);
+begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
+  somPrintf('Register VPClass som=0X%08X pas=0X%08X'#13#10, Cardinal(SOMCls^), Cardinal(PasCls));
+end;
+
 Procedure RegisterVPClass(var rec:VPSOMRECORD);
 var
   p,q                   : PVPSOMRecord;
 begin
   if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
-  somPrintf('Register VPClass som=0X%08X pas=0X%08X'#13#10, Cardinal(rec.SOMCls^), Cardinal(rec.VPCls));
+//  somPrintf('Register VPClass som=0X%08X pas=0X%08X'#13#10, Cardinal(rec.SOMCls^^), Cardinal(rec.VPCls));
+  rec.SOMCls:=PRealSOMObject(rec.SOMCls^);
   if (rec.Next<>nil)or(rec.SOMCls=nil)or(rec.VPCls=nil) then exit;
   p := @RSOMObject; q := nil;
   repeat
@@ -1364,7 +1371,7 @@ begin
   if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   if not somIsObj(obj) then Result := nil else
   begin
-      somPrintf('obj=0X%08X'#13#10, longint(obj));
+//      somPrintf('obj=0X%08X'#13#10, longint(obj));
 
     if PCardinal(Cardinal(obj)-8)^=$DEADBEAF then
     begin
@@ -1373,41 +1380,22 @@ begin
 
       if PCardinal(obj2)^<>0 then exit;  // Class already resolved;
     end else begin
-      somPrintf('Dead beaf 0X%08X'#13#10, PCardinal(Cardinal(obj)-8)^);
-      somPrintf('Trying to resolve instance of 0X%08X'#13#10, Cardinal(obj));
+//      somPrintf('Dead beaf 0X%08X'#13#10, PCardinal(Cardinal(obj)-8)^);
+//      somPrintf('Trying to resolve instance of 0X%08X'#13#10, Cardinal(obj));
 {----------------------------}
     {$ifdef fpc}TsomMethodProc(_somIsInstance):={$else}@_somIsInstance:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsInstanceOf));
     p := @RSOMObject;                   // First check for specific instances...
-    while (p<>nil)and(not _somIsInstance(obj,TRealSOMObject(p^.SOMCls^))) do
+    while (p<>nil)and(not (obj=TRealSOMObject(p^.SOMCls^))) do
     begin
-      somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
+//      somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
       p:=p^.Next;
     end;
     if p=nil then somPrintf('oops'#13#10);
     if p<>nil then begin
 //      PCardinal(obj2)^ := Cardinal(p^.VPCls);
       Result:=TSOMObject(p^.VPCls);
-      exit;
     end;
-{$ifdef asd}
-    {$ifdef fpc}TsomMethodProc(_somIsA):={$else}@_somIsA:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsA));
-    p := @RSOMObject; // Specific class not registered. Look for best general class.
-    q := @RSOMObject;
-    while (p<>nil) do begin
-      if _somIsA(obj,TRealSOMObject(p^.SOMCls^)) then q := p;
-  //    somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
-      p := p^.Next;
-    end;
-
-//    somPrintf('found 0X%08X'#13#10, longint(TSOMObject));
-    somPrintf('found 0X%08X'#13#10, longint(TSOMObject(q^.VPCls)));
-
-//    PCardinal(obj2)^ := Cardinal(q^.VPCls);
-    Result:=TSOMObject(q^.VPCls);
-{$endif}
-{----------------------------}
-      exit;
-//      Halt(1);
+    exit;
     end;
 
 
@@ -1415,7 +1403,7 @@ begin
     p := @RSOMObject;                   // First check for specific instances...
     while (p<>nil)and(not _somIsInstance(obj,TRealSOMObject(p^.SOMCls^))) do
     begin
-      somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
+//      somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
       p:=p^.Next;
     end;
     if p=nil then somPrintf('oops'#13#10);
@@ -1430,12 +1418,12 @@ begin
     q := @RSOMObject;
     while (p<>nil) do begin
       if _somIsA(obj,TRealSOMObject(p^.SOMCls^)) then q := p;
-      somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
+//      somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
       p := p^.Next;
     end;
 
-    somPrintf('found 0X%08X'#13#10, longint(TSOMObject));
-    somPrintf('found 0X%08X'#13#10, longint(TSOMObject(q^.VPCls)));
+//    somPrintf('found 0X%08X'#13#10, longint(TSOMObject));
+//    somPrintf('found 0X%08X'#13#10, longint(TSOMObject(q^.VPCls)));
 
     PCardinal(obj2)^ := Cardinal(q^.VPCls);
 //    Result:=TSOMObject(q^.VPCls);
@@ -1455,8 +1443,8 @@ begin
       Result := TSOMObjectClass(Pointer(obj));
       PCardinal(Cardinal(obj))^ := Cardinal(cls);
     end else begin
-      somPrintf('Dead beaf 0X%08X'#13#10, PCardinal(Cardinal(obj)-8)^);
-      somPrintf('Trying to cast instance of 0X%08X'#13#10, Cardinal(obj));
+//      somPrintf('Dead beaf 0X%08X'#13#10, PCardinal(Cardinal(obj)-8)^);
+//      somPrintf('Trying to cast instance of 0X%08X'#13#10, Cardinal(obj));
       Result:=TSOMObjectClass(ResolveClass(obj));
       //Halt(1);
     end;
@@ -1470,13 +1458,13 @@ var
 begin
   if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
 
-      somPrintf('Trying to resolve instance of 0X%08X'#13#10, Cardinal(obj));
+//      somPrintf('Trying to resolve instance of 0X%08X'#13#10, Cardinal(obj));
 {----------------------------}
     p := @RSOMObject;                   // First check for specific instances...
     while (p<>nil) do
     begin
-      somPrintf('0X%08X'#13#10, longint(p^.VPCls));
-      somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
+//      somPrintf('0X%08X'#13#10, longint(p^.VPCls));
+//      somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
       if TSOMObject(p^.VPCls)=obj then break;
       p:=p^.Next;
     end;
@@ -1507,8 +1495,7 @@ begin
   if (SOMObjectClassData.classObject=nil)or firsttime then begin
     firsttime:=false;
     if (SOMObjectClassData.classObject=nil) then SOMObjectNewClass(SOMObject_MajorVersion,SOMObject_MinorVersion);
-    CastClass(SOMObjectClassData.classObject,TSOMClass.RegisterClass);   // SOM Metaclass is SOMClass
-somprintf('1'#13#10);
+    CastClass(SOMObjectClassData.classObject, TSOMClass.RegisterClass);   // SOM Metaclass is SOMClass
   end;
   Result := TSOMObject;
 end;
@@ -1542,7 +1529,6 @@ begin
 
   Result := nil;
   NewCls := RegisterClass;
-somprintf('2'#13#10);
   if (InstanceSize>4)or(NewCls=nil) then exit;
   somNewNoInit := somTD_SOMClass_somNewNoInit(somResolveByName(InstanceClass,'somNewNoInit'{SOMClassClassData.somNewNoInit}));
   NewObj := somNewNoInit(InstanceClass);
@@ -1577,11 +1563,10 @@ begin
     begin
       Inc(Cardinal(Result), 4);
     end else begin
-      somPrintf('Dead beaf 0X%08X'#13#10, PCardinal(Cardinal(Result)-4)^);
-      somPrintf('Trying to get somSelf instance from 0X%08X'#13#10, Cardinal(Result));
+//      somPrintf('Dead beaf 0X%08X'#13#10, PCardinal(Cardinal(Result)-4)^);
+//      somPrintf('Trying to get somSelf instance from 0X%08X'#13#10, Cardinal(Result));
       Result:=ResolveSOMClass(Self);
-      somPrintf('somSelf 0X%08X'#13#10, Cardinal(Result));
-//halt(1);
+//      somPrintf('somSelf 0X%08X'#13#10, Cardinal(Result));
     end;
   end;
 end;
@@ -1607,10 +1592,7 @@ end;
 Function TSOMObject.somGetClass:TSOMClass;
 begin
   if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMObject.'+{$I %CURRENTROUTINE%}+#13#10);
-//  Result := TSOMClass(CastClass(SOMObject_somGetClass(somSelf), TSOMClass));
-somprintf('gc1'#13#10);
-  Result:=TSOMClass(CastClass(SOMObject_somGetClass(somSelf), TSOMClass));
-//somPrintf('found 0X%08X'#13#10, PCardinal(Cardinal(Result)));
+  Result := TSOMClass(CastClass(SOMObject_somGetClass(somSelf), TSOMClass));
 end;
 
 Function TSOMObject.somGetClassName:PChar;
@@ -1642,7 +1624,6 @@ begin
   if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMObject.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMObject_somRespondsTo(somSelf,mId);
 end;
-
 
 Procedure TSOMObject.somDispatchV(methodId: TsomId; descriptor: TsomId; ap:tva_list);
 begin
@@ -1789,7 +1770,8 @@ Begin
   SOMObjectClassDataPtr := @SOMObjectClassData;
 {$endif}
 {$ifdef SOM_OBJECTS}
-  somPrintf('Register SOMObject=0X%08X'#13#10, PRealSOMObject(@SOMObjectClassData.classObject)^);
+//  somPrintf('Register SOMObject=0X%08X'#13#10, SOMObjectClassData);
+//  RegisterSOMPasClass(TSOMObject, @SOMObjectClassData);
   RegisterVPClass(RSOMObject);
 {$endif}
 end.

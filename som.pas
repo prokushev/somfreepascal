@@ -1541,8 +1541,9 @@ var
 
 Function MyMalloc(size_t:Integer): TsomToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
   if size_t<=0 then begin
-    somPrintf('Z'#13#10);
+//    somPrintf('Z'#13#10);
     Result := nil
   end else begin
     GetMem(Result,size_t + BufSize*2);
@@ -1551,32 +1552,34 @@ begin
       PCardinal(Cardinal(Result)-4)^ := 0;
       PCardinal(Cardinal(Result)-8)^ := $DEADBEAF;
     end else  
-      somprintf('M'#13#10);
+      {somprintf('M'#13#10)};
   end;
-  somprintf('Malloc %08X'#13#10, result);
+//  somprintf('Malloc %08X'#13#10, result);
 end;
 
 Function MyCalloc(size_c:Integer; size_e:Integer): TsomToken;{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 begin
-  somprintf('Calloc'#13#10);
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
+//  somprintf('Calloc'#13#10);
   Result := somTD_SOMCalloc(OldCalloc)(size_c,size_e);
-  somprintf('c'#13#10);
+//  somprintf('c'#13#10);
 end;
 
 Procedure MyFree(ref: TsomToken);{$ifndef vpc}{$ifdef SOM_STDCALL}stdcall;{$else}cdecl;{$endif}{$endif}
 var
   size          : Longint;
 begin
-  somprintf('Free %08X'#13#10, ref);
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
+//  somprintf('Free %08X'#13#10, ref);
   if ref<>nil then begin
     size := PCardinal(Cardinal(ref)-8)^;
     dec(Cardinal(ref),BufSize);
     try
       FreeMem(ref{,size + BufSize*2}); // Possible leak!!!
     except
-      somprintf('F'#13#10);
+      {somprintf('F'#13#10)};
     end;
-    somprintf('f'#13#10);
+//    somprintf('f'#13#10);
   end;
 end;
 
@@ -1585,6 +1588,7 @@ var
   oldsize       : Longint;
   //oldtype       : Longint;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In '+{$I %CURRENTROUTINE%}+#13#10);
 //  somprintf('Realloc', []);
   //somprintf('R',nil);
   if (size<=0)or(ref=nil) then begin

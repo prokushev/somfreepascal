@@ -1221,7 +1221,7 @@ function SOMClass_somCastObj(somSelf: TRealSOMClass; castedCls: TRealSOMClass): 
 function SOMClass_somResetObj(somSelf: TRealSOMClass): TCORBA_boolean;
 {$endif}
 
-{$ifdef SOMOBJECTS}
+{$ifdef SOM_OBJECTS}
 
 (* Object Pascal classes *)
 type
@@ -1869,7 +1869,7 @@ end;
 
 {$endif}
 
-{$ifdef SOMOBJECTS}
+{$ifdef SOM_OBJECTS}
 const
   RSOMClass            : VPSOMRECORD = (
     VPCls               : TSOMClass;
@@ -1889,7 +1889,8 @@ Begin
 {$else}  
   SOMClassClassDataPtr := @SOMClassClassData;
 {$endif}
-{$ifdef SOMOBJECTS}
+{$ifdef SOM_OBJECTS}
+//  somPrintf('Register SOMClass=0X%08X'#13#10, SOMClassClassData);
   RegisterVPClass(RSOMClass);
 {$endif}
 end.
