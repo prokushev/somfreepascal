@@ -166,7 +166,7 @@ begin
   cmo.somDumpSelf(0);
   cmo.somDumpSelfInt(0);
   somPrintf('testing GetClass and type casting'#13#10);
-  cmo.somGetClass.somPrintSelf;
+  cmo.somGetClass.somDumpSelf(0);
   cmo.Destroy;
 {$endif}
 

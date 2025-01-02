@@ -776,6 +776,8 @@ type
   end;
 
 Procedure RegisterVPClass(var rec:VPSOMRECORD);
+Function CastClass(obj:TRealSOMObject; cls:TSOMObjectClass): TSOMObjectClass;
+Function ResolveClass(obj:TRealSOMObject):TSOMObject;
 
 {$endif}
 
