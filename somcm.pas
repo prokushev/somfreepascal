@@ -38,7 +38,7 @@ const
     SOMClassMgr_MinorVersion = 6;
   {$else}
     {$ifdef SOM_VERSION_2}
-      SOMClass_MinorVersion = 4;
+      SOMClassMgr_MinorVersion = 4;
     {$else}
       SOMClassMgr_MinorVersion = 1;
     {$endif}
@@ -613,37 +613,40 @@ function SOMClassMgr_somCastObj(somSelf: TRealSOMClassMgr; castedCls: TRealSOMCl
 function SOMClassMgr_somResetObj(somSelf: TRealSOMClassMgr): TCORBA_boolean;
 {$endif}
 
-{$ifdef SOM_OBJECTS}     {
+{$ifdef SOM_OBJECTS}     
 type
   TSOMClassMgr           = Class(TSOMObject)
   public
-    Function  somLoadClassFile(classId:somId; majorVersion,minorVersion:long; filen:PChar): TSOMClass;
-    Function  somLocateClassFile(classId:somId; majorVersion,minorVersion:long): PChar;
-    Procedure somRegisterClass(classObj:TSOMClass);
-    Procedure somRegisterClassLibrary(libraryName:PChar;libraryInitRtn:somMethodPtr);
-    Function  somUnloadClassFile(classObj:TSOMClass):long;
-    Function  somUnregisterClass(classObj:TSOMClass):long;
+    Function  somFindClsInFile(classId: TsomId; majorVersion, minorVersion: TCORBA_long; filen:PChar): TSOMClass;
+    Function  somFindClass(classId: TsomId; majorVersion, minorVersion: TCORBA_long): TSOMClass;
+    Function  somClassFromId(classId: TsomId): TSOMClass;
+    Procedure somRegisterClass(classObj: TSOMClass);
+    Function  somUnregisterClass(classObj: TSOMClass): TCORBA_long;
+    Function  somLocateClassFile(classId: TsomId; majorVersion, minorVersion: TCORBA_long): PChar;
+    Function  somLoadClassFile(classId: TsomId; majorVersion, minorVersion: TCORBA_long; filen:PChar): TSOMClass;
+    Function  somUnloadClassFile(classObj: TSOMClass): TCORBA_long;
+    Function  somGetInitFunction: PChar;
+    Procedure somMergeInto(targetObj: TSOMObject);
+    Function  somGetRelatedClasses(classObj: TSOMClass): SOMClassMgr_SOMClassArray;
+	// SOM 2 Methods
+	{$ifdef SOM_VERSION_2}
+    Function  somSubstituteClass(origClassName,newClassName:PChar): TCORBA_long;
     Procedure somBeginPersistentClasses;
     Procedure somEndPersistentClasses;
-    Function  somJoinAffinityGroup(newClass,affClass:SOMClass):Boolean;
-    Function  somGetInitFunction:PChar;
-    Function  somGetRelatedClasses(classObj: TSOMClass):SOMClassMgr_SOMClassArray;
-    Function  somClassFromId(classId:somId): TSOMClass;
-    Function  somFindClass(classId:somId;majorVersion,minorVersion:long): TSOMClass;
-    Function  somFindClsInFile(classId:somId;majorVersion,minorVersion:long;filen:PChar): TSOMClass;
-    Procedure somMergeInto(targetObj: TSOMObject);
-    Function  somSubstituteClass(origClassName,newClassName:PChar): long;
+    Procedure somRegisterClassLibrary(libraryName: PChar; libraryInitRtn: somTD_SOMInitModule);
+    Function  somJoinAffinityGroup(newClass,affClass : TSOMClass): TCORBA_boolean;
   private
-    Function  _get_somInterfaceRepository: TRepository;
-    Procedure _set_somInterfaceRepository(somInterfaceRepository: TRepository);
-    Function  _get_somRegisteredClasses: _IDL_SEQUENCE_SOMClass;
+//    Function  _get_somInterfaceRepository: TRepository;
+//    Procedure _set_somInterfaceRepository(somInterfaceRepository: TRepository);
+    Function  _get_somRegisteredClasses: T_IDL_SEQUENCE_SOMClass;
   public
-    property somInterfaceRepository:Repository read _get_somInterfaceRepository write _set_somInterfaceRepository;
-    property somRegisteredClasses:_IDL_SEQUENCE_SOMClass read _get_somRegisteredClasses;
+//    property somInterfaceRepository: TRepository read _get_somInterfaceRepository write _set_somInterfaceRepository;
+    property somRegisteredClasses: T_IDL_SEQUENCE_SOMClass read _get_somRegisteredClasses;
+	{$endif}
   public//protected
-    class function InstanceClass:SOMClassType; override;
-    class function RegisterClass:TSOMObject; override;
-  end;                    }
+    class function InstanceClass: TRealSOMClass; override;
+    class function RegisterClass: TSOMObjectClass; override;
+  end;                    
 {$endif}
 
 Implementation
@@ -1026,6 +1029,129 @@ end;
 
 {$endif}
 
+{$ifdef SOM_OBJECTS}     
+
+const
+  RSOMClassMgr          : VPSOMRECORD = (
+    VPCls               : TSOMClassMgr;
+    SOMCls              : @SOMClassMgrClassData);
+
+class function TSOMClassMgr.InstanceClass: TRealSOMClass;
+begin
+  Result := SOMClassMgrClassData.classObject;
+end;
+
+class function TSOMClassMgr.RegisterClass: TSOMObjectClass;
+const
+  firsttime     : Boolean       = True;
+begin
+  if (SOMClassMgrClassData.classObject=nil)or firsttime then begin
+    firsttime := false;
+    inherited RegisterClass;
+    if (SOMClassMgrClassData.classObject=nil) then SOMClassMgrNewClass(SOMClassMgr_MajorVersion,SOMClassMgr_MinorVersion);
+    CastClass(SOMClassMgrClassData.classObject, TSOMClass.RegisterClass);   // SOM Metaclass is SOMClass
+  end;
+  RegisterVPClass(RSOMClassMgr);
+  Result := TSOMObjectClass(TSOMClassMgr);
+end;
+
+Function TSOMClassMgr.somLoadClassFile(classId: TsomId; majorVersion,minorVersion: TCORBA_long; filen:PChar): TSOMClass;
+begin
+  Result := ResolveClass(SOMClassMgr_somLoadClassFile(somSelf,classId,majorVersion,minorVersion,filen)) as TSOMClass;
+end;
+
+Function TSOMClassMgr.somLocateClassFile(classId: TsomId; majorVersion, minorVersion: TCORBA_long): PChar;
+begin
+  Result := SOMClassMgr_somLocateClassFile(somSelf,classId,majorVersion,minorVersion);
+end;
+
+Procedure TSOMClassMgr.somRegisterClass(classObj: TSOMClass);
+begin
+  SOMClassMgr_somRegisterClass(somSelf,classObj.somSelf);
+end;
+
+Procedure TSOMClassMgr.somRegisterClassLibrary(libraryName:PChar; libraryInitRtn: somTD_SOMInitModule);
+begin
+  SOMClassMgr_somRegisterClassLibrary(somSelf,libraryName, libraryInitRtn);
+end;
+
+Function TSOMClassMgr.somUnloadClassFile(classObj: TSOMClass): TCORBA_long;
+begin
+  Result := SOMClassMgr_somUnloadClassFile(somSelf,classObj.somSelf);
+end;
+
+Function TSOMClassMgr.somUnregisterClass(classObj: TSOMClass): TCORBA_long;
+begin
+  Result := SOMClassMgr_somUnregisterClass(somSelf,classObj.somSelf);
+end;
+
+Procedure TSOMClassMgr.somBeginPersistentClasses;
+begin
+  SOMClassMgr_somBeginPersistentClasses(somSelf);
+end;
+
+Procedure TSOMClassMgr.somEndPersistentClasses;
+begin
+  SOMClassMgr_somEndPersistentClasses(somSelf);
+end;
+
+Function TSOMClassMgr.somJoinAffinityGroup(newClass,affClass: TSOMClass): TCORBA_boolean;
+begin
+  Result := SOMClassMgr_somJoinAffinityGroup(somSelf,newClass.somSelf,affClass.somSelf);
+end;
+
+Function TSOMClassMgr.somGetInitFunction: PChar;
+begin
+  Result := SOMClassMgr_somGetInitFunction(somSelf);
+end;
+
+Function TSOMClassMgr.somGetRelatedClasses(classObj: TSOMClass):SOMClassMgr_SOMClassArray;
+begin
+  Result := SOMClassMgr_somGetRelatedClasses(somSelf,classObj.somSelf);
+end;
+
+Function TSOMClassMgr.somClassFromId(classId: TsomId): TSOMClass;
+begin
+  Result := ResolveClass(SOMClassMgr_somClassFromId(somSelf,classId)) as TSOMClass;
+end;
+
+Function TSOMClassMgr.somFindClass(classId: TsomId; majorVersion,minorVersion: TCORBA_long): TSOMClass;
+begin
+  Result := ResolveClass(SOMClassMgr_somFindClass(somSelf,classId,majorVersion,minorVersion)) as TSOMClass;
+end;
+
+Function TSOMClassMgr.somFindClsInFile(classId: TsomId; majorVersion,minorVersion: TCORBA_long;filen:PChar): TSOMClass;
+begin
+  Result := ResolveClass(SOMClassMgr_somFindClsInFile(somSelf,classId,majorVersion,minorVersion,filen)) as TSOMClass;
+end;
+
+Procedure TSOMClassMgr.somMergeInto(targetObj: TSOMObject);
+begin
+  SOMClassMgr_somMergeInto(somSelf,targetObj.somSelf);
+end;
+
+Function TSOMClassMgr.somSubstituteClass(origClassName,newClassName:PChar): TCORBA_long;
+begin
+  Result := SOMClassMgr_somSubstituteClass(somSelf,origClassName,newClassName);
+end;
+
+{
+Function TSOMClassMgr._get_somInterfaceRepository: TRepository;
+begin
+  Result := ResolveClass(SOMClassMgr__get_somInterfaceRepository(somSelf)) as TRepository;
+end;
+
+Procedure TSOMClassMgr._set_somInterfaceRepository(somInterfaceRepository: TRepository);
+begin
+  SOMClassMgr__set_somInterfaceRepository(somSelf,somInterfaceRepository.somSelf);
+end;
+}
+Function TSOMClassMgr._get_somRegisteredClasses: T_IDL_SEQUENCE_SOMClass;
+begin
+  Result := SOMClassMgr__get_somRegisteredClasses(somSelf);
+end;
+{$endif}
+
 {$ifndef SOM_EXTVAR}
 var
   hLib1: THandle;
@@ -1039,4 +1165,5 @@ Begin
 {$else}  
   SOMClassMgrClassDataPtr := @SOMClassMgrClassData;
 {$endif}
+  RegisterVPClass(RSOMClassMgr);
 End.
