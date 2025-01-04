@@ -63,7 +63,7 @@ begin
 end;
 
 var
-  clsmgr: TRealSOMObject;
+  clsmgr: TRealSOMClassMgr;
   tstobj: TRealSOMObject;
   tst: somTD_SOMObject_somDumpSelf;
   a: TSOMClass_SOMClassSequence;
@@ -100,8 +100,8 @@ begin
   // Check two variables (must be same)
   somPrintf('SOMClassMgr=0X%08X'#13#10, longint(clsmgr));
   somPrintf('SOMClassMgr=0X%08X'#13#10, longint(SOMClassMgrObject));
-  somPrintf('SOMClassMgrObject.somPrintSelf'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
-  SOMObject_somPrintSelf(SOMClassMgrObject);
+  somPrintf('SOMClassMgr_somPrintSelf'#13#10 {$ifndef SOM_VARARGS}, [nil]{$endif});
+  SOMClassMgr_somPrintSelf(SOMClassMgrObject);
 
   somPrintf('Try to resolve SOMClassManager operation by name'#13#10);
   somTD_SOMObject_somPrintSelf(somResolveByName(clsmgr, 'somPrintSelf'))(clsmgr);
