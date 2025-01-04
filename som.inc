@@ -42,7 +42,7 @@
 {$ENDIF}
 
 {$IFDEF FPC}
-  {$WARNING This code is beta!}
+  {$WARNING This code is alpha!}
   {$MODE OBJFPC}
   {$ifdef os2}
   {$warning This units doesn't work because FPC/2 doesn't implements external vars}
