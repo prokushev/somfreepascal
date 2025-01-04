@@ -1038,6 +1038,7 @@ const
 
 class function TSOMClassMgr.InstanceClass: TRealSOMClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMClassMgrClassData.classObject;
 end;
 
@@ -1045,6 +1046,7 @@ class function TSOMClassMgr.RegisterClass: TSOMObjectClass;
 const
   firsttime     : Boolean       = True;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   if (SOMClassMgrClassData.classObject=nil)or firsttime then begin
     firsttime := false;
     inherited RegisterClass;
@@ -1057,97 +1059,116 @@ end;
 
 Function TSOMClassMgr.somLoadClassFile(classId: TsomId; majorVersion,minorVersion: TCORBA_long; filen:PChar): TSOMClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := ResolveClass(SOMClassMgr_somLoadClassFile(somSelf,classId,majorVersion,minorVersion,filen)) as TSOMClass;
 end;
 
 Function TSOMClassMgr.somLocateClassFile(classId: TsomId; majorVersion, minorVersion: TCORBA_long): PChar;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMClassMgr_somLocateClassFile(somSelf,classId,majorVersion,minorVersion);
 end;
 
 Procedure TSOMClassMgr.somRegisterClass(classObj: TSOMClass);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   SOMClassMgr_somRegisterClass(somSelf,classObj.somSelf);
 end;
 
 Procedure TSOMClassMgr.somRegisterClassLibrary(libraryName:PChar; libraryInitRtn: somTD_SOMInitModule);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   SOMClassMgr_somRegisterClassLibrary(somSelf,libraryName, libraryInitRtn);
 end;
 
 Function TSOMClassMgr.somUnloadClassFile(classObj: TSOMClass): TCORBA_long;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMClassMgr_somUnloadClassFile(somSelf,classObj.somSelf);
 end;
 
 Function TSOMClassMgr.somUnregisterClass(classObj: TSOMClass): TCORBA_long;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMClassMgr_somUnregisterClass(somSelf,classObj.somSelf);
 end;
 
 Procedure TSOMClassMgr.somBeginPersistentClasses;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   SOMClassMgr_somBeginPersistentClasses(somSelf);
 end;
 
 Procedure TSOMClassMgr.somEndPersistentClasses;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   SOMClassMgr_somEndPersistentClasses(somSelf);
 end;
 
 Function TSOMClassMgr.somJoinAffinityGroup(newClass,affClass: TSOMClass): TCORBA_boolean;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMClassMgr_somJoinAffinityGroup(somSelf,newClass.somSelf,affClass.somSelf);
 end;
 
 Function TSOMClassMgr.somGetInitFunction: PChar;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMClassMgr_somGetInitFunction(somSelf);
 end;
 
 Function TSOMClassMgr.somGetRelatedClasses(classObj: TSOMClass):SOMClassMgr_SOMClassArray;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMClassMgr_somGetRelatedClasses(somSelf,classObj.somSelf);
 end;
 
 Function TSOMClassMgr.somClassFromId(classId: TsomId): TSOMClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := ResolveClass(SOMClassMgr_somClassFromId(somSelf,classId)) as TSOMClass;
 end;
 
 Function TSOMClassMgr.somFindClass(classId: TsomId; majorVersion,minorVersion: TCORBA_long): TSOMClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := ResolveClass(SOMClassMgr_somFindClass(somSelf,classId,majorVersion,minorVersion)) as TSOMClass;
 end;
 
 Function TSOMClassMgr.somFindClsInFile(classId: TsomId; majorVersion,minorVersion: TCORBA_long;filen:PChar): TSOMClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := ResolveClass(SOMClassMgr_somFindClsInFile(somSelf,classId,majorVersion,minorVersion,filen)) as TSOMClass;
 end;
 
 Procedure TSOMClassMgr.somMergeInto(targetObj: TSOMObject);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   SOMClassMgr_somMergeInto(somSelf,targetObj.somSelf);
 end;
 
 Function TSOMClassMgr.somSubstituteClass(origClassName,newClassName:PChar): TCORBA_long;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMClassMgr_somSubstituteClass(somSelf,origClassName,newClassName);
 end;
 
-{
+(*
 Function TSOMClassMgr._get_somInterfaceRepository: TRepository;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := ResolveClass(SOMClassMgr__get_somInterfaceRepository(somSelf)) as TRepository;
 end;
 
 Procedure TSOMClassMgr._set_somInterfaceRepository(somInterfaceRepository: TRepository);
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   SOMClassMgr__set_somInterfaceRepository(somSelf,somInterfaceRepository.somSelf);
 end;
-}
+*)
 Function TSOMClassMgr._get_somRegisteredClasses: T_IDL_SEQUENCE_SOMClass;
 begin
+  if SOM_TraceLevel>1 then somPrintf('"'+{$I %FILE%}+'": '+{$I %LINE%}+':'#9'In TSOMClassMgr.'+{$I %CURRENTROUTINE%}+#13#10);
   Result := SOMClassMgr__get_somRegisteredClasses(somSelf);
 end;
 {$endif}

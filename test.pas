@@ -160,13 +160,17 @@ begin
   cmo.Destroy;
 
 
-  somPrintf('Create TSOMObject'#13#10);
+  somPrintf('Create TSOMObject instance'#13#10);
   cmo:=TSOMObject.Create;
   cmo.somDumpSelf(0);
-  somPrintf('call GetClass and type casting'#13#10);
+  somPrintf('call GetClass and type casting. Here must be TSOMClass instance (TSOMObject class)'#13#10);
   cmo.somGetClass.somDumpSelf(0);
+  somPrintf('call GetClass and type casting. Here must be TSOMClass instance (TSOMClass class)'#13#10);
+  cmo.somGetClass.somGetClass.somDumpSelf(0);
+  somPrintf('call GetClass and type casting. Here must be TSOMClass instance (TSOMClass class) again'#13#10);
+  cmo.somGetClass.somGetClass.somGetClass.somDumpSelf(0);
   somPrintf('Destroy TSOMObject'#13#10);
-  cmo.somFree;
+  cmo.Destroy;
 {$endif}
 
   somPrintf('Shutdown SOM runtime'#13#10);

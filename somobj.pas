@@ -1381,23 +1381,29 @@ begin
       Result := TSOMObject(Pointer(obj2));
 
       if PCardinal(obj2)^<>0 then exit;  // Class already resolved;
-    end else begin
+    end else 
+    begin
 //      somPrintf('Dead beaf 0X%08X'#13#10, PCardinal(Cardinal(obj)-8)^);
 //      somPrintf('Trying to resolve instance of 0X%08X'#13#10, Cardinal(obj));
 {----------------------------}
-    {$ifdef fpc}TsomMethodProc(_somIsInstance):={$else}@_somIsInstance:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsInstanceOf));
-    p := @RSOMObject;                   // First check for specific instances...
-    while (p<>nil)and(not (obj=TRealSOMObject(p^.SOMCls^))) do
-    begin
-//      somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
-      p:=p^.Next;
-    end;
-    if p=nil then somPrintf('oops'#13#10);
-    if p<>nil then begin
-//      PCardinal(obj2)^ := Cardinal(p^.VPCls);
-      Result:=TSOMObject(p^.VPCls);
-    end;
-    exit;
+      {$ifdef fpc}TsomMethodProc(_somIsInstance):={$else}@_somIsInstance:=Pointer{$endif}(somResolve(obj,SOMObjectClassData.somIsInstanceOf));
+      p := @RSOMObject;                   // First check for specific instances...
+      while (p<>nil)and(not (obj=TRealSOMObject(p^.SOMCls^))) do
+//    while (p<>nil)and(not _somIsInstance(obj,TRealSOMObject(p^.SOMCls^))) do
+      begin
+//        somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
+//        writeln(_somIsInstance(obj,TRealSOMObject(p^.SOMCls^)));
+        p:=p^.Next;
+      end;
+      if p=nil then somPrintf('oops'#13#10);
+      if p<>nil then begin
+//        PCardinal(obj2)^ := Cardinal(p^.VPCls);
+//        somPrintf('0X%08X'#13#10, longint(p^.SOMCls^));
+//        writeln(_somIsInstance(obj,TRealSOMObject(p^.SOMCls^)));
+//        writeln(p^.VPCls.ClassName);
+        Result:=TSOMObject(p^.VPCls);
+      end;
+      exit;
     end;
 
 
